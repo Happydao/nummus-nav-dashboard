@@ -2,7 +2,7 @@ import "./styles.css";
 import { attachChartInteractions } from "../charts/interactions.js";
 import { lineChart, rangeButtons, type RangeKey } from "../charts/lineChart.js";
 import { kpi } from "../components/kpi.js";
-import { latestRecord, loadHistory } from "../utils/history.js";
+import { latestRecord, loadHistory, type DailySnapshot, type SupplySnapshot } from "../utils/history.js";
 import { numberCompact, percent, ratio, tbtcAxis, usd, usdCompact } from "../utils/format.js";
 
 const app = document.querySelector<HTMLDivElement>("#app");
@@ -22,6 +22,7 @@ async function render(): Promise<void> {
   const history = await loadHistory();
   const records = history.records;
   const tbtcHistory = history.tbtcHistory ?? [];
+  const supplyChartRecords = buildSupplyChartRecords(history.supplyHistory ?? [], records);
   const latest = latestRecord(records);
   const unpricedCount = latest?.valuationReport?.unpricedAssets.length ?? 0;
 
@@ -99,14 +100,15 @@ async function render(): Promise<void> {
           ${lineChart({
             id: "supply",
             title: "Supply History",
-            records,
+            records: supplyChartRecords,
             key: "supply",
             range: selectedRange,
             formatter: numberCompact,
             axisFormatter: numberCompact,
             yLabel: "NUMMUS",
             yMin: 0,
-            yMax: 100_000_000
+            yMax: 100_000_000,
+            showMarkers: true
           })}
           ${lineChart({
             id: "tbtc",
@@ -127,6 +129,24 @@ async function render(): Promise<void> {
   `;
   attachRangeHandlers();
   attachChartInteractions(root);
+}
+
+function buildSupplyChartRecords(supplyHistory: SupplySnapshot[], records: DailySnapshot[]): SupplySnapshot[] {
+  const byDate = new Map<string, SupplySnapshot>();
+
+  for (const snapshot of supplyHistory) {
+    byDate.set(snapshot.date, snapshot);
+  }
+
+  for (const record of records) {
+    if (typeof record.supply !== "number") continue;
+    byDate.set(record.date, {
+      date: record.date,
+      supply: record.supply
+    });
+  }
+
+  return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
 }
 
 function attachRangeHandlers(): void {

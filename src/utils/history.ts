@@ -29,7 +29,7 @@ export interface TbtcSnapshot {
 export interface SupplySnapshot {
   date: string;
   supply: number;
-  burnedCumulative: number;
+  burnedCumulative?: number;
 }
 
 export async function loadHistory(): Promise<HistoryFile> {
