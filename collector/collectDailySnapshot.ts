@@ -45,7 +45,9 @@ export async function collectDailySnapshot(): Promise<DailySnapshot> {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const snapshot = await collectDailySnapshot();
   const history = await upsertToday(snapshot);
-  history.tbtcHistory = await collectTbtcHistory();
+  const tbtc = await collectTbtcHistory(history.tbtcHistory ?? [], history.tbtcCursor);
+  history.tbtcHistory = tbtc.history;
+  history.tbtcCursor = tbtc.cursor;
   await writeHistory(history);
   console.log(
     `Saved ${snapshot.date} snapshot. History records: ${history.records.length}. tBTC points: ${history.tbtcHistory?.length ?? 0}`

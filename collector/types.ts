@@ -2,6 +2,7 @@ export interface HistoryFile {
   generatedAt: string | null;
   records: DailySnapshot[];
   tbtcHistory?: TbtcSnapshot[];
+  tbtcCursor?: TbtcCursor;
 }
 
 export interface DailySnapshot {
@@ -19,6 +20,12 @@ export interface DailySnapshot {
 export interface TbtcSnapshot {
   date: string;
   amount: number;
+}
+
+export interface TbtcCursor {
+  tokenAccounts: string[];
+  processedSignatures: string[];
+  lastAmount: number;
 }
 
 export interface ValuationReport {
