@@ -23,16 +23,12 @@ export async function buildHistory(): Promise<GeneratedHistory> {
   for (const snapshot of vaultResult.data) dates.add(snapshot.date);
   for (const snapshot of supplyResult.data) dates.add(snapshot.date);
   for (const snapshot of priceResult.data) dates.add(snapshot.date);
-  for (const event of burnResult.data) dates.add(event.date);
 
   const records: HistoryRecord[] = [...dates].sort().map((date) => {
     const vaultUsd = vaultResult.data.find((snapshot) => snapshot.date === date)?.vaultUsd ?? null;
     const supply = supplyResult.data.find((snapshot) => snapshot.date === date)?.uiAmount ?? null;
     const marketPrice =
       priceResult.data.find((snapshot) => snapshot.date === date)?.priceUsd ?? null;
-    const burned = burnResult.data
-      .filter((event) => event.date === date)
-      .reduce((total, event) => total + event.amount, 0);
 
     const nav = round(divideOrNull(vaultUsd, supply));
     const backing = round(
@@ -49,8 +45,7 @@ export async function buildHistory(): Promise<GeneratedHistory> {
       marketPrice,
       nav,
       backing,
-      premium,
-      burned: burned > 0 ? round(burned, 6) : null
+      premium
     };
   });
 
@@ -77,6 +72,7 @@ export async function buildHistory(): Promise<GeneratedHistory> {
       recordCount: records.length
     },
     warnings,
+    burnEvents: burnResult.data,
     records
   };
 }

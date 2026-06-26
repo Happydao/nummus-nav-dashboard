@@ -36,9 +36,12 @@ src/
 
 ```bash
 npm install
+cp .env.example .env.local
 npm run check
 npm run collect
 ```
+
+Set `HELIUS_API_KEY` in `.env.local` for local collection. Production should inject the same environment variable through deployment secrets.
 
 `npm run collect` writes `data/history.json`.
 
@@ -60,6 +63,8 @@ Each record in `data/history.json` follows this shape:
 ```
 
 Fields are `null` when the collector cannot reconstruct them reliably from public data. This is expected until a historical vault valuation source and historical price source are configured.
+
+Burn history is stored in the same file under `burnEvents` because the requested NAV record schema does not include a burn amount field.
 
 ## Calculations
 

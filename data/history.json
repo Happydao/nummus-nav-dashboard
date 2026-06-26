@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-06-26T09:46:58.073Z",
+  "generatedAt": "2026-06-26T09:57:01.425Z",
   "coverage": {
-    "from": "2026-05-22",
+    "from": "2026-06-26",
     "to": "2026-06-26",
-    "recordCount": 5
+    "recordCount": 1
   },
   "warnings": [
     {
       "metric": "vaultUsd",
-      "message": "Historical vault USD cannot be reconstructed reliably from the vault wallet address alone. It requires historical token-account ownership, token balances at each date, LP/position decoding where applicable, and historical USD prices for every held asset."
+      "message": "Helius DAS getAssetsByOwner exposes the current vault wallet assets and native SOL value, but it does not provide a complete historical USD wallet valuation. Historical vaultUsd remains null until a valuation layer snapshots or backfills every vault asset with same-date prices."
     },
     {
       "metric": "supply",
-      "message": "Public Solana RPC exposes the current token supply. Daily historical supply requires replaying all mint and burn instructions from an archival RPC/indexer; this collector does not synthesize missing history."
+      "message": "Helius RPC getTokenSupply exposes the current token supply. Daily historical supply requires replaying all mint and burn instructions for the NUMMUS mint from complete Helius transaction history; this collector does not synthesize missing history."
     },
     {
       "metric": "marketPrice",
@@ -20,54 +20,52 @@
     },
     {
       "metric": "burn",
-      "message": "Burn events can be reconstructed from parsed SPL-token burn instructions involving the burn wallet and NUMMUS mint, but complete history requires paginating every signature through an archival RPC/indexer."
+      "message": "Burn events are reconstructed from Helius Enhanced Transactions for the burn wallet. Complete history requires paginating all burn-wallet transactions with the before cursor and validating that no NUMMUS burns occur outside the documented burn wallet."
     },
     {
       "metric": "history",
       "message": "NAV, treasury backing, and premium remain null until vault USD history and market price history are available for the same dates."
     }
   ],
-  "records": [
+  "burnEvents": [
     {
-      "date": "2026-05-22",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": null,
-      "nav": null,
-      "backing": null,
-      "premium": null,
-      "burned": 79202.270275
-    },
-    {
-      "date": "2026-06-03",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": null,
-      "nav": null,
-      "backing": null,
-      "premium": null,
-      "burned": 109857.432551
-    },
-    {
-      "date": "2026-06-12",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": null,
-      "nav": null,
-      "backing": null,
-      "premium": null,
-      "burned": 69929.253244
-    },
-    {
+      "signature": "25WczXwsay6Ammq2LukSLePtk6HbpVcRKNNq4JesZvA2wnSZs4opAX7SHnBTQwV5e4FR5Kk27cg96chnnQs7VbJa",
+      "slot": 427472987,
+      "blockTime": 1781859045,
       "date": "2026-06-19",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": null,
-      "nav": null,
-      "backing": null,
-      "premium": null,
-      "burned": 61351.378413
+      "rawAmount": "61351378413",
+      "decimals": 6,
+      "amount": 61351.378413
     },
+    {
+      "signature": "2mV7PFUbdexKm8nxw9nLMCvMTW1XUdDb3VGJiJFkshyh2VAhe9zcvxbU7LqGn41xGXKLxaYkcWbJDdRsqFmYnXSq",
+      "slot": 425951572,
+      "blockTime": 1781255514,
+      "date": "2026-06-12",
+      "rawAmount": "69929253244",
+      "decimals": 6,
+      "amount": 69929.253244
+    },
+    {
+      "signature": "BVgtKU3hedyDhviJf32bK52hW1VA4w3fpDR63ahqRZkKnLxtt4RuV9jGYdVvyVUiVbMA7pKB7C5DgtKgH3xQDGc",
+      "slot": 423999413,
+      "blockTime": 1780478837,
+      "date": "2026-06-03",
+      "rawAmount": "109857432551",
+      "decimals": 6,
+      "amount": 109857.432551
+    },
+    {
+      "signature": "QhSPc188GCqpgfoMgRfSNg3V3NjiN9JXpjbsx4W2XmWAECMHzTgyaZTcFPyCW4vmY8yDLzdr9dPTRnLBpQBCrS8",
+      "slot": 421386777,
+      "blockTime": 1779440264,
+      "date": "2026-05-22",
+      "rawAmount": "79202270275",
+      "decimals": 6,
+      "amount": 79202.270275
+    }
+  ],
+  "records": [
     {
       "date": "2026-06-26",
       "vaultUsd": null,
@@ -75,8 +73,7 @@
       "marketPrice": 0.007373441623458166,
       "nav": null,
       "backing": null,
-      "premium": null,
-      "burned": null
+      "premium": null
     }
   ]
 }

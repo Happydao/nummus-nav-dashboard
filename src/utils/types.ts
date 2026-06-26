@@ -8,7 +8,6 @@ export interface HistoryRecord {
   nav: number | null;
   backing: number | null;
   premium: number | null;
-  burned?: number | null;
 }
 
 export interface CollectionWarning {
@@ -60,5 +59,6 @@ export interface GeneratedHistory {
     recordCount: number;
   };
   warnings: CollectionWarning[];
+  burnEvents: BurnEvent[];
   records: HistoryRecord[];
 }

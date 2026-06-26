@@ -1,5 +1,5 @@
 import { NUMMUS_MINT } from "../src/utils/constants.js";
-import { SolanaRpcClient } from "../src/utils/solanaRpc.js";
+import { HeliusClient } from "../src/utils/helius.js";
 import type { CollectionResult, SupplySnapshot } from "../src/utils/types.js";
 
 interface TokenSupplyResponse {
@@ -15,9 +15,9 @@ interface TokenSupplyResponse {
 }
 
 export async function collectSupplyHistory(
-  rpc = new SolanaRpcClient()
+  helius = new HeliusClient()
 ): Promise<CollectionResult<SupplySnapshot[]>> {
-  const currentSupply = await rpc.call<TokenSupplyResponse>("getTokenSupply", [NUMMUS_MINT]);
+  const currentSupply = await helius.rpc<TokenSupplyResponse>("getTokenSupply", [NUMMUS_MINT]);
 
   const uiAmount =
     currentSupply.value.uiAmount ??
@@ -37,7 +37,7 @@ export async function collectSupplyHistory(
       {
         metric: "supply",
         message:
-          "Public Solana RPC exposes the current token supply. Daily historical supply requires replaying all mint and burn instructions from an archival RPC/indexer; this collector does not synthesize missing history."
+          "Helius RPC getTokenSupply exposes the current token supply. Daily historical supply requires replaying all mint and burn instructions for the NUMMUS mint from complete Helius transaction history; this collector does not synthesize missing history."
       }
     ]
   };
