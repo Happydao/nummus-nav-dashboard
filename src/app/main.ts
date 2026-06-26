@@ -120,11 +120,11 @@ async function render(): Promise<void> {
             axisFormatter: usdCompact,
             yLabel: "USD",
             yMin: 0,
-            info: "Vault Value is the total USD value of fungible treasury assets counted in the snapshot. Higher value means a larger treasury. NFTs and tiny spam assets are ignored."
+            info: "Vault Value is the total USD value of the treasury assets counted in the snapshot. Higher value means a larger treasury backing NUMMUS."
           })}
           ${lineChart({
             id: "supply",
-            title: "Supply History",
+            title: "Supply Reduction",
             records: supplyChartRecords,
             key: "supply",
             range: selectedRange,

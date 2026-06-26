@@ -20,7 +20,6 @@ body {
 
 .shell {
   min-height: 100vh;
-  overflow-x: hidden;
 }
 
 .topbar {
@@ -723,9 +722,14 @@ svg {
   }
 
   .info-popover {
-    left: auto;
-    min-width: min(260px, calc(100vw - 32px));
-    right: -8px;
+    left: 16px;
+    max-width: none;
+    min-width: 0;
+    position: fixed;
+    right: 16px;
+    top: 86px;
     transform: none;
+    width: auto;
+    z-index: 30;
   }
 }
