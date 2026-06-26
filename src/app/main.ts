@@ -111,7 +111,7 @@ async function render(): Promise<void> {
             formatter: numberCompact,
             axisFormatter: numberCompact,
             yLabel: "NUMMUS",
-            yMin: 80_000_000,
+            yMin: 90_000_000,
             yMax: 100_000_000,
             showMarkers: true,
             info: "Supply shows how many NUMMUS tokens are circulating. Lower supply can increase NAV per token if treasury value is stable or growing."
@@ -143,6 +143,7 @@ function vaultCompositionDetails(record: DailySnapshot): string {
   const assets = (record.valuationReport?.pricedAssets ?? []) as Array<{
     symbol?: string | null;
     mint?: string;
+    amount?: number;
     valueUsd?: number;
   }>;
   const rows = assets
@@ -151,7 +152,10 @@ function vaultCompositionDetails(record: DailySnapshot): string {
     .map(
       (asset) => `
         <li>
-          <span>${escapeHtml(asset.symbol ?? shortMint(asset.mint ?? ""))}</span>
+          <span>
+            ${escapeHtml(asset.symbol ?? shortMint(asset.mint ?? ""))}
+            <small>${formatAssetAmount(asset.amount)}</small>
+          </span>
           <strong>${usd(asset.valueUsd ?? null)}</strong>
         </li>
       `
@@ -166,6 +170,14 @@ function vaultCompositionDetails(record: DailySnapshot): string {
       <ul>${rows}</ul>
     </div>
   `;
+}
+
+function formatAssetAmount(amount: number | undefined): string {
+  if (typeof amount !== "number" || !Number.isFinite(amount)) return "";
+  const formatted = new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: amount >= 1 ? 2 : 8
+  }).format(amount);
+  return formatted;
 }
 
 function shortMint(mint: string): string {
