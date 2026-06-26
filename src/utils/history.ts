@@ -19,7 +19,7 @@ export interface HistoryFile {
 }
 
 export async function loadHistory(): Promise<HistoryFile> {
-  const response = await fetch(`/data/history.json?t=${Date.now()}`);
+  const response = await fetch(`${import.meta.env.BASE_URL}data/history.json?t=${Date.now()}`);
   if (!response.ok) {
     return { generatedAt: null, records: [] };
   }
