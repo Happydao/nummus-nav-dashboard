@@ -20,7 +20,6 @@ async function render(): Promise<void> {
   const history = await loadHistory();
   const records = history.records;
   const tbtcHistory = history.tbtcHistory ?? [];
-  const supplyHistory = history.supplyHistory ?? records;
   const latest = latestRecord(records);
   const unpricedCount = latest?.valuationReport?.unpricedAssets.length ?? 0;
 
@@ -52,7 +51,7 @@ async function render(): Promise<void> {
           ${lineChart("Treasury Backing History", records, "backing")}
           ${lineChart("Premium vs NAV History", records, "premium")}
           ${lineChart("Vault Value History", records, "vaultUsd")}
-          ${lineChart("Supply History", supplyHistory, "supply")}
+          ${lineChart("Supply History", records, "supply")}
           ${lineChart("tBTC Accumulation", tbtcHistory, "amount")}
         </section>
       </div>
