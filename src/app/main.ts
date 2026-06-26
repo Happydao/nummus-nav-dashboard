@@ -64,7 +64,7 @@ async function render(): Promise<void> {
             axisFormatter: usd,
             yLabel: "USD / NUMMUS",
             yMin: 0,
-            info: "Net asset value per NUMMUS token. Calculated as Vault Value divided by circulating supply."
+            info: "NAV is the treasury value behind each NUMMUS token. It is better when NAV is close to the market price, because that means the token price is aligned with treasury backing."
           })}
           ${lineChart({
             id: "backing",
@@ -76,7 +76,7 @@ async function render(): Promise<void> {
             axisFormatter: percent,
             yLabel: "Backing %",
             yMin: 0,
-            info: "Treasury backing compares NAV with the market price. 100% means NAV equals market price."
+            info: "Treasury backing compares NAV with market price. 100% means the market price is fully backed by NAV; below 100% means the token trades above its backing; above 100% means NAV is higher than market price."
           })}
           ${lineChart({
             id: "premium",
@@ -88,7 +88,7 @@ async function render(): Promise<void> {
             axisFormatter: ratio,
             yLabel: "Market / NAV",
             yMin: 0,
-            info: "Premium vs NAV shows how many times market price trades above or below NAV."
+            info: "Premium shows how many times market price is above NAV. Lower is generally healthier; 1x means price equals NAV, while high values mean the token is trading at a large premium."
           })}
           ${lineChart({
             id: "vault",
@@ -100,7 +100,7 @@ async function render(): Promise<void> {
             axisFormatter: usdCompact,
             yLabel: "USD",
             yMin: 0,
-            info: "Total USD value of fungible assets counted for the NUMMUS treasury snapshot. NFTs are ignored."
+            info: "Vault Value is the total USD value of fungible treasury assets counted in the snapshot. Higher value means a larger treasury. NFTs and tiny spam assets are ignored."
           })}
           ${lineChart({
             id: "supply",
@@ -114,7 +114,7 @@ async function render(): Promise<void> {
             yMin: 80_000_000,
             yMax: 100_000_000,
             showMarkers: true,
-            info: "NUMMUS circulating supply over time. Historical points come from supply reconstruction; new points come from daily snapshots."
+            info: "Supply shows how many NUMMUS tokens are circulating. Lower supply can increase NAV per token if treasury value is stable or growing."
           })}
           ${lineChart({
             id: "tbtc",
@@ -128,7 +128,7 @@ async function render(): Promise<void> {
             yMin: 0,
             showMarkers: true,
             includePreviousPoint: true,
-            info: "tBTC accumulated by the vault wallet over time, displayed as token amount rather than USD value."
+            info: "tBTC Accumulation shows how much tBTC the treasury has collected. A rising line means the treasury is accumulating more BTC exposure."
           })}
         </section>
       </div>
@@ -139,13 +139,14 @@ async function render(): Promise<void> {
 }
 
 function vaultCompositionDetails(record: DailySnapshot): string {
+  const minDisplayValueUsd = 20;
   const assets = (record.valuationReport?.pricedAssets ?? []) as Array<{
     symbol?: string | null;
     mint?: string;
     valueUsd?: number;
   }>;
   const rows = assets
-    .filter((asset) => typeof asset.valueUsd === "number" && asset.valueUsd > 0)
+    .filter((asset) => typeof asset.valueUsd === "number" && asset.valueUsd >= minDisplayValueUsd)
     .sort((a, b) => (b.valueUsd ?? 0) - (a.valueUsd ?? 0))
     .map(
       (asset) => `

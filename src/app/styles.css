@@ -90,7 +90,8 @@ body {
 .kpis {
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-auto-flow: row;
 }
 
 .kpi {
@@ -117,6 +118,7 @@ body {
 
 .kpi-with-details {
   grid-column: span 2;
+  grid-row: span 2;
 }
 
 .kpi-breakdown {
@@ -388,6 +390,7 @@ svg {
 
   .kpi-with-details {
     grid-column: span 2;
+    grid-row: span 1;
   }
 }
 
@@ -414,5 +417,6 @@ svg {
 
   .kpi-with-details {
     grid-column: span 1;
+    grid-row: span 1;
   }
 }
