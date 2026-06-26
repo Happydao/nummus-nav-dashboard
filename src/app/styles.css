@@ -104,15 +104,64 @@ body {
   padding: 16px;
 }
 
-.kpi span {
+.kpi > span {
   color: #607268;
   font-size: 12px;
   text-transform: uppercase;
 }
 
-.kpi strong {
+.kpi > strong {
   font-size: 22px;
   overflow-wrap: anywhere;
+}
+
+.kpi-with-details {
+  grid-column: span 2;
+}
+
+.kpi-breakdown {
+  border-top: 1px solid #edf1ee;
+  margin-top: 4px;
+  padding-top: 10px;
+}
+
+.kpi-breakdown small {
+  color: #607268;
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.kpi-breakdown ul {
+  display: grid;
+  gap: 5px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.kpi-breakdown li {
+  align-items: center;
+  display: flex;
+  font-size: 12px;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.kpi-breakdown li span {
+  color: #607268;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kpi-breakdown li strong {
+  color: #173d2c;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .charts {
@@ -140,6 +189,63 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.chart-title-row {
+  align-items: center;
+  display: flex;
+  gap: 7px;
+}
+
+.info-tip {
+  align-items: center;
+  border: 1px solid #b8c7be;
+  border-radius: 999px;
+  color: #607268;
+  cursor: help;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 800;
+  height: 17px;
+  justify-content: center;
+  line-height: 1;
+  position: relative;
+  text-transform: lowercase;
+  width: 17px;
+}
+
+.chart-head .info-tip {
+  color: #607268;
+  font-size: 11px;
+}
+
+.info-popover {
+  background: #10231a;
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(16, 35, 26, 0.18);
+  color: #f8fbf7;
+  display: none;
+  font-size: 12px;
+  font-weight: 500;
+  left: 50%;
+  line-height: 1.35;
+  min-width: 220px;
+  padding: 9px 10px;
+  position: absolute;
+  text-transform: none;
+  top: 24px;
+  transform: translateX(-16px);
+  z-index: 4;
+}
+
+.chart-head .info-popover {
+  color: #f8fbf7;
+  font-size: 12px;
+}
+
+.info-tip:hover .info-popover,
+.info-tip:focus .info-popover {
+  display: block;
 }
 
 .chart-head strong {
@@ -279,6 +385,10 @@ svg {
   .charts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .kpi-with-details {
+    grid-column: span 2;
+  }
 }
 
 @media (max-width: 620px) {
@@ -300,5 +410,9 @@ svg {
   .kpis,
   .charts {
     grid-template-columns: 1fr;
+  }
+
+  .kpi-with-details {
+    grid-column: span 1;
   }
 }

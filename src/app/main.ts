@@ -25,6 +25,7 @@ async function render(): Promise<void> {
   const supplyChartRecords = buildSupplyChartRecords(history.supplyHistory ?? [], records);
   const latest = latestRecord(records);
   const unpricedCount = latest?.valuationReport?.unpricedAssets.length ?? 0;
+  const vaultComposition = latest ? vaultCompositionDetails(latest) : "";
 
   root.innerHTML = `
     <div class="shell">
@@ -40,7 +41,7 @@ async function render(): Promise<void> {
       </header>
       <div class="content">
         <section class="kpis">
-          ${kpi("Vault Value", usd(latest?.vaultUsd ?? null))}
+          ${kpi("Vault Value", usd(latest?.vaultUsd ?? null), vaultComposition)}
           ${kpi("NAV", usd(latest?.nav ?? null))}
           ${kpi("Treasury Backing", percent(latest?.backing ?? null))}
           ${kpi("Premium vs NAV", ratio(latest?.premium ?? null))}
@@ -62,7 +63,8 @@ async function render(): Promise<void> {
             formatter: usd,
             axisFormatter: usd,
             yLabel: "USD / NUMMUS",
-            yMin: 0
+            yMin: 0,
+            info: "Net asset value per NUMMUS token. Calculated as Vault Value divided by circulating supply."
           })}
           ${lineChart({
             id: "backing",
@@ -73,7 +75,8 @@ async function render(): Promise<void> {
             formatter: percent,
             axisFormatter: percent,
             yLabel: "Backing %",
-            yMin: 0
+            yMin: 0,
+            info: "Treasury backing compares NAV with the market price. 100% means NAV equals market price."
           })}
           ${lineChart({
             id: "premium",
@@ -84,7 +87,8 @@ async function render(): Promise<void> {
             formatter: ratio,
             axisFormatter: ratio,
             yLabel: "Market / NAV",
-            yMin: 0
+            yMin: 0,
+            info: "Premium vs NAV shows how many times market price trades above or below NAV."
           })}
           ${lineChart({
             id: "vault",
@@ -95,7 +99,8 @@ async function render(): Promise<void> {
             formatter: usd,
             axisFormatter: usdCompact,
             yLabel: "USD",
-            yMin: 0
+            yMin: 0,
+            info: "Total USD value of fungible assets counted for the NUMMUS treasury snapshot. NFTs are ignored."
           })}
           ${lineChart({
             id: "supply",
@@ -108,7 +113,8 @@ async function render(): Promise<void> {
             yLabel: "NUMMUS",
             yMin: 80_000_000,
             yMax: 100_000_000,
-            showMarkers: true
+            showMarkers: true,
+            info: "NUMMUS circulating supply over time. Historical points come from supply reconstruction; new points come from daily snapshots."
           })}
           ${lineChart({
             id: "tbtc",
@@ -121,7 +127,8 @@ async function render(): Promise<void> {
             yLabel: "tBTC",
             yMin: 0,
             showMarkers: true,
-            includePreviousPoint: true
+            includePreviousPoint: true,
+            info: "tBTC accumulated by the vault wallet over time, displayed as token amount rather than USD value."
           })}
         </section>
       </div>
@@ -129,6 +136,48 @@ async function render(): Promise<void> {
   `;
   attachRangeHandlers();
   attachChartInteractions(root);
+}
+
+function vaultCompositionDetails(record: DailySnapshot): string {
+  const assets = (record.valuationReport?.pricedAssets ?? []) as Array<{
+    symbol?: string | null;
+    mint?: string;
+    valueUsd?: number;
+  }>;
+  const rows = assets
+    .filter((asset) => typeof asset.valueUsd === "number" && asset.valueUsd > 0)
+    .sort((a, b) => (b.valueUsd ?? 0) - (a.valueUsd ?? 0))
+    .map(
+      (asset) => `
+        <li>
+          <span>${escapeHtml(asset.symbol ?? shortMint(asset.mint ?? ""))}</span>
+          <strong>${usd(asset.valueUsd ?? null)}</strong>
+        </li>
+      `
+    )
+    .join("");
+
+  if (!rows) return "";
+
+  return `
+    <div class="kpi-breakdown" aria-label="Vault asset composition">
+      <small>Latest composition</small>
+      <ul>${rows}</ul>
+    </div>
+  `;
+}
+
+function shortMint(mint: string): string {
+  return mint ? `${mint.slice(0, 4)}...${mint.slice(-4)}` : "Asset";
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 function buildSupplyChartRecords(supplyHistory: SupplySnapshot[], records: DailySnapshot[]): SupplySnapshot[] {

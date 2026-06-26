@@ -16,6 +16,7 @@ export interface ChartOptions {
   yMax?: number;
   showMarkers?: boolean;
   includePreviousPoint?: boolean;
+  info?: string;
 }
 
 interface ChartPoint {
@@ -77,7 +78,10 @@ export function lineChart(options: ChartOptions): string {
     <section class="chart interactive-chart" data-chart-id="${options.id}">
       <div class="chart-head">
         <div>
-          <h2>${options.title}</h2>
+          <div class="chart-title-row">
+            <h2>${options.title}</h2>
+            ${options.info ? infoTip(options.info) : ""}
+          </div>
           <span>${formatDateShort(points[0].date)} -> ${formatDateShort(points.at(-1)?.date ?? points[0].date)}</span>
         </div>
         <strong>${latest ? options.formatter(latest.value) : "n/a"}</strong>
@@ -131,6 +135,15 @@ export function lineChart(options: ChartOptions): string {
         }))
       })}</script>
     </section>
+  `;
+}
+
+function infoTip(text: string): string {
+  return `
+    <span class="info-tip" tabindex="0" aria-label="${escapeHtml(text)}">
+      i
+      <span class="info-popover" role="tooltip">${escapeHtml(text)}</span>
+    </span>
   `;
 }
 
@@ -221,4 +234,13 @@ function magnitude(value: number): number {
 function formatDateShort(date: string): string {
   const [year, month, day] = date.split("-");
   return `${day}-${month}-${year.slice(2)}`;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
