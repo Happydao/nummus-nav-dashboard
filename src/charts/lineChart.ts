@@ -10,6 +10,7 @@ export interface ChartOptions {
   key: keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply"> | "amount";
   range: RangeKey;
   formatter: (value: number) => string;
+  axisFormatter?: (value: number) => string;
   yLabel: string;
   yMin?: number;
   yMax?: number;
@@ -49,45 +50,54 @@ export function lineChart(options: ChartOptions): string {
   const xRange = xMax - xMin || 1;
   const chartWidth = WIDTH - PAD.left - PAD.right;
   const chartHeight = HEIGHT - PAD.top - PAD.bottom;
+  const xForTimestamp = (timestamp: number) =>
+    xMax === xMin ? PAD.left + chartWidth / 2 : PAD.left + ((timestamp - xMin) / xRange) * chartWidth;
   const coords = points.map((point) => {
     const timestamp = new Date(`${point.date}T00:00:00.000Z`).getTime();
-    const x = PAD.left + ((timestamp - xMin) / xRange) * chartWidth;
+    const x = xForTimestamp(timestamp);
     const y = PAD.top + (1 - (point.value - yMin) / (yMax - yMin || 1)) * chartHeight;
     return { ...point, x, y };
   });
-  const path = coords
-    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`)
-    .join(" ");
-  const areaPath = `${path} L ${coords.at(-1)?.x.toFixed(2)} ${HEIGHT - PAD.bottom} L ${coords[0].x.toFixed(2)} ${HEIGHT - PAD.bottom} Z`;
+  const path =
+    coords.length === 1
+      ? `M ${PAD.left} ${coords[0].y.toFixed(2)} L ${WIDTH - PAD.right} ${coords[0].y.toFixed(2)}`
+      : coords
+          .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`)
+          .join(" ");
+  const areaPath =
+    coords.length > 1
+      ? `${path} L ${coords.at(-1)?.x.toFixed(2)} ${HEIGHT - PAD.bottom} L ${coords[0].x.toFixed(2)} ${HEIGHT - PAD.bottom} Z`
+      : "";
   const yTicks = makeTicks(yMin, yMax, 5);
   const xTicks = makeDateTicks(points);
   const latest = points.at(-1);
+  const axisFormatter = options.axisFormatter ?? options.formatter;
 
   return `
     <section class="chart interactive-chart" data-chart-id="${options.id}">
       <div class="chart-head">
         <div>
           <h2>${options.title}</h2>
-          <span>${points[0].date} -> ${points.at(-1)?.date}</span>
+          <span>${formatDateShort(points[0].date)} -> ${formatDateShort(points.at(-1)?.date ?? points[0].date)}</span>
         </div>
         <strong>${latest ? options.formatter(latest.value) : "n/a"}</strong>
       </div>
       <div class="chart-canvas">
         <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="${options.title}">
-          <text class="axis-title y-axis-title" x="18" y="${PAD.top + 8}">${options.yLabel}</text>
-          <text class="axis-title x-axis-title" x="${WIDTH - PAD.right}" y="${HEIGHT - 8}" text-anchor="end">Date</text>
+          <text class="axis-title y-axis-title" x="${PAD.left}" y="${PAD.top - 8}">${options.yLabel}</text>
+          <text class="axis-title x-axis-title" x="${WIDTH - PAD.right}" y="${HEIGHT - 7}" text-anchor="end">Date</text>
           ${yTicks
             .map((tick) => {
               const y = PAD.top + (1 - (tick - yMin) / (yMax - yMin || 1)) * chartHeight;
               return `
                 <line class="grid-line" x1="${PAD.left}" y1="${y}" x2="${WIDTH - PAD.right}" y2="${y}" />
-                <text class="tick-label y-tick" x="${PAD.left - 10}" y="${y + 4}" text-anchor="end">${options.formatter(tick)}</text>
+                <text class="tick-label y-tick" x="${PAD.left - 10}" y="${y + 4}" text-anchor="end">${axisFormatter(tick)}</text>
               `;
             })
             .join("")}
           ${xTicks
             .map((tick) => {
-              const x = PAD.left + ((tick.timestamp - xMin) / xRange) * chartWidth;
+              const x = xForTimestamp(tick.timestamp);
               return `
                 <line class="x-tick-line" x1="${x}" y1="${HEIGHT - PAD.bottom}" x2="${x}" y2="${HEIGHT - PAD.bottom + 5}" />
                 <text class="tick-label x-tick" x="${x}" y="${HEIGHT - 18}" text-anchor="middle">${tick.label}</text>
@@ -96,10 +106,10 @@ export function lineChart(options: ChartOptions): string {
             .join("")}
           <line class="axis-line" x1="${PAD.left}" y1="${HEIGHT - PAD.bottom}" x2="${WIDTH - PAD.right}" y2="${HEIGHT - PAD.bottom}" />
           <line class="axis-line" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
-          <path class="area-path" d="${areaPath}" />
+          ${areaPath ? `<path class="area-path" d="${areaPath}" />` : ""}
           <path class="series-path" d="${path}" />
           ${
-            options.showMarkers
+            options.showMarkers || coords.length === 1
               ? coords.map((point, index) => marker(point, index)).join("")
               : ""
           }
@@ -113,6 +123,7 @@ export function lineChart(options: ChartOptions): string {
         formatterName: options.id,
         points: coords.map((point) => ({
           date: point.date,
+          dateLabel: formatDateShort(point.date),
           value: point.value,
           x: point.x,
           y: point.y,
@@ -184,7 +195,7 @@ function makeDateTicks(points: ChartPoint[]): Array<{ timestamp: number; label: 
     const date = new Date(`${point.date}T00:00:00.000Z`);
     return {
       timestamp: date.getTime(),
-      label: date.toISOString().slice(5, 10)
+      label: formatDateShort(point.date)
     };
   });
 }
@@ -205,4 +216,9 @@ function niceCeil(value: number): number {
 function magnitude(value: number): number {
   if (value === 0) return 1;
   return 10 ** Math.floor(Math.log10(Math.abs(value)));
+}
+
+function formatDateShort(date: string): string {
+  const [year, month, day] = date.split("-");
+  return `${day}-${month}-${year.slice(2)}`;
 }

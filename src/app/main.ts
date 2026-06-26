@@ -3,7 +3,7 @@ import { attachChartInteractions } from "../charts/interactions.js";
 import { lineChart, rangeButtons, type RangeKey } from "../charts/lineChart.js";
 import { kpi } from "../components/kpi.js";
 import { latestRecord, loadHistory } from "../utils/history.js";
-import { numberCompact, percent, ratio, usd } from "../utils/format.js";
+import { numberCompact, percent, ratio, tbtcAxis, usd, usdCompact } from "../utils/format.js";
 
 const app = document.querySelector<HTMLDivElement>("#app");
 
@@ -59,6 +59,7 @@ async function render(): Promise<void> {
             key: "nav",
             range: selectedRange,
             formatter: usd,
+            axisFormatter: usd,
             yLabel: "USD / NUMMUS",
             yMin: 0
           })}
@@ -69,6 +70,7 @@ async function render(): Promise<void> {
             key: "backing",
             range: selectedRange,
             formatter: percent,
+            axisFormatter: percent,
             yLabel: "Backing %",
             yMin: 0
           })}
@@ -79,6 +81,7 @@ async function render(): Promise<void> {
             key: "premium",
             range: selectedRange,
             formatter: ratio,
+            axisFormatter: ratio,
             yLabel: "Market / NAV",
             yMin: 0
           })}
@@ -89,6 +92,7 @@ async function render(): Promise<void> {
             key: "vaultUsd",
             range: selectedRange,
             formatter: usd,
+            axisFormatter: usdCompact,
             yLabel: "USD",
             yMin: 0
           })}
@@ -99,7 +103,8 @@ async function render(): Promise<void> {
             key: "supply",
             range: selectedRange,
             formatter: numberCompact,
-            yLabel: "NUMMUS Supply",
+            axisFormatter: numberCompact,
+            yLabel: "NUMMUS",
             yMin: 0,
             yMax: 100_000_000
           })}
@@ -110,6 +115,7 @@ async function render(): Promise<void> {
             key: "amount",
             range: selectedRange,
             formatter: (value) => `${value.toFixed(8)} tBTC`,
+            axisFormatter: tbtcAxis,
             yLabel: "tBTC",
             yMin: 0,
             showMarkers: true,
