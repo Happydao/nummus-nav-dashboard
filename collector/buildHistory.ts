@@ -1,15 +1,11 @@
-import { writeFile, mkdir } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { collectBurnHistory } from "./collectBurnHistory.js";
 import { collectPriceHistory } from "./collectPriceHistory.js";
 import { collectSupplyHistory } from "./collectSupplyHistory.js";
 import { collectVaultHistory } from "./collectVaultHistory.js";
+import { todayIsoDate } from "../src/utils/dates.js";
 import { divideOrNull, round } from "../src/utils/math.js";
 import type { CollectionWarning, GeneratedHistory, HistoryRecord } from "../src/utils/types.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const HISTORY_PATH = resolve(__dirname, "../data/history.json");
+import { coverageFor, HISTORY_PATH, readHistory, upsertRecords, writeHistory } from "./historyStore.js";
 
 export async function buildHistory(): Promise<GeneratedHistory> {
   const [vaultResult, supplyResult, priceResult, burnResult] = await Promise.all([
@@ -64,23 +60,39 @@ export async function buildHistory(): Promise<GeneratedHistory> {
     });
   }
 
+  const existing = await readHistory();
+  const mergedRecords = upsertRecords(existing?.records ?? [], records);
+  const today = todayIsoDate();
+  const historicalRecords = mergedRecords.filter((record) => record.date < today);
+
+  if (historicalRecords.some((record) => record.vaultUsd === null)) {
+    warnings.push({
+      metric: "vaultUsd",
+      message:
+        "Historical vaultUsd remains null for backfill dates until a treasury transaction replay layer reconstructs end-of-day Realms treasury balances. The daily collector only updates the current date."
+    });
+  }
+
+  if (historicalRecords.some((record) => record.supply === null)) {
+    warnings.push({
+      metric: "supply",
+      message:
+        "Historical supply remains null for backfill dates until a NUMMUS mint/burn replay layer reconstructs supply as of each snapshot date. The daily collector only updates current supply."
+    });
+  }
+
   return {
     generatedAt: new Date().toISOString(),
-    coverage: {
-      from: records[0]?.date ?? null,
-      to: records.at(-1)?.date ?? null,
-      recordCount: records.length
-    },
+    coverage: coverageFor(mergedRecords),
     warnings,
     vaultValuation: vaultResult.data.at(-1) ?? null,
     burnEvents: burnResult.data,
-    records
+    records: mergedRecords
   };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const history = await buildHistory();
-  await mkdir(dirname(HISTORY_PATH), { recursive: true });
-  await writeFile(`${HISTORY_PATH}`, `${JSON.stringify(history, null, 2)}\n`);
+  await writeHistory(history);
   console.log(`Wrote ${history.records.length} history records to ${HISTORY_PATH}`);
 }

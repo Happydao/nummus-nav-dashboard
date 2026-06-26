@@ -282,6 +282,32 @@ Daily maintenance:
 
 This avoids dependency on a provider exposing direct historical treasury value, while still relying on providers for raw chain data and market prices.
 
+## Collector Modes
+
+There are two collector modes:
+
+### `npm run backfill`
+
+Backfill creates snapshot dates from `NUMMUS_PROJECT_START_DATE` through yesterday using `BACKFILL_INTERVAL_DAYS`, which defaults to `15`.
+
+Backfill rules:
+
+- it never interpolates values;
+- it never reuses current vault, supply, or price values for historical dates;
+- it writes `null` for any metric that is not truly reconstructed for that exact snapshot date;
+- it preserves existing daily records for today and later.
+
+Current implementation:
+
+- historical market price is populated from DefiLlama Coins when available for the exact snapshot date;
+- historical `vaultUsd` remains `null` because treasury balance replay is not implemented yet;
+- historical `supply` remains `null` because NUMMUS mint/burn replay is not implemented yet;
+- historical NAV, backing, and premium remain `null` unless same-date `vaultUsd`, `supply`, and `marketPrice` are all available.
+
+### `npm run collect`
+
+Daily collection only upserts the current date. It checks existing `data/history.json`, replaces today's record if it exists, and otherwise appends today's record. It does not rebuild historical dates and does not delete previous backfill records.
+
 ## Recommended Architecture
 
 Use a Realms-first treasury discovery layer:

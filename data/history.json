@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-06-26T10:18:49.422Z",
+  "generatedAt": "2026-06-26T10:24:38.044Z",
   "coverage": {
-    "from": "2026-06-26",
+    "from": "2025-05-20",
     "to": "2026-06-26",
-    "recordCount": 1
+    "recordCount": 28
   },
   "warnings": [
     {
@@ -21,11 +21,19 @@
     {
       "metric": "burn",
       "message": "Burn events are reconstructed from Helius Enhanced Transactions for the burn wallet. Complete history requires paginating all burn-wallet transactions with the before cursor and validating that no NUMMUS burns occur outside the documented burn wallet."
+    },
+    {
+      "metric": "vaultUsd",
+      "message": "Historical vaultUsd remains null for backfill dates until a treasury transaction replay layer reconstructs end-of-day Realms treasury balances. The daily collector only updates the current date."
+    },
+    {
+      "metric": "supply",
+      "message": "Historical supply remains null for backfill dates until a NUMMUS mint/burn replay layer reconstructs supply as of each snapshot date. The daily collector only updates current supply."
     }
   ],
   "vaultValuation": {
     "date": "2026-06-26",
-    "vaultUsd": 81883.69490805,
+    "vaultUsd": 81883.68777978,
     "source": "Realms DAO treasury discovery + Helius DAS current balances + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
     "pricedAssetCount": 5,
     "ignoredAssetCount": 2,
@@ -35,8 +43,8 @@
         "symbol": "SOL",
         "mint": "So11111111111111111111111111111111111111112",
         "amount": 0.104571323,
-        "priceUsd": 69.00782872654513,
-        "valueUsd": 7.21623995,
+        "priceUsd": 68.95653462924649,
+        "valueUsd": 7.21087606,
         "provider": "jupiter"
       },
       {
@@ -51,8 +59,8 @@
         "symbol": "NUMMUS",
         "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
         "amount": 25,
-        "priceUsd": 0.007373441623458166,
-        "valueUsd": 0.18433604,
+        "priceUsd": 0.007302866227988808,
+        "valueUsd": 0.18257166,
         "provider": "jupiter"
       },
       {
@@ -126,13 +134,256 @@
   ],
   "records": [
     {
+      "date": "2025-05-20",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": null,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-06-04",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": null,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-06-19",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": null,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-07-04",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.120244,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-07-19",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.108637,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-08-03",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.04097397,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-08-18",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.02411722,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-09-02",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.01089386,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-09-17",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.01466649,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-10-02",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.01044224,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-10-17",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.00834178440141405,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-11-01",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.008981522272506655,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-11-16",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.008134317861742216,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-12-01",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.006126650387311283,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-12-16",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.011494344241808905,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2025-12-31",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.015672222695125044,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2026-01-15",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.01513134933066821,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2026-01-30",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.011864200980158914,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2026-02-14",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.010568938740665001,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2026-03-01",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.007915271424379805,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2026-03-16",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.007916702308660921,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2026-03-31",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.007104594799575069,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2026-04-15",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.007240079379849556,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2026-04-30",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.007205990175752324,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2026-05-15",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.008438788706517722,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2026-05-30",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.007987818877939094,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
+      "date": "2026-06-14",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": 0.007185748404080266,
+      "nav": null,
+      "backing": null,
+      "premium": null
+    },
+    {
       "date": "2026-06-26",
-      "vaultUsd": 81883.69490805,
+      "vaultUsd": 81883.68777978,
       "supply": 98152185.149189,
-      "marketPrice": 0.007373441623458166,
+      "marketPrice": 0.007302866227988808,
       "nav": 0.00083425,
-      "backing": 11.31425517,
-      "premium": 8.8384077
+      "backing": 11.4235969,
+      "premium": 8.75381028
     }
   ]
 }

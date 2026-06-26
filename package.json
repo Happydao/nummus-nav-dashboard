@@ -5,6 +5,7 @@
   "description": "Official NUMMUS NAV and treasury backing dashboard data architecture.",
   "type": "module",
   "scripts": {
+    "backfill": "tsx collector/backfillHistory.ts",
     "collect": "tsx collector/buildHistory.ts",
     "discover:treasuries": "tsx collector/collectRealmTreasuries.ts",
     "check": "tsc --noEmit"

@@ -40,6 +40,7 @@ npm install
 cp .env.example .env.local
 npm run check
 npm run discover:treasuries
+npm run backfill
 npm run collect
 ```
 
@@ -47,7 +48,9 @@ Set `HELIUS_API_KEY` in `.env.local` for local collection. Production should inj
 
 `npm run discover:treasuries` verifies the Realms DAO treasury discovery path.
 
-`npm run collect` writes `data/history.json`. Vault collection starts from the NUMMUS Realms DAO, derives native treasury PDAs, reads current treasury assets through Helius DAS, ignores non-fungible spam/scam assets, and prices fungible assets through Jupiter, Helius, DexScreener, then DefiLlama. If any fungible treasury asset cannot be priced under the declared policy, `vaultUsd` remains `null`.
+`npm run backfill` creates historical snapshot dates from `NUMMUS_PROJECT_START_DATE` through yesterday using `BACKFILL_INTERVAL_DAYS` (default `15`). It only writes values that are truly reconstructed for the snapshot date; current values are never reused for the past.
+
+`npm run collect` upserts today's snapshot in `data/history.json`. If today's record already exists, it is updated; otherwise it is created. Vault collection starts from the NUMMUS Realms DAO, derives native treasury PDAs, reads current treasury assets through Helius DAS, ignores non-fungible spam/scam assets, and prices fungible assets through Jupiter, Helius, DexScreener, then DefiLlama. If any fungible treasury asset cannot be priced under the declared policy, `vaultUsd` remains `null`.
 
 ## Generated Dataset
 

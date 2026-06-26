@@ -7,3 +7,5 @@ export const JUPITER_PRICE_URL = "https://lite-api.jup.ag/price/v3";
 export const DEXSCREENER_TOKEN_URL = "https://api.dexscreener.com/latest/dex/tokens";
 export const DEFILLAMA_COINS_URL = "https://coins.llama.fi/prices";
 export const WRAPPED_SOL_MINT = "So11111111111111111111111111111111111111112";
+export const BACKFILL_INTERVAL_DAYS = Number(process.env.BACKFILL_INTERVAL_DAYS ?? 15);
+export const NUMMUS_PROJECT_START_DATE = process.env.NUMMUS_PROJECT_START_DATE ?? "2025-05-20";
