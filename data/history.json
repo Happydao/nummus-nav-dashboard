@@ -1,0 +1,82 @@
+{
+  "generatedAt": "2026-06-26T09:46:58.073Z",
+  "coverage": {
+    "from": "2026-05-22",
+    "to": "2026-06-26",
+    "recordCount": 5
+  },
+  "warnings": [
+    {
+      "metric": "vaultUsd",
+      "message": "Historical vault USD cannot be reconstructed reliably from the vault wallet address alone. It requires historical token-account ownership, token balances at each date, LP/position decoding where applicable, and historical USD prices for every held asset."
+    },
+    {
+      "metric": "supply",
+      "message": "Public Solana RPC exposes the current token supply. Daily historical supply requires replaying all mint and burn instructions from an archival RPC/indexer; this collector does not synthesize missing history."
+    },
+    {
+      "metric": "marketPrice",
+      "message": "Jupiter and DexScreener public endpoints expose current NUMMUS pricing, not a guaranteed daily historical candle series. Historical market price needs a candle/trade indexer such as Birdeye, GeckoTerminal, DexScreener charts access, or retained internal snapshots."
+    },
+    {
+      "metric": "burn",
+      "message": "Burn events can be reconstructed from parsed SPL-token burn instructions involving the burn wallet and NUMMUS mint, but complete history requires paginating every signature through an archival RPC/indexer."
+    },
+    {
+      "metric": "history",
+      "message": "NAV, treasury backing, and premium remain null until vault USD history and market price history are available for the same dates."
+    }
+  ],
+  "records": [
+    {
+      "date": "2026-05-22",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": null,
+      "nav": null,
+      "backing": null,
+      "premium": null,
+      "burned": 79202.270275
+    },
+    {
+      "date": "2026-06-03",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": null,
+      "nav": null,
+      "backing": null,
+      "premium": null,
+      "burned": 109857.432551
+    },
+    {
+      "date": "2026-06-12",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": null,
+      "nav": null,
+      "backing": null,
+      "premium": null,
+      "burned": 69929.253244
+    },
+    {
+      "date": "2026-06-19",
+      "vaultUsd": null,
+      "supply": null,
+      "marketPrice": null,
+      "nav": null,
+      "backing": null,
+      "premium": null,
+      "burned": 61351.378413
+    },
+    {
+      "date": "2026-06-26",
+      "vaultUsd": null,
+      "supply": 98152185.149189,
+      "marketPrice": 0.007373441623458166,
+      "nav": null,
+      "backing": null,
+      "premium": null,
+      "burned": null
+    }
+  ]
+}
