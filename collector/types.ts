@@ -3,6 +3,8 @@ export interface HistoryFile {
   records: DailySnapshot[];
   tbtcHistory?: TbtcSnapshot[];
   tbtcCursor?: TbtcCursor;
+  supplyHistory?: SupplySnapshot[];
+  supplyCursor?: SupplyCursor;
 }
 
 export interface DailySnapshot {
@@ -26,6 +28,17 @@ export interface TbtcCursor {
   tokenAccounts: string[];
   processedSignatures: string[];
   lastAmount: number;
+}
+
+export interface SupplySnapshot {
+  date: string;
+  supply: number;
+  burnedCumulative: number;
+}
+
+export interface SupplyCursor {
+  processedSignatures: string[];
+  totalBurned: number;
 }
 
 export interface ValuationReport {

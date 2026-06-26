@@ -1,5 +1,6 @@
 import { getCurrentMarketPrice } from "./sources/marketPrice.js";
 import { getCurrentSupply } from "./sources/supply.js";
+import { collectSupplyHistory } from "./sources/supplyHistory.js";
 import { collectTbtcHistory } from "./sources/tbtcHistory.js";
 import { getCurrentVaultAssets } from "./sources/vaultAssets.js";
 import { upsertToday, writeHistory } from "./utils/historyStore.js";
@@ -46,10 +47,17 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const snapshot = await collectDailySnapshot();
   const history = await upsertToday(snapshot);
   const tbtc = await collectTbtcHistory(history.tbtcHistory ?? [], history.tbtcCursor);
+  const supply = await collectSupplyHistory(
+    snapshot.supply ?? 0,
+    history.supplyHistory ?? [],
+    history.supplyCursor
+  );
   history.tbtcHistory = tbtc.history;
   history.tbtcCursor = tbtc.cursor;
+  history.supplyHistory = supply.history;
+  history.supplyCursor = supply.cursor;
   await writeHistory(history);
   console.log(
-    `Saved ${snapshot.date} snapshot. History records: ${history.records.length}. tBTC points: ${history.tbtcHistory?.length ?? 0}`
+    `Saved ${snapshot.date} snapshot. History records: ${history.records.length}. tBTC points: ${history.tbtcHistory?.length ?? 0}. Supply points: ${history.supplyHistory?.length ?? 0}`
   );
 }

@@ -18,11 +18,18 @@ export interface HistoryFile {
   generatedAt: string | null;
   records: DailySnapshot[];
   tbtcHistory?: TbtcSnapshot[];
+  supplyHistory?: SupplySnapshot[];
 }
 
 export interface TbtcSnapshot {
   date: string;
   amount: number;
+}
+
+export interface SupplySnapshot {
+  date: string;
+  supply: number;
+  burnedCumulative: number;
 }
 
 export async function loadHistory(): Promise<HistoryFile> {

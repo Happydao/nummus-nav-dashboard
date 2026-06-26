@@ -22,6 +22,7 @@ It is not a vault-composition dashboard.
 | Vault assets | Helius DAS `getAssetsByOwner` for the NUMMUS vault wallet |
 | Vault asset prices | Jupiter, Helius `price_info`, DexScreener, DefiLlama |
 | Supply | Helius RPC `getTokenSupply` for the NUMMUS mint |
+| Supply history | Incremental Helius replay of the NUMMUS burn wallet |
 | Market price | Same pricing cascade for the NUMMUS mint |
 
 NFTs received by the vault are ignored automatically as spam/scam assets. Only fungible assets are valued.
@@ -100,5 +101,7 @@ The dashboard is a Vite app. It reads `data/history.json` and renders:
 - Vault Value History;
 - Supply History.
 - tBTC Accumulation.
+
+Supply history is reconstructed from confirmed NUMMUS burns sent through the burn wallet. Daily runs keep a cursor of processed burn signatures and only append newly observed burns.
 
 At the start there may be only one record. The charts become useful as the daily snapshot history grows.

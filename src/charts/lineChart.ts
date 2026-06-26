@@ -1,6 +1,6 @@
-import type { DailySnapshot, TbtcSnapshot } from "../utils/history.js";
+import type { DailySnapshot, SupplySnapshot, TbtcSnapshot } from "../utils/history.js";
 
-type ChartRecord = DailySnapshot | TbtcSnapshot;
+type ChartRecord = DailySnapshot | TbtcSnapshot | SupplySnapshot;
 
 export function lineChart(
   title: string,
