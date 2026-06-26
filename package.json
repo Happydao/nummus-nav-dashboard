@@ -6,11 +6,16 @@
   "type": "module",
   "scripts": {
     "collect": "tsx collector/buildHistory.ts",
+    "discover:treasuries": "tsx collector/collectRealmTreasuries.ts",
     "check": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
     "tsx": "^4.16.2",
     "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "@solana/spl-governance": "^0.3.28",
+    "@solana/web3.js": "^1.98.4"
   }
 }

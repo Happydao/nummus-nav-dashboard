@@ -49,6 +49,8 @@ export interface VaultValueSnapshot {
   date: IsoDate;
   vaultUsd: number | null;
   source: string | null;
+  pricedAssetCount?: number;
+  unpricedAssetCount?: number;
 }
 
 export interface GeneratedHistory {

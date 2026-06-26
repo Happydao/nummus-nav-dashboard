@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T09:57:01.425Z",
+  "generatedAt": "2026-06-26T10:13:20.989Z",
   "coverage": {
     "from": "2026-06-26",
     "to": "2026-06-26",
@@ -8,7 +8,11 @@
   "warnings": [
     {
       "metric": "vaultUsd",
-      "message": "Helius DAS getAssetsByOwner exposes the current vault wallet assets and native SOL value, but it does not provide a complete historical USD wallet valuation. Historical vaultUsd remains null until a valuation layer snapshots or backfills every vault asset with same-date prices."
+      "message": "Vault collection now starts from the NUMMUS Realms DAO, enumerates governance native treasury PDAs, and reads current treasury assets through Helius DAS. This produces a current-day snapshot only; historical daily Vault USD requires transaction replay plus same-date prices."
+    },
+    {
+      "metric": "vaultUsd",
+      "message": "Current vaultUsd was left null because 3 treasury asset(s) could not be priced by the current fungible-token policy: MyNF:GGVXuvQD13vxsNi9Dx86AwwpcTHrfNFcJSgsKesbyzn7, MyNF:EUGVqX5GWe6P4b8bYyaWLFhzMwAES8tq79KpYs5UagMY, PUNCHY:GnYufMbTAMz1DzkSN2DmwkBzjMTLkM22WvQuN1VCbonk."
     },
     {
       "metric": "supply",

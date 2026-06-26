@@ -128,9 +128,10 @@ Shyft appears to be the best documented external provider for Realms-specific in
 | Metric | Recommended Source | Historical or Current | Can Be Reconstructed Automatically? | Notes |
 | --- | --- | --- | --- | --- |
 | Treasury accounts | Realms/SPL Governance via SDK or Shyft GraphQL | Current governance structure | Yes | Start from realm, enumerate governances, derive native treasury PDAs |
-| Treasury assets | Helius DAS `getAssetsByOwner` or Shyft wallet/token APIs for each derived treasury wallet | Current | Yes for current holdings | Must aggregate across all DAO treasury wallets |
+| Treasury assets | Helius DAS `getAssetsByOwner` for each derived treasury wallet | Current | Yes for current holdings | Must aggregate across all DAO treasury wallets |
 | Historical treasury balances | Helius Enhanced Transactions, Shyft transaction/indexer data, or archival RPC replay | Historical | Yes, with full replay and storage | Requires transaction-level reconstruction for every derived treasury wallet |
-| Historical treasury USD value | Internal valuation service using historical balances + historical prices | Historical | Not directly from Realms | Requires pricing all assets by date and decoding positions |
+| Historical treasury prices | DefiLlama Coins historical prices, plus a fallback provider such as Birdeye/GeckoTerminal/CoinGecko for missing assets | Historical | Partially | Current treasury test coverage priced SOL, tBTC, NUMMUS, and PISTA; PUNCHY and NFTs were not covered by the fungible-token policy |
+| Historical treasury USD value | Internal valuation service using historical balances + historical prices | Historical | Yes only when every material asset is priced | Requires pricing all assets by date and decoding positions; leave `vaultUsd` null if coverage is incomplete |
 | Supply | Helius RPC `getTokenSupply` for current; mint/burn replay for history | Current + reconstructable historical | Yes with full mint-level replay | Do not infer supply from burn events alone |
 | Burn history | Helius Enhanced Transactions for burn wallet | Historical paginated | Yes if all burn-wallet history is paginated | Also run a mint-level burn audit later |
 | Market price | Jupiter/DexScreener current; candle/trade provider for history | Current unless paid/indexed history is added | Yes with a price indexer | Helius/Realms do not provide historical NUMMUS market candles |
@@ -174,6 +175,110 @@ Realms improves treasury discovery.
 Realms does not directly solve historical vaultUsd.
 ```
 
+## Daily Snapshot Valuation Assessment
+
+The preferred architecture is not to ask a provider for "historical treasury USD value". The preferred architecture is:
+
+1. discover DAO treasury wallets from Realms;
+2. snapshot all treasury assets for each day;
+3. fetch same-day USD prices for each asset;
+4. calculate `vaultUsd` internally;
+5. store only the daily portfolio-level output used by the NAV dashboard.
+
+### Is it technically feasible?
+
+Yes for current and future daily snapshots.
+
+The current collector implements the start of this architecture:
+
+- `collectRealmTreasuries` uses `@solana/spl-governance` and Helius RPC to enumerate governances for realm `2Czvw7p29thfqNJznuicygBKxh33xoCMuGMH7zbPQ2gp`.
+- The discovered governance currently derives native treasury PDA `HtT3yMsAavLQYmd6VSbXSdbAefyZUrrFeEPoTPivde3s`.
+- `collectVaultHistory` reads current assets for every discovered treasury using Helius DAS `getAssetsByOwner`.
+- The collector prices supported fungible Solana assets through DefiLlama Coins current prices.
+- If any treasury asset cannot be priced, the output `vaultUsd` is left `null`.
+
+Yes, with more engineering, for historical backfill.
+
+Historical backfill cannot be done with Helius DAS alone because DAS returns current assets, not "assets as of date X". A reliable backfill must replay historical activity for every discovered treasury wallet, reconstruct end-of-day balances, and then price those balances using a historical price provider.
+
+### Reliability
+
+High reliability:
+
+- Realms treasury discovery from SPL Governance accounts.
+- Current native SOL and fungible token balances from Helius DAS.
+- Historical prices for liquid assets covered by the selected price provider.
+
+Medium reliability:
+
+- Historical SPL token balances reconstructed from full transaction replay. This is feasible, but the implementation must handle token account creation, closing, transfers, burns, mints, decimals, Token-2022, native SOL lamport changes, and pagination completeness.
+- Historical prices for smaller Solana assets. Coverage varies by provider and date.
+
+Low reliability without a declared policy:
+
+- NFTs.
+- LP tokens.
+- staking/escrow/vesting positions.
+- illiquid tokens with no reliable market price.
+- assets whose market price exists today but not for earlier dates.
+
+The current treasury asset test showed this exact issue: DefiLlama priced SOL, tBTC, NUMMUS, and PISTA, but did not price PUNCHY through `coins.llama.fi`, and the treasury also holds two NFTs. Therefore a full `Vault USD` number is not reliable unless those assets are either priced by an approved provider or excluded by an explicit DAO-approved valuation policy.
+
+### Computational Cost
+
+Future daily snapshots are cheap:
+
+- one Realms governance query;
+- one Helius DAS `getAssetsByOwner` request per treasury wallet;
+- one batched price request for all fungible assets;
+- one append/update to the stored daily dataset.
+
+Historical backfill is more expensive but bounded:
+
+- `O(number_of_treasury_transactions)` to reconstruct balances;
+- `O(number_of_dates * number_of_assets_per_day)` for pricing, usually reduced through batching and caching;
+- additional protocol-specific decoding if treasury assets include LP/staked/escrowed positions.
+
+For this DAO, current Realms discovery returns one native treasury, so the first backfill should be manageable. The cost can grow if the DAO later adds more governances/treasuries or actively trades many assets.
+
+### APIs Required
+
+Minimum architecture:
+
+- Helius RPC: read SPL Governance accounts through `@solana/spl-governance`.
+- Helius DAS `getAssetsByOwner`: current treasury asset snapshot.
+- Helius Enhanced Transactions or an archival/indexed Solana transaction source: historical treasury transaction replay.
+- DefiLlama Coins historical prices: first historical price source for supported fungible assets.
+- A fallback price provider, likely Birdeye, GeckoTerminal, CoinGecko, or a DEX candle indexer: required for assets missing from DefiLlama.
+
+Optional:
+
+- Shyft GraphQL Realms/Governance indexer for faster Realms account discovery and query ergonomics.
+- Internal raw snapshot storage so future backfills are reproducible without repeatedly re-querying all providers.
+
+### One-Time Backfill + Daily Maintenance
+
+This is the recommended operating model.
+
+One-time backfill:
+
+1. discover all treasury wallets from Realms;
+2. fetch all historical transactions for each treasury;
+3. replay balance changes into end-of-day balances;
+4. price every asset on every day;
+5. write `date, vaultUsd` records only where valuation coverage is complete;
+6. persist raw replay state and pricing coverage diagnostics.
+
+Daily maintenance:
+
+1. run treasury discovery;
+2. fetch current treasury assets;
+3. fetch current prices;
+4. append today's `vaultUsd` if coverage is complete;
+5. leave today's `vaultUsd` as `null` and emit warnings if any material asset is unpriced.
+
+This avoids dependency on a provider exposing direct historical treasury value, while still relying on providers for raw chain data and market prices.
+
 ## Recommended Architecture
 
 Use a Realms-first treasury discovery layer:
@@ -205,17 +310,24 @@ Use a Realms-first treasury discovery layer:
 
 Recommended provider choice:
 
-- Use Shyft GraphQL for Realms-specific indexing if a Shyft API key is available.
-- Keep Helius as the primary Solana RPC/enhanced transaction/DAS provider for current assets and generic transaction history.
+- Keep Helius as the primary Solana RPC/enhanced transaction/DAS provider for Realms discovery, current assets, and generic transaction history.
+- Use DefiLlama Coins as the first no-key historical price provider for supported fungible assets.
+- Add a fallback paid/indexed price provider before enabling historical Vault USD as a production KPI.
+- Use Shyft GraphQL for Realms-specific indexing only if Helius/SPL Governance discovery becomes too slow or if Shyft provides useful indexed historical transaction tables for treasury replay.
 - Do not use the old hardcoded vault wallet as the root of treasury discovery.
 
 ## Implementation Decision
 
-Do not implement a collector workaround that simply replaces the old vault wallet with one derived treasury wallet.
+The collector now implements Realms-first discovery instead of starting from the previous vault wallet constant.
 
-The next implementation should first add a Realms treasury discovery collector. It should output the DAO-controlled treasury wallet set and source metadata. Only after that is verified should vault valuation be refactored to aggregate across those treasury wallets.
+Current implementation status:
 
-Until this exists, `vaultUsd` should remain `null`.
+- `collector/collectRealmTreasuries.ts` discovers DAO-controlled native treasury PDAs from the Realms realm.
+- `collector/collectVaultHistory.ts` aggregates current treasury assets across discovered treasuries.
+- `src/utils/defillama.ts` provides current and historical price lookups for fungible Solana assets by `solana:<mint>`.
+- `vaultUsd` is emitted only if all current treasury assets can be valued by the declared pricing policy.
+
+The historical transaction replay layer is not implemented yet. Until it exists, historical `vaultUsd` records must remain `null`.
 
 ## Derived Metrics
 
