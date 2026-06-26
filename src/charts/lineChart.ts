@@ -1,12 +1,17 @@
-import type { DailySnapshot } from "../utils/history.js";
+import type { DailySnapshot, TbtcSnapshot } from "../utils/history.js";
+
+type ChartRecord = DailySnapshot | TbtcSnapshot;
 
 export function lineChart(
   title: string,
-  records: DailySnapshot[],
-  key: keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply">
+  records: ChartRecord[],
+  key: keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply"> | "amount"
 ): string {
   const points = records
-    .map((record) => ({ date: record.date, value: record[key] }))
+    .map((record) => ({
+      date: record.date,
+      value: (record as unknown as Record<string, unknown>)[key]
+    }))
     .filter((point): point is { date: string; value: number } => typeof point.value === "number");
 
   if (points.length === 0) {

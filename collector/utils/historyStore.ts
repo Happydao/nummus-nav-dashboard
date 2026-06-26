@@ -22,10 +22,15 @@ export async function upsertToday(snapshot: DailySnapshot): Promise<HistoryFile>
 
   const next: HistoryFile = {
     generatedAt: new Date().toISOString(),
-    records: [...recordsByDate.values()].sort((a, b) => a.date.localeCompare(b.date))
+    records: [...recordsByDate.values()].sort((a, b) => a.date.localeCompare(b.date)),
+    tbtcHistory: history.tbtcHistory ?? []
   };
 
-  await mkdir(dirname(HISTORY_PATH), { recursive: true });
-  await writeFile(HISTORY_PATH, `${JSON.stringify(next, null, 2)}\n`);
+  await writeHistory(next);
   return next;
+}
+
+export async function writeHistory(history: HistoryFile): Promise<void> {
+  await mkdir(dirname(HISTORY_PATH), { recursive: true });
+  await writeFile(HISTORY_PATH, `${JSON.stringify(history, null, 2)}\n`);
 }

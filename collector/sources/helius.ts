@@ -48,6 +48,20 @@ export class HeliusClient {
     return payload.result;
   }
 
+  async getEnhancedTransactionsByAddress<T>(
+    address: string,
+    options: { limit?: number; before?: string } = {}
+  ): Promise<T[]> {
+    const url = new URL(`https://api.helius.xyz/v0/addresses/${address}/transactions`);
+    url.searchParams.set("api-key", this.apiKey);
+    url.searchParams.set("limit", String(options.limit ?? 100));
+    if (options.before) {
+      url.searchParams.set("before", options.before);
+    }
+
+    return this.fetchJson<T[]>(url.toString());
+  }
+
   private async fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);

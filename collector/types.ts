@@ -1,6 +1,7 @@
 export interface HistoryFile {
   generatedAt: string | null;
   records: DailySnapshot[];
+  tbtcHistory?: TbtcSnapshot[];
 }
 
 export interface DailySnapshot {
@@ -11,7 +12,13 @@ export interface DailySnapshot {
   nav: number | null;
   backing: number | null;
   premium: number | null;
+  tbtcAmount: number | null;
   valuationReport: ValuationReport;
+}
+
+export interface TbtcSnapshot {
+  date: string;
+  amount: number;
 }
 
 export interface ValuationReport {

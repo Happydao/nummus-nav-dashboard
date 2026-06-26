@@ -4,6 +4,7 @@ export const SPL_GOVERNANCE_PROGRAM_ID = "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXp
 export const VAULT_WALLET = "HtT3yMsAavLQYmd6VSbXSdbAefyZUrrFeEPoTPivde3s";
 export const BURN_WALLET = "5G62fW1BuK6k9B6sGwvTBtoKRPseshj9SSYPzudSPUYE";
 export const WRAPPED_SOL_MINT = "So11111111111111111111111111111111111111112";
+export const TBTC_MINT = "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU";
 
 export const JUPITER_PRICE_URL = "https://lite-api.jup.ag/price/v3";
 export const DEXSCREENER_TOKEN_URL = "https://api.dexscreener.com/latest/dex/tokens";

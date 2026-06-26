@@ -99,5 +99,6 @@ The dashboard is a Vite app. It reads `data/history.json` and renders:
 - Premium vs NAV History;
 - Vault Value History;
 - Supply History.
+- tBTC Accumulation.
 
 At the start there may be only one record. The charts become useful as the daily snapshot history grows.
