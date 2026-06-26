@@ -127,6 +127,29 @@ body {
   padding-top: 10px;
 }
 
+.kpi-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.kpi-links a {
+  border: 1px solid #cbd7cf;
+  border-radius: 999px;
+  color: #173d2c;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 6px 8px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.kpi-links a:hover {
+  background: #edf4ef;
+}
+
 .kpi-breakdown small {
   color: #607268;
   display: block;

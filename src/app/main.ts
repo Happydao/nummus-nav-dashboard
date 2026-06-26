@@ -6,6 +6,10 @@ import { latestRecord, loadHistory, type DailySnapshot, type SupplySnapshot } fr
 import { numberCompact, percent, ratio, tbtcAxis, usd, usdCompact } from "../utils/format.js";
 
 const app = document.querySelector<HTMLDivElement>("#app");
+const NUMMUS_MINT_URL = "https://solscan.io/token/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray";
+const REALMS_DAO_URL = "https://app.realms.today/dao/2Czvw7p29thfqNJznuicygBKxh33xoCMuGMH7zbPQ2gp";
+const VAULT_SOLSCAN_URL = "https://solscan.io/account/HtT3yMsAavLQYmd6VSbXSdbAefyZUrrFeEPoTPivde3s";
+const NUMMUS_COINGECKO_URL = "https://www.coingecko.com/en/search?query=NUMMUS";
 
 if (!app) {
   throw new Error("Missing #app root");
@@ -41,12 +45,19 @@ async function render(): Promise<void> {
       </header>
       <div class="content">
         <section class="kpis">
-          ${kpi("Vault Value", usd(latest?.vaultUsd ?? null), vaultComposition)}
+          ${kpi(
+            "Nummus Aeternitas Vault DAO",
+            usd(latest?.vaultUsd ?? null),
+            `${externalLinks([
+              ["Realms DAO", REALMS_DAO_URL],
+              ["Vault Solscan", VAULT_SOLSCAN_URL]
+            ])}${vaultComposition}`
+          )}
           ${kpi("NAV", usd(latest?.nav ?? null))}
           ${kpi("Treasury Backing", percent(latest?.backing ?? null))}
           ${kpi("Premium vs NAV", ratio(latest?.premium ?? null))}
-          ${kpi("Current Supply", numberCompact(latest?.supply ?? null))}
-          ${kpi("Market Price", usd(latest?.marketPrice ?? null))}
+          ${kpi("NUMMUS Supply", numberCompact(latest?.supply ?? null), externalLinks([["Mint Solscan", NUMMUS_MINT_URL]]))}
+          ${kpi("NUMMUS Price", usd(latest?.marketPrice ?? null), externalLinks([["CoinGecko", NUMMUS_COINGECKO_URL]]))}
         </section>
         ${
           unpricedCount > 0
@@ -168,6 +179,19 @@ function vaultCompositionDetails(record: DailySnapshot): string {
     <div class="kpi-breakdown" aria-label="Vault asset composition">
       <small>Latest composition</small>
       <ul>${rows}</ul>
+    </div>
+  `;
+}
+
+function externalLinks(links: Array<[string, string]>): string {
+  return `
+    <div class="kpi-links">
+      ${links
+        .map(
+          ([label, href]) =>
+            `<a href="${href}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`
+        )
+        .join("")}
     </div>
   `;
 }
