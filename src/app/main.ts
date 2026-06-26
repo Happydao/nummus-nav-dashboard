@@ -124,7 +124,6 @@ async function render(): Promise<void> {
             yLabel: "NUMMUS",
             yMin: 90_000_000,
             yMax: 100_000_000,
-            showMarkers: true,
             info: "Supply shows how many NUMMUS tokens are circulating. Lower supply can increase NAV per token if treasury value is stable or growing."
           })}
           ${lineChart({
@@ -137,7 +136,6 @@ async function render(): Promise<void> {
             axisFormatter: tbtcAxis,
             yLabel: "tBTC",
             yMin: 0,
-            showMarkers: true,
             includePreviousPoint: true,
             info: "tBTC Accumulation shows how much tBTC the treasury has collected. A rising line means the treasury is accumulating more BTC exposure."
           })}
