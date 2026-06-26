@@ -1,22 +1,22 @@
 {
   "name": "nummus-nav-dashboard",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "Official NUMMUS NAV and treasury backing dashboard data architecture.",
+  "description": "Official NUMMUS NAV and Treasury Backing dashboard.",
   "type": "module",
   "scripts": {
-    "backfill": "tsx collector/backfillHistory.ts",
-    "collect": "tsx collector/buildHistory.ts",
-    "discover:treasuries": "tsx collector/collectRealmTreasuries.ts",
-    "check": "tsc --noEmit"
+    "collect": "tsx collector/collectDailySnapshot.ts",
+    "check": "tsc --noEmit",
+    "build": "vite build && node scripts/copy-data.mjs"
+  },
+  "dependencies": {
+    "@solana/spl-governance": "^0.3.28",
+    "@solana/web3.js": "^1.98.4",
+    "vite": "^5.4.19"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
     "tsx": "^4.16.2",
     "typescript": "^5.5.3"
-  },
-  "dependencies": {
-    "@solana/spl-governance": "^0.3.28",
-    "@solana/web3.js": "^1.98.4"
   }
 }

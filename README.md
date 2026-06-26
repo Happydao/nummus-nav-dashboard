@@ -1,90 +1,101 @@
 # NUMMUS NAV Dashboard
 
-Official data architecture for the NUMMUS NAV / Treasury Backing dashboard.
+Official daily NAV / Treasury Backing dashboard for NUMMUS.
 
-This repository is intentionally focused on historical portfolio-level metrics only:
+This repository intentionally starts historical tracking from the day the collector is run. It does not backfill the past because historical reconstruction proved too expensive and fragile for a reliable public dashboard. From now on, `npm run collect` records one real daily snapshot and updates that same date if it is run more than once.
 
-- Vault Value (USD)
-- Supply
+The dashboard focuses only on portfolio-level metrics:
+
+- Vault Value
 - NAV
-- Treasury Backing
+- Treasury Backing %
 - Premium vs NAV
-- Burn history
+- Current Supply
+- Market Price
 
-It is not a vault-composition dashboard. Token balances, positions, and asset allocation belong in separate products.
+It is not a vault-composition dashboard.
 
-## Status
+## Data Sources
 
-The first implementation creates the collector layer, documentation, and generated data shape. It does not implement the UI yet and does not backfill mocked historical values.
+| Metric | Source |
+| --- | --- |
+| Vault assets | Helius DAS `getAssetsByOwner` for the NUMMUS vault wallet |
+| Vault asset prices | Jupiter, Helius `price_info`, DexScreener, DefiLlama |
+| Supply | Helius RPC `getTokenSupply` for the NUMMUS mint |
+| Market price | Same pricing cascade for the NUMMUS mint |
 
-## Repository Structure
+NFTs received by the vault are ignored automatically as spam/scam assets. Only fungible assets are valued.
+
+If a fungible asset cannot be priced, the collector does not invent a value. It documents the asset under `valuationReport.unpricedAssets`, leaves `vaultUsd` as `null`, and derived metrics also remain `null`.
+
+## Formulas
 
 ```text
-collector/
-  collectRealmTreasuries.ts
-  collectVaultHistory.ts
-  collectSupplyHistory.ts
-  collectBurnHistory.ts
-  collectPriceHistory.ts
-  buildHistory.ts
-data/
-  history.json
-src/
-  utils/
+NAV = vaultUsd / supply
+Treasury Backing % = (NAV / marketPrice) * 100
+Premium vs NAV = marketPrice / NAV
 ```
+
+## Environment
+
+Create `.env.local` for local collection:
+
+```bash
+cp .env.example .env.local
+```
+
+Then set:
+
+```text
+HELIUS_API_KEY=
+```
+
+Never hardcode the Helius key. Production should inject it through GitHub Secrets.
 
 ## Commands
 
 ```bash
 npm install
-cp .env.example .env.local
 npm run check
-npm run discover:treasuries
-npm run backfill
 npm run collect
+npm run build
 ```
 
-Set `HELIUS_API_KEY` in `.env.local` for local collection. Production should inject the same environment variable through deployment secrets.
+`npm run collect` writes `data/history.json`.
 
-`npm run discover:treasuries` verifies the Realms DAO treasury discovery path.
+Every run:
 
-`npm run backfill` creates historical snapshot dates from `NUMMUS_PROJECT_START_DATE` through yesterday using `BACKFILL_INTERVAL_DAYS` (default `15`). It only writes values that are truly reconstructed for the snapshot date; current values are never reused for the past.
+1. calculates current Vault Value USD;
+2. reads current NUMMUS supply;
+3. reads current NUMMUS market price;
+4. calculates NAV, Treasury Backing, and Premium;
+5. updates today's record if it already exists;
+6. appends today's record if it does not exist.
 
-`npm run collect` upserts today's snapshot in `data/history.json`. If today's record already exists, it is updated; otherwise it is created. Vault collection starts from the NUMMUS Realms DAO, derives native treasury PDAs, reads current treasury assets through Helius DAS, ignores non-fungible spam/scam assets, and prices fungible assets through Jupiter, Helius, DexScreener, then DefiLlama. If any fungible treasury asset cannot be priced under the declared policy, `vaultUsd` remains `null`.
+## GitHub Actions
 
-## Generated Dataset
+The workflow `.github/workflows/daily-snapshot.yml` runs once per day. It:
 
-Each record in `data/history.json` follows this shape:
+1. installs dependencies;
+2. runs `npm run collect`;
+3. runs `npm run build`;
+4. commits `data/history.json` if it changed.
 
-```json
-{
-  "date": "2026-06-26",
-  "vaultUsd": null,
-  "supply": 98152185.149189,
-  "marketPrice": 0.00737344,
-  "nav": null,
-  "backing": null,
-  "premium": null,
-  "burned": null
-}
-```
-
-Fields are `null` when the collector cannot reconstruct them reliably from public data. This is expected until historical balance replay and complete historical price coverage are configured.
-
-Burn history is stored in the same file under `burnEvents` because the requested NAV record schema does not include a burn amount field.
-
-Vault valuation diagnostics are stored under `vaultValuation` so the collector can report valued fungible assets, ignored spam/scam NFTs, and any genuinely unpriced fungible assets without turning the dashboard into a composition view.
-
-## Calculations
+Add this repository secret before enabling the workflow:
 
 ```text
-NAV = Vault Value USD / Current Supply
-Treasury Backing = NAV / Market Price * 100
-Premium = Market Price / NAV
+HELIUS_API_KEY
 ```
 
-Calculations only run when all required inputs exist for the same date.
+## Dashboard
 
-## Data Sources
+The dashboard is a Vite app. It reads `data/history.json` and renders:
 
-See [DATA_SOURCES.md](./DATA_SOURCES.md) for the source-by-source reconstruction plan and known limitations.
+- KPI cards for the latest snapshot;
+- NAV History;
+- Treasury Backing History;
+- Premium vs NAV History;
+- Vault Value History;
+- Supply History.
+
+At the start there may be only one record. The charts become useful as the daily snapshot history grows.

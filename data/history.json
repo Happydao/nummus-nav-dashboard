@@ -1,389 +1,72 @@
 {
-  "generatedAt": "2026-06-26T10:24:38.044Z",
-  "coverage": {
-    "from": "2025-05-20",
-    "to": "2026-06-26",
-    "recordCount": 28
-  },
-  "warnings": [
-    {
-      "metric": "vaultUsd",
-      "message": "Vault collection starts from the NUMMUS Realms DAO, enumerates governance native treasury PDAs, reads current treasury assets through Helius DAS, ignores non-fungible spam/scam assets, and prices fungible assets through Jupiter, Helius, DexScreener, then DefiLlama. This produces a current-day snapshot only; historical daily Vault USD requires transaction replay plus same-date prices."
-    },
-    {
-      "metric": "supply",
-      "message": "Helius RPC getTokenSupply exposes the current token supply. Daily historical supply requires replaying all mint and burn instructions for the NUMMUS mint from complete Helius transaction history; this collector does not synthesize missing history."
-    },
-    {
-      "metric": "marketPrice",
-      "message": "Jupiter and DexScreener public endpoints expose current NUMMUS pricing, not a guaranteed daily historical candle series. Historical market price needs a candle/trade indexer such as Birdeye, GeckoTerminal, DexScreener charts access, or retained internal snapshots."
-    },
-    {
-      "metric": "burn",
-      "message": "Burn events are reconstructed from Helius Enhanced Transactions for the burn wallet. Complete history requires paginating all burn-wallet transactions with the before cursor and validating that no NUMMUS burns occur outside the documented burn wallet."
-    },
-    {
-      "metric": "vaultUsd",
-      "message": "Historical vaultUsd remains null for backfill dates until a treasury transaction replay layer reconstructs end-of-day Realms treasury balances. The daily collector only updates the current date."
-    },
-    {
-      "metric": "supply",
-      "message": "Historical supply remains null for backfill dates until a NUMMUS mint/burn replay layer reconstructs supply as of each snapshot date. The daily collector only updates current supply."
-    }
-  ],
-  "vaultValuation": {
-    "date": "2026-06-26",
-    "vaultUsd": 81883.68777978,
-    "source": "Realms DAO treasury discovery + Helius DAS current balances + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
-    "pricedAssetCount": 5,
-    "ignoredAssetCount": 2,
-    "unpricedAssetCount": 0,
-    "valuedAssets": [
-      {
-        "symbol": "SOL",
-        "mint": "So11111111111111111111111111111111111111112",
-        "amount": 0.104571323,
-        "priceUsd": 68.95653462924649,
-        "valueUsd": 7.21087606,
-        "provider": "jupiter"
-      },
-      {
-        "symbol": "PUNCHY",
-        "mint": "GnYufMbTAMz1DzkSN2DmwkBzjMTLkM22WvQuN1VCbonk",
-        "amount": 25000000,
-        "priceUsd": 0.00006683571109407034,
-        "valueUsd": 1670.89277735,
-        "provider": "jupiter"
-      },
-      {
-        "symbol": "NUMMUS",
-        "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
-        "amount": 25,
-        "priceUsd": 0.007302866227988808,
-        "valueUsd": 0.18257166,
-        "provider": "jupiter"
-      },
-      {
-        "symbol": "PISTA",
-        "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
-        "amount": 25000000,
-        "priceUsd": 0.0014215140926793492,
-        "valueUsd": 35537.85231698,
-        "provider": "jupiter"
-      },
-      {
-        "symbol": "tBTC",
-        "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
-        "amount": 0.74886342,
-        "priceUsd": 59647.12395449306,
-        "valueUsd": 44667.54923773,
-        "provider": "jupiter"
-      }
-    ],
-    "ignoredAssets": [
-      {
-        "symbol": "MyNF",
-        "mint": "GGVXuvQD13vxsNi9Dx86AwwpcTHrfNFcJSgsKesbyzn7",
-        "reason": "ignored V1_NFT received by treasury"
-      },
-      {
-        "symbol": "MyNF",
-        "mint": "EUGVqX5GWe6P4b8bYyaWLFhzMwAES8tq79KpYs5UagMY",
-        "reason": "ignored V1_NFT received by treasury"
-      }
-    ],
-    "unpricedAssets": []
-  },
-  "burnEvents": [
-    {
-      "signature": "25WczXwsay6Ammq2LukSLePtk6HbpVcRKNNq4JesZvA2wnSZs4opAX7SHnBTQwV5e4FR5Kk27cg96chnnQs7VbJa",
-      "slot": 427472987,
-      "blockTime": 1781859045,
-      "date": "2026-06-19",
-      "rawAmount": "61351378413",
-      "decimals": 6,
-      "amount": 61351.378413
-    },
-    {
-      "signature": "2mV7PFUbdexKm8nxw9nLMCvMTW1XUdDb3VGJiJFkshyh2VAhe9zcvxbU7LqGn41xGXKLxaYkcWbJDdRsqFmYnXSq",
-      "slot": 425951572,
-      "blockTime": 1781255514,
-      "date": "2026-06-12",
-      "rawAmount": "69929253244",
-      "decimals": 6,
-      "amount": 69929.253244
-    },
-    {
-      "signature": "BVgtKU3hedyDhviJf32bK52hW1VA4w3fpDR63ahqRZkKnLxtt4RuV9jGYdVvyVUiVbMA7pKB7C5DgtKgH3xQDGc",
-      "slot": 423999413,
-      "blockTime": 1780478837,
-      "date": "2026-06-03",
-      "rawAmount": "109857432551",
-      "decimals": 6,
-      "amount": 109857.432551
-    },
-    {
-      "signature": "QhSPc188GCqpgfoMgRfSNg3V3NjiN9JXpjbsx4W2XmWAECMHzTgyaZTcFPyCW4vmY8yDLzdr9dPTRnLBpQBCrS8",
-      "slot": 421386777,
-      "blockTime": 1779440264,
-      "date": "2026-05-22",
-      "rawAmount": "79202270275",
-      "decimals": 6,
-      "amount": 79202.270275
-    }
-  ],
+  "generatedAt": "2026-06-26T11:49:46.378Z",
   "records": [
     {
-      "date": "2025-05-20",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": null,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-06-04",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": null,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-06-19",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": null,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-07-04",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.120244,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-07-19",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.108637,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-08-03",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.04097397,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-08-18",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.02411722,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-09-02",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.01089386,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-09-17",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.01466649,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-10-02",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.01044224,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-10-17",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.00834178440141405,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-11-01",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.008981522272506655,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-11-16",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.008134317861742216,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-12-01",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.006126650387311283,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-12-16",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.011494344241808905,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2025-12-31",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.015672222695125044,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2026-01-15",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.01513134933066821,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2026-01-30",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.011864200980158914,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2026-02-14",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.010568938740665001,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2026-03-01",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.007915271424379805,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2026-03-16",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.007916702308660921,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2026-03-31",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.007104594799575069,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2026-04-15",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.007240079379849556,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2026-04-30",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.007205990175752324,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2026-05-15",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.008438788706517722,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2026-05-30",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.007987818877939094,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
-      "date": "2026-06-14",
-      "vaultUsd": null,
-      "supply": null,
-      "marketPrice": 0.007185748404080266,
-      "nav": null,
-      "backing": null,
-      "premium": null
-    },
-    {
       "date": "2026-06-26",
-      "vaultUsd": 81883.68777978,
+      "vaultUsd": 81576.18524507,
       "supply": 98152185.149189,
-      "marketPrice": 0.007302866227988808,
-      "nav": 0.00083425,
-      "backing": 11.4235969,
-      "premium": 8.75381028
+      "marketPrice": 0.007266491227573536,
+      "nav": 0.00083112,
+      "backing": 11.43770733,
+      "premium": 8.74301091,
+      "valuationReport": {
+        "source": "Helius DAS current vault assets + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
+        "pricedAssets": [
+          {
+            "symbol": "SOL",
+            "mint": "So11111111111111111111111111111111111111112",
+            "amount": 0.104571323,
+            "priceUsd": 68.54601285466669,
+            "valueUsd": 7.16794725,
+            "provider": "jupiter"
+          },
+          {
+            "symbol": "PUNCHY",
+            "mint": "GnYufMbTAMz1DzkSN2DmwkBzjMTLkM22WvQuN1VCbonk",
+            "amount": 25000000,
+            "priceUsd": 0.00006683571109407034,
+            "valueUsd": 1670.89277735,
+            "provider": "jupiter"
+          },
+          {
+            "symbol": "NUMMUS",
+            "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
+            "amount": 25,
+            "priceUsd": 0.007266491227573536,
+            "valueUsd": 0.18166228,
+            "provider": "jupiter"
+          },
+          {
+            "symbol": "PISTA",
+            "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
+            "amount": 25000000,
+            "priceUsd": 0.0014215140926793492,
+            "valueUsd": 35537.85231698,
+            "provider": "jupiter"
+          },
+          {
+            "symbol": "tBTC",
+            "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
+            "amount": 0.74886342,
+            "priceUsd": 59236.55683597759,
+            "valueUsd": 44360.09054121,
+            "provider": "jupiter"
+          }
+        ],
+        "ignoredAssets": [
+          {
+            "symbol": "MyNF",
+            "mint": "GGVXuvQD13vxsNi9Dx86AwwpcTHrfNFcJSgsKesbyzn7",
+            "reason": "ignored V1_NFT received by treasury"
+          },
+          {
+            "symbol": "MyNF",
+            "mint": "EUGVqX5GWe6P4b8bYyaWLFhzMwAES8tq79KpYs5UagMY",
+            "reason": "ignored V1_NFT received by treasury"
+          }
+        ],
+        "unpricedAssets": []
+      }
     }
   ]
 }

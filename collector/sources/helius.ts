@@ -1,4 +1,4 @@
-import { getRequiredEnv } from "./env.js";
+import { requiredEnv } from "../utils/env.js";
 
 interface RpcSuccess<T> {
   jsonrpc: string;
@@ -22,7 +22,7 @@ export class HeliusClient {
   private readonly timeoutMs: number;
 
   constructor(options: { apiKey?: string; timeoutMs?: number } = {}) {
-    this.apiKey = options.apiKey ?? getRequiredEnv("HELIUS_API_KEY");
+    this.apiKey = options.apiKey ?? requiredEnv("HELIUS_API_KEY");
     this.timeoutMs = options.timeoutMs ?? Number(process.env.HELIUS_TIMEOUT_MS ?? 20_000);
   }
 
@@ -31,9 +31,7 @@ export class HeliusClient {
       `https://mainnet.helius-rpc.com/?api-key=${this.apiKey}`,
       {
         method: "POST",
-        headers: {
-          "content-type": "application/json"
-        },
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({
           jsonrpc: "2.0",
           id: 1,
@@ -50,29 +48,13 @@ export class HeliusClient {
     return payload.result;
   }
 
-  async getEnhancedTransactionsByAddress<T>(
-    address: string,
-    options: { limit?: number; before?: string } = {}
-  ): Promise<T[]> {
-    const url = new URL(`https://api.helius.xyz/v0/addresses/${address}/transactions`);
-    url.searchParams.set("api-key", this.apiKey);
-    url.searchParams.set("limit", String(options.limit ?? 100));
-    if (options.before) {
-      url.searchParams.set("before", options.before);
-    }
-
-    return this.fetchJson<T[]>(url.toString());
-  }
-
   private async fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
 
-    const response = await fetch(url, {
-      ...init,
-      signal: controller.signal
-    }).finally(() => clearTimeout(timeout));
-
+    const response = await fetch(url, { ...init, signal: controller.signal }).finally(() =>
+      clearTimeout(timeout)
+    );
     if (!response.ok) {
       throw new Error(`Helius request failed with HTTP ${response.status}`);
     }
