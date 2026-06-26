@@ -53,9 +53,9 @@ async function render(): Promise<void> {
               ["Vault Solscan", VAULT_SOLSCAN_URL]
             ])}${vaultComposition}`
           )}
-          ${kpi("NAV", usd(latest?.nav ?? null))}
-          ${kpi("Treasury Backing", percent(latest?.backing ?? null))}
-          ${kpi("Premium vs NAV", ratio(latest?.premium ?? null))}
+          ${kpi("NAV", usd(latest?.nav ?? null), formula("Vault Value / Supply"))}
+          ${kpi("Treasury Backing", percent(latest?.backing ?? null), formula("NAV / NUMMUS Price x 100"))}
+          ${kpi("Premium vs NAV", ratio(latest?.premium ?? null), formula("NUMMUS Price / NAV"))}
           ${kpi("NUMMUS Supply", numberCompact(latest?.supply ?? null), externalLinks([["Mint Solscan", NUMMUS_MINT_URL]]))}
           ${kpi("NUMMUS Price", usd(latest?.marketPrice ?? null), externalLinks([["CoinGecko", NUMMUS_COINGECKO_URL]]))}
         </section>
@@ -198,6 +198,10 @@ function externalLinks(links: Array<[string, string]>): string {
         .join("")}
     </div>
   `;
+}
+
+function formula(value: string): string {
+  return `<small class="kpi-formula">${escapeHtml(value)}</small>`;
 }
 
 function formatAssetAmount(amount: number | undefined): string {
