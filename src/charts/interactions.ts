@@ -8,7 +8,15 @@ export function attachChartInteractions(root: ParentNode = document): void {
     if (!dataNode || !capture || !crosshair || !hoverDot || !tooltip) continue;
 
     const parsed = JSON.parse(dataNode.textContent ?? "{}") as {
-      points: Array<{ date: string; dateLabel?: string; value: number; label: string; x: number; y: number }>;
+      points: Array<{
+        date: string;
+        dateLabel?: string;
+        value: number;
+        label: string;
+        x: number;
+        y: number;
+        series?: Array<{ name: string; label: string; kind: "primary" | "secondary" }>;
+      }>;
     };
     const points = parsed.points;
     if (points.length === 0) continue;
@@ -29,7 +37,12 @@ export function attachChartInteractions(root: ParentNode = document): void {
       hoverDot.setAttribute("cx", String(nearest.x));
       hoverDot.setAttribute("cy", String(nearest.y));
       chart.classList.add("hovering");
-      tooltip.innerHTML = `<strong>${nearest.dateLabel ?? nearest.date}</strong><span>${nearest.label}</span>`;
+      const series = nearest.series?.length
+        ? nearest.series
+            .map((item) => `<span class="tooltip-row ${item.kind}"><em>${item.name}</em><b>${item.label}</b></span>`)
+            .join("")
+        : `<span>${nearest.label}</span>`;
+      tooltip.innerHTML = `<strong>${nearest.dateLabel ?? nearest.date}</strong>${series}`;
       tooltip.style.left = `${Math.min(Math.max(nearest.x, 90), 650)}px`;
       tooltip.style.top = `${Math.max(nearest.y - 52, 12)}px`;
     });

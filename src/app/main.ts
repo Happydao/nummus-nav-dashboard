@@ -67,7 +67,7 @@ async function render(): Promise<void> {
         <section class="charts">
           ${lineChart({
             id: "nav",
-            title: "NAV History",
+            title: "NAV vs NUMMUS Price",
             records,
             key: "nav",
             range: selectedRange,
@@ -75,7 +75,13 @@ async function render(): Promise<void> {
             axisFormatter: usd,
             yLabel: "USD / NUMMUS",
             yMin: 0,
-            info: "NAV is the treasury value behind each NUMMUS token. It is better when NAV is close to the market price, because that means the token price is aligned with treasury backing."
+            secondary: {
+              key: "marketPrice",
+              label: "NUMMUS Price",
+              formatter: usd
+            },
+            fullWidth: true,
+            info: "This compares NAV with NUMMUS market price. NAV is the treasury value behind each token; the market price is what traders pay. The healthier zone is when price moves closer to NAV, because a large gap means NUMMUS trades at a high premium to treasury backing."
           })}
           ${lineChart({
             id: "backing",

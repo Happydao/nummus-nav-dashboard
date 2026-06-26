@@ -7,7 +7,7 @@ export interface ChartOptions {
   id: string;
   title: string;
   records: ChartRecord[];
-  key: keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply"> | "amount";
+  key: ChartKey;
   range: RangeKey;
   formatter: (value: number) => string;
   axisFormatter?: (value: number) => string;
@@ -17,7 +17,15 @@ export interface ChartOptions {
   showMarkers?: boolean;
   includePreviousPoint?: boolean;
   info?: string;
+  secondary?: {
+    key: ChartKey;
+    label: string;
+    formatter?: (value: number) => string;
+  };
+  fullWidth?: boolean;
 }
+
+type ChartKey = keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply" | "marketPrice"> | "amount";
 
 interface ChartPoint {
   date: string;
@@ -36,12 +44,18 @@ const PAD = {
 export function lineChart(options: ChartOptions): string {
   const allPoints = toPoints(options.records, options.key);
   const points = filterByRange(allPoints, options.range, Boolean(options.includePreviousPoint));
+  const secondaryByDate = options.secondary ? toPointMap(options.records, options.secondary.key) : new Map<string, number>();
 
   if (points.length === 0) {
     return `<section class="chart"><h2>${options.title}</h2><div class="empty">No snapshots in selected range</div></section>`;
   }
 
-  const values = points.map((point) => point.value);
+  const values = [
+    ...points.map((point) => point.value),
+    ...points
+      .map((point) => secondaryByDate.get(point.date))
+      .filter((value): value is number => typeof value === "number")
+  ];
   const rawMin = options.yMin ?? Math.min(...values);
   const rawMax = options.yMax ?? Math.max(...values);
   const yMin = options.yMin ?? niceFloor(rawMin);
@@ -59,12 +73,18 @@ export function lineChart(options: ChartOptions): string {
     const y = PAD.top + (1 - (point.value - yMin) / (yMax - yMin || 1)) * chartHeight;
     return { ...point, x, y };
   });
-  const path =
-    coords.length === 1
-      ? `M ${PAD.left} ${coords[0].y.toFixed(2)} L ${WIDTH - PAD.right} ${coords[0].y.toFixed(2)}`
-      : coords
-          .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`)
-          .join(" ");
+  const secondaryCoords = options.secondary
+    ? coords
+        .map((point) => {
+          const value = secondaryByDate.get(point.date);
+          if (typeof value !== "number") return null;
+          const y = PAD.top + (1 - (value - yMin) / (yMax - yMin || 1)) * chartHeight;
+          return { date: point.date, value, x: point.x, y };
+        })
+        .filter((point): point is ChartPoint & { x: number; y: number } => point !== null)
+    : [];
+  const path = makePath(coords);
+  const secondaryPath = secondaryCoords.length > 0 ? makePath(secondaryCoords) : "";
   const areaPath =
     coords.length > 1
       ? `${path} L ${coords.at(-1)?.x.toFixed(2)} ${HEIGHT - PAD.bottom} L ${coords[0].x.toFixed(2)} ${HEIGHT - PAD.bottom} Z`
@@ -75,7 +95,7 @@ export function lineChart(options: ChartOptions): string {
   const axisFormatter = options.axisFormatter ?? options.formatter;
 
   return `
-    <section class="chart interactive-chart" data-chart-id="${options.id}">
+    <section class="chart interactive-chart${options.fullWidth ? " chart-full" : ""}" data-chart-id="${options.id}">
       <div class="chart-head">
         <div>
           <div class="chart-title-row">
@@ -83,6 +103,7 @@ export function lineChart(options: ChartOptions): string {
             ${options.info ? infoTip(options.info) : ""}
           </div>
           <span>${formatDateShort(points[0].date)} -> ${formatDateShort(points.at(-1)?.date ?? points[0].date)}</span>
+          ${options.secondary ? legend(options.secondary.label) : ""}
         </div>
         <strong>${latest ? options.formatter(latest.value) : "n/a"}</strong>
       </div>
@@ -112,6 +133,7 @@ export function lineChart(options: ChartOptions): string {
           <line class="axis-line" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
           ${areaPath ? `<path class="area-path" d="${areaPath}" />` : ""}
           <path class="series-path" d="${path}" />
+          ${secondaryPath ? `<path class="series-path secondary-series-path" d="${secondaryPath}" />` : ""}
           ${
             options.showMarkers || coords.length === 1
               ? coords.map((point, index) => marker(point, index)).join("")
@@ -131,10 +153,44 @@ export function lineChart(options: ChartOptions): string {
           value: point.value,
           x: point.x,
           y: point.y,
-          label: options.formatter(point.value)
+          label: options.formatter(point.value),
+          series: options.secondary
+            ? [
+                { name: "NAV", label: options.formatter(point.value), kind: "primary" },
+                ...(typeof secondaryByDate.get(point.date) === "number"
+                  ? [
+                      {
+                        name: options.secondary.label,
+                        label: (options.secondary.formatter ?? options.formatter)(
+                          secondaryByDate.get(point.date) as number
+                        ),
+                        kind: "secondary"
+                      }
+                    ]
+                  : [])
+              ]
+            : undefined
         }))
       })}</script>
     </section>
+  `;
+}
+
+function makePath(points: Array<ChartPoint & { x: number; y: number }>): string {
+  if (points.length === 1) {
+    return `M ${PAD.left} ${points[0].y.toFixed(2)} L ${WIDTH - PAD.right} ${points[0].y.toFixed(2)}`;
+  }
+  return points
+    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`)
+    .join(" ");
+}
+
+function legend(secondaryLabel: string): string {
+  return `
+    <div class="chart-legend" aria-label="Chart legend">
+      <span><i class="legend-swatch primary"></i>NAV</span>
+      <span><i class="legend-swatch secondary"></i>${escapeHtml(secondaryLabel)}</span>
+    </div>
   `;
 }
 
@@ -169,6 +225,10 @@ function toPoints(records: ChartRecord[], key: ChartOptions["key"]): ChartPoint[
     }))
     .filter((point): point is ChartPoint => typeof point.value === "number")
     .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+function toPointMap(records: ChartRecord[], key: ChartOptions["key"]): Map<string, number> {
+  return new Map(toPoints(records, key).map((point) => [point.date, point.value]));
 }
 
 function filterByRange(points: ChartPoint[], range: RangeKey, includePreviousPoint: boolean): ChartPoint[] {
