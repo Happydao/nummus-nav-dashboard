@@ -8,6 +8,7 @@ export interface DailySnapshot {
   premium: number | null;
   tbtcAmount?: number | null;
   valuationReport?: {
+    source?: string;
     pricedAssets: unknown[];
     ignoredAssets: unknown[];
     unpricedAssets: unknown[];
