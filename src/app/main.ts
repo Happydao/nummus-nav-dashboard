@@ -9,7 +9,7 @@ const app = document.querySelector<HTMLDivElement>("#app");
 const NUMMUS_MINT_URL = "https://solscan.io/token/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray";
 const REALMS_DAO_URL = "https://app.realms.today/dao/2Czvw7p29thfqNJznuicygBKxh33xoCMuGMH7zbPQ2gp";
 const VAULT_SOLSCAN_URL = "https://solscan.io/account/HtT3yMsAavLQYmd6VSbXSdbAefyZUrrFeEPoTPivde3s";
-const NUMMUS_COINGECKO_URL = "https://www.coingecko.com/en/search?query=NUMMUS";
+const NUMMUS_COINGECKO_URL = "https://www.coingecko.com/en/coins/nummus-aeternitas";
 
 if (!app) {
   throw new Error("Missing #app root");
