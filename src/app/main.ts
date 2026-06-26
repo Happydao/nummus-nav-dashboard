@@ -106,7 +106,7 @@ async function render(): Promise<void> {
             formatter: numberCompact,
             axisFormatter: numberCompact,
             yLabel: "NUMMUS",
-            yMin: 0,
+            yMin: 80_000_000,
             yMax: 100_000_000,
             showMarkers: true
           })}
