@@ -2,7 +2,7 @@
 
 Official daily NAV / Treasury Backing dashboard for NUMMUS.
 
-This repository intentionally starts historical tracking from the day the collector is run. It does not backfill the past because historical reconstruction proved too expensive and fragile for a reliable public dashboard. From now on, `npm run collect` records one real daily snapshot and updates that same date if it is run more than once.
+This repository stores one real daily snapshot from the collector and updates that same date if it is run more than once. Historical vault USD records can also be imported from committed snapshots in `Nummus.VaultDAO`; those imported records are treated as historical snapshot data, not as live on-chain reconstruction.
 
 The dashboard focuses only on portfolio-level metrics:
 
@@ -58,10 +58,11 @@ Never hardcode the Helius key. Production should inject it through GitHub Secret
 npm install
 npm run check
 npm run collect
+npm run import:vault-history
 npm run build
 ```
 
-`npm run collect` writes `data/history.json`.
+`npm run collect` writes today's raw snapshot to `data/snapshots/YYYY-MM-DD.json` and updates `data/history.json`.
 
 Every run:
 
@@ -72,6 +73,18 @@ Every run:
 5. updates today's record if it already exists;
 6. appends today's record if it does not exist.
 
+`npm run import:vault-history` imports one daily Vault Value record from the local `Nummus.VaultDAO` Git history. It defaults to `../Nummus.VaultDAO`; set `VAULTDAO_REPO_PATH=/path/to/Nummus.VaultDAO` if the clone is elsewhere. The import keeps the last `data/prices.json` snapshot available for each day and merges those records into `data/history.json`.
+
+## Data Layout
+
+```text
+data/
+  history.json              Aggregated dashboard index.
+  snapshots/YYYY-MM-DD.json Raw daily collector snapshot from today forward.
+```
+
+`data/history.json` is intentionally kept as the dashboard read model because GitHub Pages can load one file quickly. The cleaner source of truth for new daily collector output is the per-day file under `data/snapshots/`.
+
 ## GitHub Actions
 
 The workflow `.github/workflows/daily-snapshot.yml` runs once per day at `06:00 UTC`, which is currently 08:00 in Italy during daylight saving time. It:
@@ -80,6 +93,7 @@ The workflow `.github/workflows/daily-snapshot.yml` runs once per day at `06:00 
 2. runs `npm run collect`;
 3. runs `npm run build`;
 4. commits `data/history.json` if it changed.
+5. commits `data/snapshots/YYYY-MM-DD.json` if today's raw snapshot changed.
 
 The workflow `.github/workflows/deploy-pages.yml` builds the dashboard and deploys `dist/` to GitHub Pages on every push to `main`.
 
@@ -103,6 +117,6 @@ The dashboard is a Vite app. It reads `data/history.json` and renders:
 
 Charts use a sticky global range selector (`1D`, `7D`, `30D`, `1Y`, `ALL`) and interactive hover tooltips with crosshairs and axis labels.
 
-Supply History in the dashboard uses daily collector snapshots. Burn-derived supply data may be retained internally, but the chart is intended to grow one point per daily update.
+Supply History in the dashboard uses burn-derived historical supply points plus daily collector snapshots from today forward. The tooltip shows only date and supply.
 
 At the start there may be only one record. The charts become useful as the daily snapshot history grows.
