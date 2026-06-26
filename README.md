@@ -47,7 +47,7 @@ Set `HELIUS_API_KEY` in `.env.local` for local collection. Production should inj
 
 `npm run discover:treasuries` verifies the Realms DAO treasury discovery path.
 
-`npm run collect` writes `data/history.json`. Vault collection starts from the NUMMUS Realms DAO, derives native treasury PDAs, reads current treasury assets through Helius DAS, and prices supported fungible assets through DefiLlama. If any treasury asset cannot be priced under the declared policy, `vaultUsd` remains `null`.
+`npm run collect` writes `data/history.json`. Vault collection starts from the NUMMUS Realms DAO, derives native treasury PDAs, reads current treasury assets through Helius DAS, ignores non-fungible spam/scam assets, and prices fungible assets through Jupiter, Helius, DexScreener, then DefiLlama. If any fungible treasury asset cannot be priced under the declared policy, `vaultUsd` remains `null`.
 
 ## Generated Dataset
 
@@ -69,6 +69,8 @@ Each record in `data/history.json` follows this shape:
 Fields are `null` when the collector cannot reconstruct them reliably from public data. This is expected until historical balance replay and complete historical price coverage are configured.
 
 Burn history is stored in the same file under `burnEvents` because the requested NAV record schema does not include a burn amount field.
+
+Vault valuation diagnostics are stored under `vaultValuation` so the collector can report valued fungible assets, ignored spam/scam NFTs, and any genuinely unpriced fungible assets without turning the dashboard into a composition view.
 
 ## Calculations
 

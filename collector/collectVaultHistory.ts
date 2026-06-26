@@ -1,7 +1,7 @@
 import { WRAPPED_SOL_MINT } from "../src/utils/constants.js";
-import { DefiLlamaPriceClient } from "../src/utils/defillama.js";
 import { HeliusClient } from "../src/utils/helius.js";
 import { round } from "../src/utils/math.js";
+import { TreasuryPriceClient, type HeliusPriceInfo } from "../src/utils/treasuryPricing.js";
 import type { CollectionResult, VaultValueSnapshot } from "../src/utils/types.js";
 import { collectRealmTreasuries } from "./collectRealmTreasuries.js";
 
@@ -27,6 +27,7 @@ interface HeliusAsset {
     balance?: number | string;
     decimals?: number;
     symbol?: string;
+    price_info?: HeliusPriceInfo;
   };
 }
 
@@ -34,17 +35,24 @@ interface BalanceLine {
   mint: string;
   symbol: string | null;
   amount: number;
-  coinId: string;
+  heliusPriceInfo?: HeliusPriceInfo;
+}
+
+interface IgnoredAsset {
+  symbol: string | null;
+  mint: string;
+  reason: string;
 }
 
 export async function collectVaultHistory(
   helius = new HeliusClient(),
-  prices = new DefiLlamaPriceClient()
+  prices = new TreasuryPriceClient()
 ): Promise<CollectionResult<VaultValueSnapshot[]>> {
   const treasuryResult = await collectRealmTreasuries();
   const today = new Date().toISOString().slice(0, 10);
   const balances: BalanceLine[] = [];
-  const unpriceableAssets: string[] = [];
+  const ignoredAssets: IgnoredAsset[] = [];
+  const unpricedAssets: IgnoredAsset[] = [];
 
   for (const treasury of treasuryResult.data.treasuries) {
     const response = await helius.rpc<HeliusAssetsByOwnerResponse>("getAssetsByOwner", {
@@ -62,8 +70,7 @@ export async function collectVaultHistory(
       balances.push({
         mint: WRAPPED_SOL_MINT,
         symbol: "SOL",
-        amount: nativeSol,
-        coinId: `solana:${WRAPPED_SOL_MINT}`
+        amount: nativeSol
       });
     }
 
@@ -72,8 +79,21 @@ export async function collectVaultHistory(
       const decimals = item.token_info?.decimals;
       const rawBalance = Number(item.token_info?.balance);
 
-      if (item.interface !== "FungibleToken" || decimals === undefined || !Number.isFinite(rawBalance)) {
-        unpriceableAssets.push(`${symbol ?? item.interface ?? "asset"}:${item.id}`);
+      if (item.interface !== "FungibleToken") {
+        ignoredAssets.push({
+          symbol,
+          mint: item.id,
+          reason: `ignored ${item.interface ?? "non-fungible asset"} received by treasury`
+        });
+        continue;
+      }
+
+      if (decimals === undefined || !Number.isFinite(rawBalance)) {
+        unpricedAssets.push({
+          symbol,
+          mint: item.id,
+          reason: "missing fungible balance or decimals from Helius DAS"
+        });
         continue;
       }
 
@@ -81,28 +101,38 @@ export async function collectVaultHistory(
         mint: item.id,
         symbol,
         amount: rawBalance / 10 ** decimals,
-        coinId: `solana:${item.id}`
+        heliusPriceInfo: item.token_info?.price_info
       });
     }
   }
 
-  const coinIds = [...new Set(balances.map((balance) => balance.coinId))];
-  const priceMap = await prices.getCurrentPrices(coinIds);
   let vaultUsd = 0;
-  let pricedAssetCount = 0;
+  const valuedAssets: NonNullable<VaultValueSnapshot["valuedAssets"]> = [];
 
   for (const balance of balances) {
-    const price = priceMap.get(balance.coinId);
+    const price = await prices.getPrice(balance.mint, balance.heliusPriceInfo);
     if (!price) {
-      unpriceableAssets.push(`${balance.symbol ?? "token"}:${balance.mint}`);
+      unpricedAssets.push({
+        symbol: balance.symbol,
+        mint: balance.mint,
+        reason: "no valid price from Jupiter, Helius, DexScreener, or DefiLlama"
+      });
       continue;
     }
 
-    pricedAssetCount += 1;
-    vaultUsd += balance.amount * price.priceUsd;
+    const valueUsd = round(balance.amount * price.priceUsd) ?? 0;
+    vaultUsd += valueUsd;
+    valuedAssets.push({
+      symbol: balance.symbol,
+      mint: balance.mint,
+      amount: balance.amount,
+      priceUsd: price.priceUsd,
+      valueUsd,
+      provider: price.provider
+    });
   }
 
-  const unpricedAssetCount = unpriceableAssets.length;
+  const unpricedAssetCount = unpricedAssets.length;
   const completeVaultUsd = unpricedAssetCount === 0 ? round(vaultUsd) : null;
 
   return {
@@ -110,9 +140,14 @@ export async function collectVaultHistory(
       {
         date: today,
         vaultUsd: completeVaultUsd,
-        source: "Realms DAO treasury discovery + Helius DAS current balances + DefiLlama current prices",
-        pricedAssetCount,
-        unpricedAssetCount
+        source:
+          "Realms DAO treasury discovery + Helius DAS current balances + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
+        pricedAssetCount: valuedAssets.length,
+        ignoredAssetCount: ignoredAssets.length,
+        unpricedAssetCount,
+        valuedAssets,
+        ignoredAssets,
+        unpricedAssets
       }
     ],
     warnings: [
@@ -120,13 +155,13 @@ export async function collectVaultHistory(
       {
         metric: "vaultUsd",
         message:
-          "Vault collection now starts from the NUMMUS Realms DAO, enumerates governance native treasury PDAs, and reads current treasury assets through Helius DAS. This produces a current-day snapshot only; historical daily Vault USD requires transaction replay plus same-date prices."
+          "Vault collection starts from the NUMMUS Realms DAO, enumerates governance native treasury PDAs, reads current treasury assets through Helius DAS, ignores non-fungible spam/scam assets, and prices fungible assets through Jupiter, Helius, DexScreener, then DefiLlama. This produces a current-day snapshot only; historical daily Vault USD requires transaction replay plus same-date prices."
       },
       ...(unpricedAssetCount > 0
         ? [
             {
               metric: "vaultUsd" as const,
-              message: `Current vaultUsd was left null because ${unpricedAssetCount} treasury asset(s) could not be priced by the current fungible-token policy: ${unpriceableAssets.join(", ")}.`
+              message: `Current vaultUsd was left null because ${unpricedAssetCount} fungible treasury asset(s) could not be priced by Jupiter, Helius, DexScreener, or DefiLlama: ${unpricedAssets.map((asset) => `${asset.symbol ?? "token"}:${asset.mint}`).join(", ")}.`
             }
           ]
         : [])

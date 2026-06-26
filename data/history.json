@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T10:13:20.989Z",
+  "generatedAt": "2026-06-26T10:18:49.422Z",
   "coverage": {
     "from": "2026-06-26",
     "to": "2026-06-26",
@@ -8,11 +8,7 @@
   "warnings": [
     {
       "metric": "vaultUsd",
-      "message": "Vault collection now starts from the NUMMUS Realms DAO, enumerates governance native treasury PDAs, and reads current treasury assets through Helius DAS. This produces a current-day snapshot only; historical daily Vault USD requires transaction replay plus same-date prices."
-    },
-    {
-      "metric": "vaultUsd",
-      "message": "Current vaultUsd was left null because 3 treasury asset(s) could not be priced by the current fungible-token policy: MyNF:GGVXuvQD13vxsNi9Dx86AwwpcTHrfNFcJSgsKesbyzn7, MyNF:EUGVqX5GWe6P4b8bYyaWLFhzMwAES8tq79KpYs5UagMY, PUNCHY:GnYufMbTAMz1DzkSN2DmwkBzjMTLkM22WvQuN1VCbonk."
+      "message": "Vault collection starts from the NUMMUS Realms DAO, enumerates governance native treasury PDAs, reads current treasury assets through Helius DAS, ignores non-fungible spam/scam assets, and prices fungible assets through Jupiter, Helius, DexScreener, then DefiLlama. This produces a current-day snapshot only; historical daily Vault USD requires transaction replay plus same-date prices."
     },
     {
       "metric": "supply",
@@ -25,12 +21,71 @@
     {
       "metric": "burn",
       "message": "Burn events are reconstructed from Helius Enhanced Transactions for the burn wallet. Complete history requires paginating all burn-wallet transactions with the before cursor and validating that no NUMMUS burns occur outside the documented burn wallet."
-    },
-    {
-      "metric": "history",
-      "message": "NAV, treasury backing, and premium remain null until vault USD history and market price history are available for the same dates."
     }
   ],
+  "vaultValuation": {
+    "date": "2026-06-26",
+    "vaultUsd": 81883.69490805,
+    "source": "Realms DAO treasury discovery + Helius DAS current balances + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
+    "pricedAssetCount": 5,
+    "ignoredAssetCount": 2,
+    "unpricedAssetCount": 0,
+    "valuedAssets": [
+      {
+        "symbol": "SOL",
+        "mint": "So11111111111111111111111111111111111111112",
+        "amount": 0.104571323,
+        "priceUsd": 69.00782872654513,
+        "valueUsd": 7.21623995,
+        "provider": "jupiter"
+      },
+      {
+        "symbol": "PUNCHY",
+        "mint": "GnYufMbTAMz1DzkSN2DmwkBzjMTLkM22WvQuN1VCbonk",
+        "amount": 25000000,
+        "priceUsd": 0.00006683571109407034,
+        "valueUsd": 1670.89277735,
+        "provider": "jupiter"
+      },
+      {
+        "symbol": "NUMMUS",
+        "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
+        "amount": 25,
+        "priceUsd": 0.007373441623458166,
+        "valueUsd": 0.18433604,
+        "provider": "jupiter"
+      },
+      {
+        "symbol": "PISTA",
+        "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
+        "amount": 25000000,
+        "priceUsd": 0.0014215140926793492,
+        "valueUsd": 35537.85231698,
+        "provider": "jupiter"
+      },
+      {
+        "symbol": "tBTC",
+        "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
+        "amount": 0.74886342,
+        "priceUsd": 59647.12395449306,
+        "valueUsd": 44667.54923773,
+        "provider": "jupiter"
+      }
+    ],
+    "ignoredAssets": [
+      {
+        "symbol": "MyNF",
+        "mint": "GGVXuvQD13vxsNi9Dx86AwwpcTHrfNFcJSgsKesbyzn7",
+        "reason": "ignored V1_NFT received by treasury"
+      },
+      {
+        "symbol": "MyNF",
+        "mint": "EUGVqX5GWe6P4b8bYyaWLFhzMwAES8tq79KpYs5UagMY",
+        "reason": "ignored V1_NFT received by treasury"
+      }
+    ],
+    "unpricedAssets": []
+  },
   "burnEvents": [
     {
       "signature": "25WczXwsay6Ammq2LukSLePtk6HbpVcRKNNq4JesZvA2wnSZs4opAX7SHnBTQwV5e4FR5Kk27cg96chnnQs7VbJa",
@@ -72,12 +127,12 @@
   "records": [
     {
       "date": "2026-06-26",
-      "vaultUsd": null,
+      "vaultUsd": 81883.69490805,
       "supply": 98152185.149189,
       "marketPrice": 0.007373441623458166,
-      "nav": null,
-      "backing": null,
-      "premium": null
+      "nav": 0.00083425,
+      "backing": 11.31425517,
+      "premium": 8.8384077
     }
   ]
 }

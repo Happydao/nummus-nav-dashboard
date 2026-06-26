@@ -72,6 +72,7 @@ export async function buildHistory(): Promise<GeneratedHistory> {
       recordCount: records.length
     },
     warnings,
+    vaultValuation: vaultResult.data.at(-1) ?? null,
     burnEvents: burnResult.data,
     records
   };

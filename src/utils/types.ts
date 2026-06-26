@@ -50,7 +50,26 @@ export interface VaultValueSnapshot {
   vaultUsd: number | null;
   source: string | null;
   pricedAssetCount?: number;
+  ignoredAssetCount?: number;
   unpricedAssetCount?: number;
+  valuedAssets?: Array<{
+    symbol: string | null;
+    mint: string;
+    amount: number;
+    priceUsd: number;
+    valueUsd: number;
+    provider: string;
+  }>;
+  ignoredAssets?: Array<{
+    symbol: string | null;
+    mint: string;
+    reason: string;
+  }>;
+  unpricedAssets?: Array<{
+    symbol: string | null;
+    mint: string;
+    reason: string;
+  }>;
 }
 
 export interface GeneratedHistory {
@@ -61,6 +80,7 @@ export interface GeneratedHistory {
     recordCount: number;
   };
   warnings: CollectionWarning[];
+  vaultValuation: VaultValueSnapshot | null;
   burnEvents: BurnEvent[];
   records: HistoryRecord[];
 }
