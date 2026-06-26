@@ -1,5 +1,6 @@
 import "./styles.css";
-import { lineChart } from "../charts/lineChart.js";
+import { attachChartInteractions } from "../charts/interactions.js";
+import { lineChart, rangeButtons, type RangeKey } from "../charts/lineChart.js";
 import { kpi } from "../components/kpi.js";
 import { latestRecord, loadHistory } from "../utils/history.js";
 import { numberCompact, percent, ratio, usd } from "../utils/format.js";
@@ -11,6 +12,7 @@ if (!app) {
 }
 
 const root = app;
+let selectedRange: RangeKey = "30D";
 
 render().catch((error: unknown) => {
   root.innerHTML = `<div class="notice">${error instanceof Error ? error.message : "Unable to load dashboard"}</div>`;
@@ -30,7 +32,10 @@ async function render(): Promise<void> {
           <strong>NUMMUS NAV Dashboard</strong>
           <span>Daily NAV, Treasury Backing, and Premium snapshots. Updated once per day at 06:00 UTC.</span>
         </div>
-        <span class="updated">${history.generatedAt ? `Updated ${new Date(history.generatedAt).toLocaleString()}` : "No snapshot collected yet"}</span>
+        <div class="topbar-tools">
+          ${rangeButtons(selectedRange)}
+          <span class="updated">${history.generatedAt ? `Updated ${new Date(history.generatedAt).toLocaleString()}` : "No snapshot collected yet"}</span>
+        </div>
       </header>
       <div class="content">
         <section class="kpis">
@@ -47,14 +52,84 @@ async function render(): Promise<void> {
             : ""
         }
         <section class="charts">
-          ${lineChart("NAV History", records, "nav")}
-          ${lineChart("Treasury Backing History", records, "backing")}
-          ${lineChart("Premium vs NAV History", records, "premium")}
-          ${lineChart("Vault Value History", records, "vaultUsd")}
-          ${lineChart("Supply History", records, "supply")}
-          ${lineChart("tBTC Accumulation", tbtcHistory, "amount")}
+          ${lineChart({
+            id: "nav",
+            title: "NAV History",
+            records,
+            key: "nav",
+            range: selectedRange,
+            formatter: usd,
+            yLabel: "USD / NUMMUS",
+            yMin: 0
+          })}
+          ${lineChart({
+            id: "backing",
+            title: "Treasury Backing History",
+            records,
+            key: "backing",
+            range: selectedRange,
+            formatter: percent,
+            yLabel: "Backing %",
+            yMin: 0
+          })}
+          ${lineChart({
+            id: "premium",
+            title: "Premium vs NAV History",
+            records,
+            key: "premium",
+            range: selectedRange,
+            formatter: ratio,
+            yLabel: "Market / NAV",
+            yMin: 0
+          })}
+          ${lineChart({
+            id: "vault",
+            title: "Vault Value History",
+            records,
+            key: "vaultUsd",
+            range: selectedRange,
+            formatter: usd,
+            yLabel: "USD",
+            yMin: 0
+          })}
+          ${lineChart({
+            id: "supply",
+            title: "Supply History",
+            records,
+            key: "supply",
+            range: selectedRange,
+            formatter: numberCompact,
+            yLabel: "NUMMUS Supply",
+            yMin: 0,
+            yMax: 100_000_000
+          })}
+          ${lineChart({
+            id: "tbtc",
+            title: "tBTC Accumulation",
+            records: tbtcHistory,
+            key: "amount",
+            range: selectedRange,
+            formatter: (value) => `${value.toFixed(8)} tBTC`,
+            yLabel: "tBTC",
+            yMin: 0,
+            showMarkers: true,
+            includePreviousPoint: true
+          })}
         </section>
       </div>
     </div>
   `;
+  attachRangeHandlers();
+  attachChartInteractions(root);
+}
+
+function attachRangeHandlers(): void {
+  for (const button of root.querySelectorAll<HTMLButtonElement>("[data-range]")) {
+    button.addEventListener("click", () => {
+      selectedRange = button.dataset.range as RangeKey;
+      render().catch((error: unknown) => {
+        root.innerHTML = `<div class="notice">${error instanceof Error ? error.message : "Unable to load dashboard"}</div>`;
+      });
+    });
+  }
 }

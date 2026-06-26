@@ -1,50 +1,208 @@
 import type { DailySnapshot, SupplySnapshot, TbtcSnapshot } from "../utils/history.js";
 
-type ChartRecord = DailySnapshot | TbtcSnapshot | SupplySnapshot;
+export type RangeKey = "1D" | "7D" | "30D" | "1Y" | "ALL";
+export type ChartRecord = DailySnapshot | TbtcSnapshot | SupplySnapshot;
 
-export function lineChart(
-  title: string,
-  records: ChartRecord[],
-  key: keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply"> | "amount"
-): string {
-  const points = records
+export interface ChartOptions {
+  id: string;
+  title: string;
+  records: ChartRecord[];
+  key: keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply"> | "amount";
+  range: RangeKey;
+  formatter: (value: number) => string;
+  yLabel: string;
+  yMin?: number;
+  yMax?: number;
+  showMarkers?: boolean;
+  includePreviousPoint?: boolean;
+}
+
+interface ChartPoint {
+  date: string;
+  value: number;
+}
+
+const WIDTH = 760;
+const HEIGHT = 310;
+const PAD = {
+  top: 22,
+  right: 22,
+  bottom: 44,
+  left: 82
+};
+
+export function lineChart(options: ChartOptions): string {
+  const allPoints = toPoints(options.records, options.key);
+  const points = filterByRange(allPoints, options.range, Boolean(options.includePreviousPoint));
+
+  if (points.length === 0) {
+    return `<section class="chart"><h2>${options.title}</h2><div class="empty">No snapshots in selected range</div></section>`;
+  }
+
+  const values = points.map((point) => point.value);
+  const rawMin = options.yMin ?? Math.min(...values);
+  const rawMax = options.yMax ?? Math.max(...values);
+  const yMin = options.yMin ?? niceFloor(rawMin);
+  const yMax = options.yMax ?? niceCeil(rawMax === rawMin ? rawMax + 1 : rawMax);
+  const xMin = new Date(`${points[0].date}T00:00:00.000Z`).getTime();
+  const xMax = new Date(`${points.at(-1)?.date}T00:00:00.000Z`).getTime();
+  const xRange = xMax - xMin || 1;
+  const chartWidth = WIDTH - PAD.left - PAD.right;
+  const chartHeight = HEIGHT - PAD.top - PAD.bottom;
+  const coords = points.map((point) => {
+    const timestamp = new Date(`${point.date}T00:00:00.000Z`).getTime();
+    const x = PAD.left + ((timestamp - xMin) / xRange) * chartWidth;
+    const y = PAD.top + (1 - (point.value - yMin) / (yMax - yMin || 1)) * chartHeight;
+    return { ...point, x, y };
+  });
+  const path = coords
+    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`)
+    .join(" ");
+  const areaPath = `${path} L ${coords.at(-1)?.x.toFixed(2)} ${HEIGHT - PAD.bottom} L ${coords[0].x.toFixed(2)} ${HEIGHT - PAD.bottom} Z`;
+  const yTicks = makeTicks(yMin, yMax, 5);
+  const xTicks = makeDateTicks(points);
+  const latest = points.at(-1);
+
+  return `
+    <section class="chart interactive-chart" data-chart-id="${options.id}">
+      <div class="chart-head">
+        <div>
+          <h2>${options.title}</h2>
+          <span>${points[0].date} -> ${points.at(-1)?.date}</span>
+        </div>
+        <strong>${latest ? options.formatter(latest.value) : "n/a"}</strong>
+      </div>
+      <div class="chart-canvas">
+        <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="${options.title}">
+          <text class="axis-title y-axis-title" x="18" y="${PAD.top + 8}">${options.yLabel}</text>
+          <text class="axis-title x-axis-title" x="${WIDTH - PAD.right}" y="${HEIGHT - 8}" text-anchor="end">Date</text>
+          ${yTicks
+            .map((tick) => {
+              const y = PAD.top + (1 - (tick - yMin) / (yMax - yMin || 1)) * chartHeight;
+              return `
+                <line class="grid-line" x1="${PAD.left}" y1="${y}" x2="${WIDTH - PAD.right}" y2="${y}" />
+                <text class="tick-label y-tick" x="${PAD.left - 10}" y="${y + 4}" text-anchor="end">${options.formatter(tick)}</text>
+              `;
+            })
+            .join("")}
+          ${xTicks
+            .map((tick) => {
+              const x = PAD.left + ((tick.timestamp - xMin) / xRange) * chartWidth;
+              return `
+                <line class="x-tick-line" x1="${x}" y1="${HEIGHT - PAD.bottom}" x2="${x}" y2="${HEIGHT - PAD.bottom + 5}" />
+                <text class="tick-label x-tick" x="${x}" y="${HEIGHT - 18}" text-anchor="middle">${tick.label}</text>
+              `;
+            })
+            .join("")}
+          <line class="axis-line" x1="${PAD.left}" y1="${HEIGHT - PAD.bottom}" x2="${WIDTH - PAD.right}" y2="${HEIGHT - PAD.bottom}" />
+          <line class="axis-line" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
+          <path class="area-path" d="${areaPath}" />
+          <path class="series-path" d="${path}" />
+          ${
+            options.showMarkers
+              ? coords.map((point, index) => marker(point, index)).join("")
+              : ""
+          }
+          <line class="crosshair" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
+          <circle class="hover-dot" cx="${coords[0].x}" cy="${coords[0].y}" r="5" />
+          <rect class="hover-capture" x="${PAD.left}" y="${PAD.top}" width="${chartWidth}" height="${chartHeight}" />
+        </svg>
+        <div class="chart-tooltip"></div>
+      </div>
+      <script type="application/json" class="chart-data">${JSON.stringify({
+        formatterName: options.id,
+        points: coords.map((point) => ({
+          date: point.date,
+          value: point.value,
+          x: point.x,
+          y: point.y,
+          label: options.formatter(point.value)
+        }))
+      })}</script>
+    </section>
+  `;
+}
+
+export function rangeButtons(selected: RangeKey): string {
+  const ranges: RangeKey[] = ["1D", "7D", "30D", "1Y", "ALL"];
+  return `
+    <div class="range-selector" aria-label="Chart range">
+      ${ranges
+        .map(
+          (range) =>
+            `<button type="button" data-range="${range}" class="${range === selected ? "active" : ""}">${range}</button>`
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function toPoints(records: ChartRecord[], key: ChartOptions["key"]): ChartPoint[] {
+  return records
     .map((record) => ({
       date: record.date,
       value: (record as unknown as Record<string, unknown>)[key]
     }))
-    .filter((point): point is { date: string; value: number } => typeof point.value === "number");
+    .filter((point): point is ChartPoint => typeof point.value === "number")
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
 
-  if (points.length === 0) {
-    return `<section class="chart"><h2>${title}</h2><div class="empty">No snapshots yet</div></section>`;
+function filterByRange(points: ChartPoint[], range: RangeKey, includePreviousPoint: boolean): ChartPoint[] {
+  if (range === "ALL" || points.length === 0) return points;
+
+  const lastDate = new Date(`${points.at(-1)?.date}T00:00:00.000Z`);
+  const cutoff = new Date(lastDate);
+  const days = range === "1D" ? 1 : range === "7D" ? 7 : range === "30D" ? 30 : 365;
+  cutoff.setUTCDate(cutoff.getUTCDate() - days);
+
+  const filtered = points.filter((point) => new Date(`${point.date}T00:00:00.000Z`) >= cutoff);
+  if (!includePreviousPoint) return filtered;
+
+  const firstFilteredDate = filtered[0]?.date ?? points.at(-1)?.date;
+  if (!firstFilteredDate) return filtered;
+  const previous = [...points]
+    .reverse()
+    .find((point) => point.date < firstFilteredDate);
+  if (filtered.length === 0) {
+    const fallback = previous ?? points.at(-1);
+    return fallback ? [fallback] : [];
   }
 
-  const width = 640;
-  const height = 220;
-  const pad = 28;
-  const values = points.map((point) => point.value);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = max - min || 1;
-  const xStep = points.length > 1 ? (width - pad * 2) / (points.length - 1) : 0;
-  const coords = points.map((point, index) => {
-    const x = pad + index * xStep;
-    const y = height - pad - ((point.value - min) / range) * (height - pad * 2);
-    return { ...point, x, y };
-  });
-  const path = coords.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
+  return previous ? [previous, ...filtered] : filtered;
+}
 
-  return `
-    <section class="chart">
-      <div class="chart-head">
-        <h2>${title}</h2>
-        <span>${points[0].date} -> ${points.at(-1)?.date}</span>
-      </div>
-      <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${title}">
-        <line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" />
-        <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height - pad}" />
-        <path d="${path}" />
-        ${coords.map((point) => `<circle cx="${point.x}" cy="${point.y}" r="3"><title>${point.date}: ${point.value}</title></circle>`).join("")}
-      </svg>
-    </section>
-  `;
+function makeTicks(min: number, max: number, count: number): number[] {
+  if (count <= 1) return [min, max];
+  const step = (max - min) / (count - 1);
+  return Array.from({ length: count }, (_, index) => min + step * index);
+}
+
+function makeDateTicks(points: ChartPoint[]): Array<{ timestamp: number; label: string }> {
+  const indexes = points.length <= 2 ? [0, points.length - 1] : [0, Math.floor((points.length - 1) / 2), points.length - 1];
+  return [...new Set(indexes)].map((index) => {
+    const point = points[index];
+    const date = new Date(`${point.date}T00:00:00.000Z`);
+    return {
+      timestamp: date.getTime(),
+      label: date.toISOString().slice(5, 10)
+    };
+  });
+}
+
+function marker(point: ChartPoint & { x: number; y: number }, index: number): string {
+  return `<circle class="series-marker" data-index="${index}" cx="${point.x}" cy="${point.y}" r="3.5" />`;
+}
+
+function niceFloor(value: number): number {
+  if (value > 0 && value < 1) return 0;
+  return Math.floor(value / magnitude(value)) * magnitude(value);
+}
+
+function niceCeil(value: number): number {
+  return Math.ceil(value / magnitude(value)) * magnitude(value);
+}
+
+function magnitude(value: number): number {
+  if (value === 0) return 1;
+  return 10 ** Math.floor(Math.log10(Math.abs(value)));
 }

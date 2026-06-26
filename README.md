@@ -101,6 +101,8 @@ The dashboard is a Vite app. It reads `data/history.json` and renders:
 - Supply History.
 - tBTC Accumulation.
 
+Charts use a sticky global range selector (`1D`, `7D`, `30D`, `1Y`, `ALL`) and interactive hover tooltips with crosshairs and axis labels.
+
 Supply History in the dashboard uses daily collector snapshots. Burn-derived supply data may be retained internally, but the chart is intended to grow one point per daily update.
 
 At the start there may be only one record. The charts become useful as the daily snapshot history grows.

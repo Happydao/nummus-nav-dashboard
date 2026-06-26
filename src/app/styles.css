@@ -25,6 +25,10 @@ body {
   display: flex;
   justify-content: space-between;
   padding: 18px 28px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .brand {
@@ -42,6 +46,39 @@ body {
 .chart-head span {
   color: #91a69a;
   font-size: 13px;
+}
+
+.topbar-tools {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.range-selector {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(44px, 1fr));
+  padding: 3px;
+}
+
+.range-selector button {
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: #c8d6ce;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  height: 30px;
+}
+
+.range-selector button.active {
+  background: #f8fbf7;
+  color: #10231a;
+  font-weight: 700;
 }
 
 .content {
@@ -89,7 +126,7 @@ body {
   background: #ffffff;
   border: 1px solid #d9e0da;
   border-radius: 8px;
-  padding: 16px;
+  padding: 18px;
 }
 
 .chart-head {
@@ -97,6 +134,18 @@ body {
   display: flex;
   justify-content: space-between;
   gap: 12px;
+}
+
+.chart-head > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chart-head strong {
+  color: #173d2c;
+  font-size: 18px;
+  white-space: nowrap;
 }
 
 h2 {
@@ -107,15 +156,41 @@ h2 {
 svg {
   display: block;
   height: auto;
-  margin-top: 12px;
   width: 100%;
 }
 
-svg line {
-  stroke: #d2dad4;
+.chart-canvas {
+  margin-top: 14px;
+  position: relative;
 }
 
-svg path {
+.grid-line {
+  stroke: #edf1ee;
+  stroke-width: 1;
+}
+
+.axis-line,
+.x-tick-line {
+  stroke: #cbd7cf;
+  stroke-width: 1.2;
+}
+
+.tick-label,
+.axis-title {
+  fill: #65756c;
+  font-size: 11px;
+}
+
+.axis-title {
+  font-weight: 700;
+}
+
+.area-path {
+  fill: #23704d;
+  opacity: 0.08;
+}
+
+.series-path {
   fill: none;
   stroke: #23704d;
   stroke-linecap: round;
@@ -123,8 +198,63 @@ svg path {
   stroke-width: 3;
 }
 
-svg circle {
+.series-marker {
   fill: #23704d;
+}
+
+.crosshair {
+  opacity: 0;
+  pointer-events: none;
+  stroke: #799487;
+  stroke-dasharray: 4 4;
+}
+
+.hover-dot {
+  fill: #ffffff;
+  opacity: 0;
+  pointer-events: none;
+  stroke: #23704d;
+  stroke-width: 3;
+}
+
+.hover-capture {
+  fill: transparent;
+  cursor: crosshair;
+}
+
+.chart-tooltip {
+  background: #ffffff;
+  border: 1px solid #cbd7cf;
+  border-radius: 8px;
+  box-shadow: 0 10px 28px rgba(16, 35, 26, 0.12);
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 132px;
+  padding: 8px 10px;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.chart-tooltip strong {
+  color: #17211c;
+  font-size: 12px;
+}
+
+.chart-tooltip span {
+  color: #23704d;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.interactive-chart.hovering .chart-tooltip {
+  display: flex;
+}
+
+.interactive-chart.hovering .crosshair,
+.interactive-chart.hovering .hover-dot {
+  opacity: 1;
 }
 
 .empty {
@@ -156,6 +286,11 @@ svg circle {
   .chart-head {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .topbar-tools {
+    align-items: stretch;
+    width: 100%;
   }
 
   .content {
