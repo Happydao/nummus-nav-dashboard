@@ -74,12 +74,14 @@ Every run:
 
 ## GitHub Actions
 
-The workflow `.github/workflows/daily-snapshot.yml` runs once per day. It:
+The workflow `.github/workflows/daily-snapshot.yml` runs once per day at `06:00 UTC`, which is currently 08:00 in Italy during daylight saving time. It:
 
 1. installs dependencies;
 2. runs `npm run collect`;
 3. runs `npm run build`;
 4. commits `data/history.json` if it changed.
+
+The workflow `.github/workflows/deploy-pages.yml` builds the dashboard and deploys `dist/` to GitHub Pages on every push to `main`.
 
 Add this repository secret before enabling the workflow:
 

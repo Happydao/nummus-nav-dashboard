@@ -2,7 +2,8 @@ name: Daily NUMMUS Snapshot
 
 on:
   schedule:
-    - cron: "10 2 * * *"
+    # 06:00 UTC, currently 08:00 in Italy during daylight saving time.
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
 permissions:
