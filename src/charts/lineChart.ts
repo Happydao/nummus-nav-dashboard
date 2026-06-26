@@ -23,6 +23,10 @@ export interface ChartOptions {
     formatter?: (value: number) => string;
   };
   fullWidth?: boolean;
+  action?: {
+    label: string;
+    href: string;
+  };
 }
 
 type ChartKey = keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply" | "marketPrice"> | "amount";
@@ -101,6 +105,7 @@ export function lineChart(options: ChartOptions): string {
           <div class="chart-title-row">
             <h2>${options.title}</h2>
             ${options.info ? infoTip(options.info) : ""}
+            ${options.action ? chartAction(options.action.label, options.action.href) : ""}
           </div>
           <span>${formatDateShort(points[0].date)} -> ${formatDateShort(points.at(-1)?.date ?? points[0].date)}</span>
           ${options.secondary ? legend(options.secondary.label) : ""}
@@ -156,18 +161,20 @@ export function lineChart(options: ChartOptions): string {
           label: options.formatter(point.value),
           series: options.secondary
             ? [
-                { name: "NAV", label: options.formatter(point.value), kind: "primary" },
                 ...(typeof secondaryByDate.get(point.date) === "number"
                   ? [
                       {
                         name: options.secondary.label,
-                        label: (options.secondary.formatter ?? options.formatter)(
-                          secondaryByDate.get(point.date) as number
-                        ),
+                        label: (options.secondary.formatter ?? options.formatter)(secondaryByDate.get(point.date) as number),
                         kind: "secondary"
                       }
                     ]
-                  : [])
+                  : []),
+                {
+                  name: "NAV",
+                  label: options.formatter(point.value),
+                  kind: "primary"
+                }
               ]
             : undefined
         }))
@@ -192,6 +199,10 @@ function legend(secondaryLabel: string): string {
       <span><i class="legend-swatch secondary"></i>${escapeHtml(secondaryLabel)}</span>
     </div>
   `;
+}
+
+function chartAction(label: string, href: string): string {
+  return `<a class="chart-action" href="${escapeHtml(href)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`;
 }
 
 function infoTip(text: string): string {

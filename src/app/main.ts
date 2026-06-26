@@ -16,7 +16,7 @@ if (!app) {
 }
 
 const root = app;
-let selectedRange: RangeKey = "30D";
+let selectedRange: RangeKey = "ALL";
 
 render().catch((error: unknown) => {
   root.innerHTML = `<div class="notice">${error instanceof Error ? error.message : "Unable to load dashboard"}</div>`;
@@ -35,8 +35,11 @@ async function render(): Promise<void> {
     <div class="shell">
       <header class="topbar">
         <div class="brand">
-          <strong>NUMMUS NAV Dashboard</strong>
-          <span>Daily NAV, Treasury Backing, and Premium snapshots. Updated once per day at 06:00 UTC.</span>
+          <img src="${import.meta.env.BASE_URL}visuals/logo3.png" alt="NUMMUS Aeternitas" />
+          <div>
+            <strong>NUMMUS NAV Dashboard</strong>
+            <span>Daily NAV, Treasury Backing, and Premium snapshots. Updated once per day at 06:00 UTC.</span>
+          </div>
         </div>
         <div class="topbar-tools">
           ${rangeButtons(selectedRange)}
@@ -81,7 +84,7 @@ async function render(): Promise<void> {
               formatter: usd
             },
             fullWidth: true,
-            info: "This compares NAV with NUMMUS market price. NAV is the treasury value behind each token; the market price is what traders pay. The healthier zone is when price moves closer to NAV, because a large gap means NUMMUS trades at a high premium to treasury backing."
+            info: "This compares NAV with NUMMUS market price in real USD terms. NAV is the treasury value behind each token; the market price is what traders pay. A smaller gap means price is closer to treasury backing."
           })}
           ${lineChart({
             id: "backing",
@@ -130,6 +133,10 @@ async function render(): Promise<void> {
             yLabel: "NUMMUS",
             yMin: 90_000_000,
             yMax: 100_000_000,
+            action: {
+              label: "Burn Dashboard",
+              href: "https://happydao.github.io/Nummus.burn/"
+            },
             info: "Supply shows how many NUMMUS tokens are circulating. Lower supply can increase NAV per token if treasury value is stable or growing."
           })}
           ${lineChart({
@@ -143,9 +150,21 @@ async function render(): Promise<void> {
             yLabel: "tBTC",
             yMin: 0,
             includePreviousPoint: true,
+            action: {
+              label: "Vault DAO",
+              href: "https://happydao.github.io/Nummus.VaultDAO/"
+            },
             info: "tBTC Accumulation shows how much tBTC the treasury has collected. A rising line means the treasury is accumulating more BTC exposure."
           })}
         </section>
+        <footer class="site-footer">
+          <a class="footer-button" href="https://jup.ag/tokens/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray" target="_blank" rel="noreferrer">Buy on Jupiter</a>
+          <p>
+            © 2023 Torrino DAO — Crafted with passion by HAPPY —
+            <a href="https://happydev.fi" target="_blank" rel="noreferrer">happydev.fi</a>
+          </p>
+          <a class="footer-button" href="https://nummus.meme" target="_blank" rel="noreferrer">nummus.meme</a>
+        </footer>
       </div>
     </div>
   `;

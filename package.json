@@ -8,7 +8,10 @@
     "collect": "tsx collector/collectDailySnapshot.ts",
     "import:vault-history": "tsx collector/importVaultHistory.ts",
     "check": "tsc --noEmit",
-    "build": "vite build && node scripts/copy-data.mjs"
+    "dev": "VITE_BASE_PATH=/ vite --host 127.0.0.1",
+    "build": "vite build && node scripts/copy-data.mjs",
+    "build:local": "VITE_BASE_PATH=/ vite build && node scripts/copy-data.mjs",
+    "preview:local": "VITE_BASE_PATH=/ vite preview --host 127.0.0.1"
   },
   "dependencies": {
     "@solana/spl-governance": "^0.3.28",
