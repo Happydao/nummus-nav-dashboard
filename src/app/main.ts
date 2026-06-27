@@ -160,8 +160,8 @@ async function render(): Promise<void> {
         <footer class="site-footer">
           <a class="footer-button" href="https://jup.ag/tokens/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray" target="_blank" rel="noreferrer">Buy on Jupiter</a>
           <p>
-            © 2023 Torrino DAO — Crafted with passion by HAPPY —
-            <a href="https://happydev.fi" target="_blank" rel="noreferrer">happydev.fi</a>
+            © 2023 <a href="https://torrino.space" target="_blank" rel="noreferrer">Torrino DAO</a> —
+            Crafted with passion by <a href="https://happydev.fi" target="_blank" rel="noreferrer">HAPPY</a>
           </p>
           <a class="footer-button" href="https://nummus.meme" target="_blank" rel="noreferrer">nummus.meme</a>
         </footer>
