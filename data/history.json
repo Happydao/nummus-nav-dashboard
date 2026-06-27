@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-27T17:01:15.632Z",
+  "generatedAt": "2026-06-27T19:07:33.203Z",
   "records": [
     {
       "date": "2025-12-05",
@@ -8148,12 +8148,12 @@
     },
     {
       "date": "2026-06-27",
-      "vaultUsd": 83362.9701603,
+      "vaultUsd": 83362.9063701,
       "supply": 98152101.856498,
-      "marketPrice": 0.008193459602999317,
+      "marketPrice": 0.008140809375984753,
       "nav": 0.00084932,
-      "backing": 10.36582886,
-      "premium": 9.6470819,
+      "backing": 10.43286927,
+      "premium": 9.58509087,
       "tbtcAmount": 0.74886342,
       "valuationReport": {
         "source": "Helius DAS current vault assets + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
@@ -8162,8 +8162,8 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104571323,
-            "priceUsd": 72.37046635278601,
-            "valueUsd": 7.56787541,
+            "priceUsd": 71.77303731449088,
+            "valueUsd": 7.50540147,
             "provider": "jupiter"
           },
           {
@@ -8178,8 +8178,8 @@
             "symbol": "NUMMUS",
             "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
             "amount": 25,
-            "priceUsd": 0.008193459602999317,
-            "valueUsd": 0.20483649,
+            "priceUsd": 0.008140809375984753,
+            "valueUsd": 0.20352023,
             "provider": "jupiter"
           },
           {
