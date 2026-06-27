@@ -88,7 +88,7 @@ async function render(): Promise<void> {
               yMin: 0
             },
             fullWidth: true,
-            info: "This compares NAV with NUMMUS market price in real USD terms. NAV is the treasury value behind each token; the market price is what traders pay. A smaller gap means price is closer to treasury backing."
+            info: "NAV is the treasury value behind each NUMMUS, while market price is what traders pay. The green NAV line uses the left axis and the orange NUMMUS Price line uses the right axis. Because the scales are independent, compare their trends rather than their visual distance or crossing points. Use Treasury Backing and Premium vs NAV to measure the actual difference between price and NAV."
           })}
           ${lineChart({
             id: "backing",
