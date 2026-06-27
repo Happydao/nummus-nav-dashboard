@@ -2,8 +2,8 @@ name: Daily NUMMUS Snapshot
 
 on:
   schedule:
-    # 06:25 UTC, currently 08:25 in Italy during daylight saving time.
-    - cron: "25 6 * * *"
+    # Temporary scheduler test. Restore to "25 6 * * *" after verification.
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 permissions:
