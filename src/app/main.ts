@@ -173,13 +173,24 @@ async function render(): Promise<void> {
             info: "tBTC Accumulation shows how much tBTC the treasury has collected. A rising line means the treasury is accumulating more BTC exposure."
           })}
         </section>
-        ${projectionChart({
-          latest,
-          records,
-          supplyHistory: history.supplyHistory ?? [],
-          scenario: selectedProjectionScenario,
-          years: selectedProjectionYears
-        })}
+      </div>
+      <section class="projection-zone" aria-labelledby="projection-zone-title">
+        <div class="projection-zone-inner">
+          <header class="projection-intro">
+            <span>Hypothetical scenarios</span>
+            <h2 id="projection-zone-title">Forward-Looking Simulation</h2>
+            <p>Modelled outcomes based on the latest real snapshot and documented assumptions. This section is not historical data or a price forecast.</p>
+          </header>
+          ${projectionChart({
+            latest,
+            records,
+            supplyHistory: history.supplyHistory ?? [],
+            scenario: selectedProjectionScenario,
+            years: selectedProjectionYears
+          })}
+        </div>
+      </section>
+      <div class="content footer-content">
         <footer class="site-footer">
           <a class="footer-button" href="https://jup.ag/tokens/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray" target="_blank" rel="noreferrer">Buy on Jupiter</a>
           <p>
