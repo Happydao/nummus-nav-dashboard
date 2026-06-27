@@ -1,4 +1,4 @@
-name: Daily NUMMUS Snapshot
+name: Scheduled NUMMUS Snapshot
 
 on:
   schedule:

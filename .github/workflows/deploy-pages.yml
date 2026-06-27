@@ -6,7 +6,7 @@ on:
       - main
   workflow_run:
     workflows:
-      - Daily NUMMUS Snapshot
+      - Scheduled NUMMUS Snapshot
     types:
       - completed
   workflow_dispatch:
