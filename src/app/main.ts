@@ -38,7 +38,7 @@ async function render(): Promise<void> {
           <img src="${import.meta.env.BASE_URL}visuals/logo3.png" alt="NUMMUS Aeternitas" />
           <div>
             <strong>NUMMUS NAV Dashboard</strong>
-            <span>Daily NAV, Treasury Backing, and Premium snapshots. Updated once per day at 06:00 UTC.</span>
+            <span>Daily NAV, Treasury Backing, and Premium snapshots. Updated once per day at 06:25 UTC.</span>
           </div>
         </div>
         <div class="topbar-tools">

@@ -52,6 +52,15 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     history.supplyHistory ?? [],
     history.supplyCursor
   );
+  if (snapshot.tbtcAmount !== null) {
+    const tbtcByDate = new Map(tbtc.history.map((point) => [point.date, point.amount]));
+    tbtcByDate.set(snapshot.date, snapshot.tbtcAmount);
+    tbtc.history = [...tbtcByDate.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, amount]) => ({ date, amount }));
+    tbtc.cursor.lastAmount = snapshot.tbtcAmount;
+  }
+
   history.tbtcHistory = tbtc.history;
   history.tbtcCursor = tbtc.cursor;
   history.supplyHistory = supply.history;
