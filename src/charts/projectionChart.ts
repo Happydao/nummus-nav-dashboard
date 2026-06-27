@@ -25,17 +25,17 @@ interface ProjectionPoint {
   priceY: number;
 }
 
-const SCENARIOS: Record<ProjectionScenario, { label: string; growth: number }> = {
-  steady: { label: "Steady", growth: 1 },
-  strong: { label: "Strong", growth: 1.5 },
-  accelerated: { label: "Accelerated", growth: 2 }
+const SCENARIOS: Record<ProjectionScenario, { label: string; targetMultiplier: number; premiumBasis: string }> = {
+  steady: { label: "Steady", targetMultiplier: 5, premiumBasis: "historical minimum" },
+  strong: { label: "Strong", targetMultiplier: 10, premiumBasis: "historical average" },
+  accelerated: { label: "Accelerated", targetMultiplier: 20, premiumBasis: "historical maximum" }
 };
 
 const WIDTH = 1000;
 const HEIGHT = 390;
 const PAD = { top: 28, right: 112, bottom: 48, left: 112 };
 const INFO =
-  "This simulator starts from the latest real Vault Value and supply. Vault Value increases each year by the selected percentage of today's Vault Value, using a linear annual model. Supply decreases using the average daily burn observed between the first reliable supply point and today. Projected NAV equals projected Vault Value divided by projected supply. Projected NUMMUS Price equals projected NAV multiplied by the average historical premium across all valid daily records. These are mathematical scenarios, not guaranteed market forecasts or financial advice.";
+  "This simulator starts from the latest real Vault Value and supply. The selected scenario sets the Vault Value target at year five: Steady 5x, Strong 10x, or Accelerated 20x today's Vault. Values between today and year five are interpolated linearly, so every horizon follows the same trajectory. Supply decreases using the average daily burn observed between the first reliable supply point and today. Projected NAV equals projected Vault Value divided by projected supply. For every valid historical day, premium equals NUMMUS market price divided by NAV. Steady uses the lowest historical premium, Strong uses the arithmetic average, and Accelerated uses the highest historical premium. Projected NUMMUS Price equals projected NAV multiplied by the selected scenario premium. These are mathematical scenarios, not guaranteed market forecasts or financial advice.";
 
 export function projectionChart(options: ProjectionChartOptions): string {
   const latest = options.latest;
@@ -57,13 +57,14 @@ export function projectionChart(options: ProjectionChartOptions): string {
   }
 
   const burnRate = observedBurnRate(options.supplyHistory, latest);
-  const premium = historicalAveragePremium(options.records) ?? latest.marketPrice / latest.nav;
   const scenario = SCENARIOS[options.scenario];
+  const premium = scenarioPremium(options.records, options.scenario) ?? latest.marketPrice / latest.nav;
   const totalMonths = options.years * 12;
   const rawPoints = Array.from({ length: totalMonths + 1 }, (_, month) => {
     const date = addUtcMonths(latest.date, month);
     const elapsedDays = daysBetween(latest.date, date);
-    const vaultUsd = latest.vaultUsd as number * (1 + scenario.growth * (month / 12));
+    const vaultMultiplier = 1 + (scenario.targetMultiplier - 1) * (month / 60);
+    const vaultUsd = latest.vaultUsd as number * vaultMultiplier;
     const supply = Math.max(1, (latest.supply as number) - burnRate.perDay * elapsedDays);
     const nav = vaultUsd / supply;
     return {
@@ -103,7 +104,7 @@ export function projectionChart(options: ProjectionChartOptions): string {
             <h2>Treasury Growth &amp; Projected NUMMUS Price Simulator</h2>
             ${infoTip(INFO)}
           </div>
-          <span>${scenario.label} scenario · +${scenario.growth * 100}% annual Vault increase · ${options.years}Y horizon</span>
+          <span>${scenario.label} scenario · ${scenario.targetMultiplier}x Vault target at 5Y · ${options.years}Y view</span>
         </div>
         <div class="projection-controls">
           ${scenarioButtons(options.scenario)}
@@ -117,11 +118,12 @@ export function projectionChart(options: ProjectionChartOptions): string {
         ${stat("Projected Burns", numberCompact(endpoint.burned))}
         ${stat("Projected NAV", usd(endpoint.nav))}
         ${stat("Projected NUMMUS Price", usd(endpoint.impliedPrice), "projection-stat-price")}
-        ${stat("Historical Avg Premium", ratio(premium))}
+        ${stat("Scenario Premium", ratio(premium))}
       </div>
 
       <div class="projection-assumptions">
         <span>Observed burn pace: ${numberCompact(burnRate.perYear)} NUMMUS/year</span>
+        <span>Premium basis: ${scenario.premiumBasis}</span>
         <span>Projection endpoint: ${formatProjectionDate(endpoint.date)}</span>
       </div>
 
@@ -195,11 +197,13 @@ function observedBurnRate(history: SupplySnapshot[], latest: DailySnapshot): { p
   return { perDay, perYear: perDay * 365.25 };
 }
 
-function historicalAveragePremium(records: DailySnapshot[]): number | null {
+function scenarioPremium(records: DailySnapshot[], scenario: ProjectionScenario): number | null {
   const premiums = records
     .map((record) => record.premium)
     .filter((premium): premium is number => typeof premium === "number" && Number.isFinite(premium) && premium > 0);
   if (premiums.length === 0) return null;
+  if (scenario === "steady") return Math.min(...premiums);
+  if (scenario === "accelerated") return Math.max(...premiums);
   return premiums.reduce((total, premium) => total + premium, 0) / premiums.length;
 }
 
@@ -209,7 +213,7 @@ function scenarioButtons(selected: ProjectionScenario): string {
       ${(Object.entries(SCENARIOS) as Array<[ProjectionScenario, (typeof SCENARIOS)[ProjectionScenario]]>)
         .map(
           ([key, scenario]) =>
-            `<button type="button" data-projection-scenario="${key}" class="${key === selected ? "active" : ""}">${scenario.label} +${scenario.growth * 100}%/yr</button>`
+            `<button type="button" data-projection-scenario="${key}" class="${key === selected ? "active" : ""}">${scenario.label} ${scenario.targetMultiplier}x</button>`
         )
         .join("")}
     </div>
