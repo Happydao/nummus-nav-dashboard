@@ -682,6 +682,14 @@ svg {
     padding: 14px;
   }
 
+  .chart {
+    position: relative;
+  }
+
+  .chart-canvas {
+    position: static;
+  }
+
   .kpi > strong {
     font-size: 20px;
   }
@@ -735,9 +743,9 @@ svg {
 
   .chart-tooltip {
     left: auto !important;
-    max-width: calc(100% - 16px);
-    right: 8px;
-    top: 8px !important;
+    max-width: calc(100% - 28px);
+    right: 14px;
+    top: 14px !important;
     transform: none;
     z-index: 5;
   }
