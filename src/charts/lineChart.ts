@@ -10,6 +10,7 @@ export interface ChartOptions {
   key: ChartKey;
   range: RangeKey;
   formatter: (value: number) => string;
+  primaryLegendLabel?: string;
   axisFormatter?: (value: number) => string;
   yLabel: string;
   yMin?: number;
@@ -21,6 +22,7 @@ export interface ChartOptions {
   secondary?: {
     key: ChartKey;
     label: string;
+    legendLabel?: string;
     formatter?: (value: number) => string;
     axisFormatter?: (value: number) => string;
     axisLabel?: string;
@@ -118,6 +120,9 @@ export function lineChart(options: ChartOptions): string {
   const latest = points.at(-1);
   const axisFormatter = options.axisFormatter ?? options.formatter;
   const changeSummary = renderChangeSummary(options, points, secondaryCoords);
+  const dualAxisSummary = hasIndependentAxis
+    ? renderDualAxisSummary(options, points, secondaryCoords)
+    : "";
 
   return `
     <section class="chart interactive-chart${options.fullWidth ? " chart-full" : ""}" data-chart-id="${options.id}">
@@ -129,13 +134,15 @@ export function lineChart(options: ChartOptions): string {
             ${options.action ? chartAction(options.action.label, options.action.href) : ""}
           </div>
           <span>${formatDateShort(points[0].date)} -> ${formatDateShort(points.at(-1)?.date ?? points[0].date)}</span>
-          ${options.secondary ? legend(options.secondary.label) : ""}
+          ${options.secondary ? legend(options.primaryLegendLabel ?? "NAV", options.secondary.legendLabel ?? options.secondary.label) : ""}
         </div>
-        <div class="chart-current">
-          <strong>${latest ? options.formatter(latest.value) : "n/a"}</strong>
-          ${changeSummary}
-        </div>
+        ${
+          hasIndependentAxis
+            ? ""
+            : `<div class="chart-current"><strong>${latest ? options.formatter(latest.value) : "n/a"}</strong>${changeSummary}</div>`
+        }
       </div>
+      ${dualAxisSummary}
       <div class="chart-canvas">
         <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="${options.title}">
           <text class="axis-title y-axis-title${hasIndependentAxis ? " primary-axis-title" : ""}" x="${PAD.left}" y="${PAD.top - 8}">${options.yLabel}</text>
@@ -150,7 +157,7 @@ export function lineChart(options: ChartOptions): string {
               const y = PAD.top + (1 - (tick - yMin) / (yMax - yMin || 1)) * chartHeight;
               return `
                 <line class="grid-line" x1="${PAD.left}" y1="${y}" x2="${plotRight}" y2="${y}" />
-                <text class="tick-label y-tick" x="${PAD.left - 10}" y="${y + 4}" text-anchor="end">${axisFormatter(tick)}</text>
+                <text class="tick-label y-tick${hasIndependentAxis ? " primary-y-tick" : ""}" x="${PAD.left - 10}" y="${y + 4}" text-anchor="end">${axisFormatter(tick)}</text>
               `;
             })
             .join("")}
@@ -170,7 +177,7 @@ export function lineChart(options: ChartOptions): string {
             })
             .join("")}
           <line class="axis-line" x1="${PAD.left}" y1="${HEIGHT - PAD.bottom}" x2="${plotRight}" y2="${HEIGHT - PAD.bottom}" />
-          <line class="axis-line" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
+          <line class="axis-line${hasIndependentAxis ? " primary-axis-line" : ""}" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
           ${hasIndependentAxis ? `<line class="axis-line secondary-axis-line" x1="${plotRight}" y1="${PAD.top}" x2="${plotRight}" y2="${HEIGHT - PAD.bottom}" />` : ""}
           ${areaPath ? `<path class="area-path" d="${areaPath}" />` : ""}
           <path class="series-path" d="${path}" />
@@ -216,6 +223,29 @@ export function lineChart(options: ChartOptions): string {
         }))
       })}</script>
     </section>
+  `;
+}
+
+function renderDualAxisSummary(
+  options: ChartOptions,
+  primaryPoints: ChartPoint[],
+  secondaryPoints: ChartPoint[]
+): string {
+  const primaryLatest = primaryPoints.at(-1)?.value;
+  const secondaryLatest = secondaryPoints.at(-1)?.value;
+  const secondaryFormatter = options.secondary?.formatter ?? options.formatter;
+
+  return `
+    <div class="dual-axis-summary">
+      <div class="dual-axis-metric primary">
+        <strong>${typeof primaryLatest === "number" ? options.formatter(primaryLatest) : "n/a"}</strong>
+        ${changeLine(primaryPoints, options.changeMode ?? "standard", "NAV")}
+      </div>
+      <div class="dual-axis-metric secondary">
+        <strong>${typeof secondaryLatest === "number" ? secondaryFormatter(secondaryLatest) : "n/a"}</strong>
+        ${changeLine(secondaryPoints, options.secondary?.changeMode ?? "standard", "Price")}
+      </div>
+    </div>
   `;
 }
 
@@ -288,10 +318,10 @@ function makePath(points: Array<ChartPoint & { x: number; y: number }>, plotRigh
     .join(" ");
 }
 
-function legend(secondaryLabel: string): string {
+function legend(primaryLabel: string, secondaryLabel: string): string {
   return `
     <div class="chart-legend" aria-label="Chart legend">
-      <span><i class="legend-swatch primary"></i>NAV</span>
+      <span><i class="legend-swatch primary"></i>${escapeHtml(primaryLabel)}</span>
       <span><i class="legend-swatch secondary"></i>${escapeHtml(secondaryLabel)}</span>
     </div>
   `;

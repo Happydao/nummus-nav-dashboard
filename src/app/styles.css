@@ -409,6 +409,40 @@ body {
   min-width: 120px;
 }
 
+.dual-axis-summary {
+  align-items: flex-start;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 14px;
+  max-width: 100%;
+  width: 100%;
+}
+
+.dual-axis-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.dual-axis-metric.secondary {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.dual-axis-metric strong {
+  color: #f4f8f5;
+  font-size: 18px;
+}
+
+.dual-axis-metric.primary .chart-change {
+  color: #57c990;
+}
+
+.dual-axis-metric.secondary .chart-change {
+  color: #d79551;
+}
+
 .chart-change-list {
   align-items: flex-end;
   display: flex;
@@ -477,6 +511,14 @@ svg {
 }
 
 .primary-axis-title {
+  fill: #57c990;
+}
+
+.primary-axis-line {
+  stroke: rgba(87, 201, 144, 0.5);
+}
+
+.primary-y-tick {
   fill: #57c990;
 }
 
@@ -720,12 +762,16 @@ svg {
   }
 
   .content {
+    min-width: 0;
     padding: 14px;
+    width: 100%;
   }
 
   .kpis,
   .charts {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+    width: 100%;
   }
 
   .chart-full {
@@ -739,6 +785,9 @@ svg {
 
   .kpi,
   .chart {
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
     padding: 14px;
   }
 
