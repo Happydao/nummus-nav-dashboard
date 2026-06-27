@@ -96,6 +96,7 @@ async function render(): Promise<void> {
             axisFormatter: percent,
             yLabel: "Backing %",
             yMin: 0,
+            changeMode: "percentage-points",
             info: "Treasury backing compares NAV with market price. 100% means the market price is fully backed by NAV; below 100% means the token trades above its backing; above 100% means NAV is higher than market price."
           })}
           ${lineChart({
@@ -108,6 +109,7 @@ async function render(): Promise<void> {
             axisFormatter: ratio,
             yLabel: "Market / NAV",
             yMin: 0,
+            changeMode: "inverse",
             info: "Premium shows how many times market price is above NAV. Lower is generally healthier; 1x means price equals NAV, while high values mean the token is trading at a large premium."
           })}
           ${lineChart({
@@ -133,6 +135,7 @@ async function render(): Promise<void> {
             yLabel: "NUMMUS",
             yMin: 90_000_000,
             yMax: 100_000_000,
+            changeMode: "reduction",
             action: {
               label: "Burn Dashboard",
               href: "https://happydao.github.io/Nummus.burn/"

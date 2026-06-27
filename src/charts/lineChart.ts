@@ -16,11 +16,13 @@ export interface ChartOptions {
   yMax?: number;
   showMarkers?: boolean;
   includePreviousPoint?: boolean;
+  changeMode?: ChangeMode;
   info?: string;
   secondary?: {
     key: ChartKey;
     label: string;
     formatter?: (value: number) => string;
+    changeMode?: ChangeMode;
   };
   fullWidth?: boolean;
   action?: {
@@ -28,6 +30,8 @@ export interface ChartOptions {
     href: string;
   };
 }
+
+type ChangeMode = "standard" | "reduction" | "inverse" | "percentage-points";
 
 type ChartKey = keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply" | "marketPrice"> | "amount";
 
@@ -97,6 +101,7 @@ export function lineChart(options: ChartOptions): string {
   const xTicks = makeDateTicks(points);
   const latest = points.at(-1);
   const axisFormatter = options.axisFormatter ?? options.formatter;
+  const changeSummary = renderChangeSummary(options, points, secondaryCoords);
 
   return `
     <section class="chart interactive-chart${options.fullWidth ? " chart-full" : ""}" data-chart-id="${options.id}">
@@ -110,7 +115,10 @@ export function lineChart(options: ChartOptions): string {
           <span>${formatDateShort(points[0].date)} -> ${formatDateShort(points.at(-1)?.date ?? points[0].date)}</span>
           ${options.secondary ? legend(options.secondary.label) : ""}
         </div>
-        <strong>${latest ? options.formatter(latest.value) : "n/a"}</strong>
+        <div class="chart-current">
+          <strong>${latest ? options.formatter(latest.value) : "n/a"}</strong>
+          ${changeSummary}
+        </div>
       </div>
       <div class="chart-canvas">
         <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="${options.title}">
@@ -181,6 +189,66 @@ export function lineChart(options: ChartOptions): string {
       })}</script>
     </section>
   `;
+}
+
+function renderChangeSummary(
+  options: ChartOptions,
+  points: ChartPoint[],
+  secondaryPoints: ChartPoint[]
+): string {
+  if (options.secondary) {
+    return `
+      <div class="chart-change-list">
+        ${changeLine(points, options.changeMode ?? "standard", "NAV")}
+        ${changeLine(secondaryPoints, options.secondary.changeMode ?? "standard", options.secondary.label)}
+      </div>
+    `;
+  }
+
+  return `<div class="chart-change-list">${changeLine(points, options.changeMode ?? "standard")}</div>`;
+}
+
+function changeLine(points: ChartPoint[], mode: ChangeMode, label?: string): string {
+  const prefix = label ? `${escapeHtml(label)} ` : "";
+  if (points.length < 2) {
+    return `<span class="chart-change neutral">${prefix}N/A for range</span>`;
+  }
+
+  const first = points[0].value;
+  const last = points.at(-1)?.value ?? first;
+  const delta = last - first;
+  const relative = first === 0 ? null : (delta / Math.abs(first)) * 100;
+  const direction = delta > 0 ? "↑" : delta < 0 ? "↓" : "→";
+  const state = changeState(delta, mode);
+
+  if (mode === "reduction" && relative !== null) {
+    const wording = delta < 0 ? "reduction" : delta > 0 ? "increase" : "change";
+    return `<span class="chart-change ${state}">${direction} ${formatChange(Math.abs(relative), false)} ${wording}</span>`;
+  }
+
+  if (mode === "percentage-points") {
+    const relativeText = relative === null ? "N/A" : formatChange(relative);
+    return `<span class="chart-change ${state}">${direction} ${relativeText} · ${formatSignedNumber(delta)} pp</span>`;
+  }
+
+  const value = relative === null ? "N/A" : formatChange(relative);
+  return `<span class="chart-change ${state}">${prefix}${direction} ${value}</span>`;
+}
+
+function changeState(delta: number, mode: ChangeMode): "favorable" | "adverse" | "neutral" {
+  if (delta === 0) return "neutral";
+  if (mode === "inverse" || mode === "reduction") return delta < 0 ? "favorable" : "adverse";
+  return delta > 0 ? "favorable" : "adverse";
+}
+
+function formatChange(value: number, signed = true): string {
+  const sign = signed && value > 0 ? "+" : "";
+  return `${sign}${new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(value)}%`;
+}
+
+function formatSignedNumber(value: number): string {
+  const sign = value > 0 ? "+" : "";
+  return `${sign}${new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(value)}`;
 }
 
 function makePath(points: Array<ChartPoint & { x: number; y: number }>): string {

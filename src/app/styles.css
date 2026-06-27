@@ -401,6 +401,40 @@ body {
   white-space: nowrap;
 }
 
+.chart-current {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 120px;
+}
+
+.chart-change-list {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chart-change {
+  color: #a7baaf;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.chart-change.favorable {
+  color: #57c990;
+}
+
+.chart-change.adverse {
+  color: #e49a62;
+}
+
+.chart-change.neutral {
+  color: #91a49a;
+}
+
 h2 {
   color: #f4f8f5;
   font-size: 15px;
@@ -645,6 +679,19 @@ svg {
     width: 54px;
   }
 
+  .brand,
+  .brand > div {
+    min-width: 0;
+  }
+
+  .brand {
+    width: 100%;
+  }
+
+  .brand span {
+    overflow-wrap: anywhere;
+  }
+
   .brand strong {
     font-size: 16px;
   }
@@ -696,6 +743,11 @@ svg {
 
   .chart-head strong {
     font-size: 16px;
+  }
+
+  .chart-current,
+  .chart-change-list {
+    align-items: flex-start;
   }
 
   .range-selector {
