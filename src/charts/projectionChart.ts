@@ -27,14 +27,14 @@ interface ProjectionPoint {
 const SCENARIOS: Record<ProjectionScenario, { label: string; growth: number }> = {
   steady: { label: "Steady", growth: 0.5 },
   strong: { label: "Strong", growth: 1 },
-  accelerated: { label: "Accelerated", growth: 2 }
+  accelerated: { label: "Accelerated", growth: 1.5 }
 };
 
 const WIDTH = 1000;
 const HEIGHT = 390;
 const PAD = { top: 28, right: 112, bottom: 48, left: 112 };
 const INFO =
-  "This simulator starts from the latest real Vault Value, supply, NAV, and NUMMUS market premium. Vault Value grows to the selected scenario target by the end of the chosen horizon. Supply decreases using the average daily burn observed between the first reliable supply point and today. Projected NAV equals projected Vault Value divided by projected supply. Implied NUMMUS Price equals projected NAV multiplied by today's premium. These are mathematical scenarios, not market forecasts or financial advice.";
+  "This simulator starts from the latest real Vault Value, supply, NAV, and NUMMUS market premium. Vault Value increases each year by the selected percentage of today's Vault Value, using a linear annual model. Supply decreases using the average daily burn observed between the first reliable supply point and today. Projected NAV equals projected Vault Value divided by projected supply. Projected NUMMUS Price equals projected NAV multiplied by today's premium. These are mathematical scenarios, not guaranteed market forecasts or financial advice.";
 
 export function projectionChart(options: ProjectionChartOptions): string {
   const latest = options.latest;
@@ -49,7 +49,7 @@ export function projectionChart(options: ProjectionChartOptions): string {
   ) {
     return `
       <section class="chart chart-full projection-section">
-        <h2>Treasury Growth &amp; Implied NUMMUS Price Simulator</h2>
+        <h2>Treasury Growth &amp; Projected NUMMUS Price Simulator</h2>
         <div class="empty">A complete current snapshot is required for projections</div>
       </section>
     `;
@@ -62,7 +62,7 @@ export function projectionChart(options: ProjectionChartOptions): string {
   const rawPoints = Array.from({ length: totalMonths + 1 }, (_, month) => {
     const date = addUtcMonths(latest.date, month);
     const elapsedDays = daysBetween(latest.date, date);
-    const vaultUsd = latest.vaultUsd as number * (1 + scenario.growth) ** (month / totalMonths);
+    const vaultUsd = latest.vaultUsd as number * (1 + scenario.growth * (month / 12));
     const supply = Math.max(1, (latest.supply as number) - burnRate.perDay * elapsedDays);
     const nav = vaultUsd / supply;
     return {
@@ -99,10 +99,10 @@ export function projectionChart(options: ProjectionChartOptions): string {
       <div class="projection-head">
         <div>
           <div class="chart-title-row">
-            <h2>Treasury Growth &amp; Implied NUMMUS Price Simulator</h2>
+            <h2>Treasury Growth &amp; Projected NUMMUS Price Simulator</h2>
             ${infoTip(INFO)}
           </div>
-          <span>${scenario.label} scenario · +${scenario.growth * 100}% Vault target · ${options.years}Y horizon</span>
+          <span>${scenario.label} scenario · +${scenario.growth * 100}% annual Vault increase · ${options.years}Y horizon</span>
         </div>
         <div class="projection-controls">
           ${scenarioButtons(options.scenario)}
@@ -115,7 +115,7 @@ export function projectionChart(options: ProjectionChartOptions): string {
         ${stat("Projected Supply", numberCompact(endpoint.supply))}
         ${stat("Projected Burns", numberCompact(endpoint.burned))}
         ${stat("Projected NAV", usd(endpoint.nav))}
-        ${stat("Implied Price", usd(endpoint.impliedPrice))}
+        ${stat("Projected Price", usd(endpoint.impliedPrice))}
         ${stat("Premium Fixed", ratio(premium))}
       </div>
 
@@ -126,13 +126,13 @@ export function projectionChart(options: ProjectionChartOptions): string {
 
       <div class="chart-legend projection-legend" aria-label="Projection legend">
         <span><i class="legend-swatch projection-vault"></i>Vault Value (USD)</span>
-        <span><i class="legend-swatch projection-price"></i>Implied NUMMUS Price (USD)</span>
+        <span><i class="legend-swatch projection-price"></i>Projected NUMMUS Price (USD)</span>
       </div>
 
       <div class="chart-canvas projection-canvas">
-        <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="Projected Vault Value and implied NUMMUS price">
+        <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="Projected Vault Value and projected NUMMUS price">
           <text class="axis-title projection-vault-axis" x="${PAD.left}" y="${PAD.top - 10}">Vault Value (USD)</text>
-          <text class="axis-title projection-price-axis" x="${WIDTH - 4}" y="${PAD.top - 10}" text-anchor="end">Implied Price (USD)</text>
+          <text class="axis-title projection-price-axis" x="${WIDTH - 4}" y="${PAD.top - 10}" text-anchor="end">Projected NUMMUS Price (USD)</text>
           ${vaultTicks
             .map((tick, index) => {
               const y = PAD.top + (1 - tick / vaultMax) * plotHeight;
@@ -172,7 +172,7 @@ export function projectionChart(options: ProjectionChartOptions): string {
           label: usd(point.vaultUsd),
           series: [
             { name: "Vault Value", label: usd(point.vaultUsd), kind: "primary" },
-            { name: "Implied Price", label: usd(point.impliedPrice), kind: "secondary" },
+            { name: "Projected Price", label: usd(point.impliedPrice), kind: "secondary" },
             { name: "Supply", label: numberCompact(point.supply), kind: "neutral" },
             { name: "Projected Burns", label: numberCompact(point.burned), kind: "neutral" },
             { name: "NAV", label: usd(point.nav), kind: "neutral" }
@@ -200,7 +200,7 @@ function scenarioButtons(selected: ProjectionScenario): string {
       ${(Object.entries(SCENARIOS) as Array<[ProjectionScenario, (typeof SCENARIOS)[ProjectionScenario]]>)
         .map(
           ([key, scenario]) =>
-            `<button type="button" data-projection-scenario="${key}" class="${key === selected ? "active" : ""}">${scenario.label} +${scenario.growth * 100}%</button>`
+            `<button type="button" data-projection-scenario="${key}" class="${key === selected ? "active" : ""}">${scenario.label} +${scenario.growth * 100}%/yr</button>`
         )
         .join("")}
     </div>
