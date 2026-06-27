@@ -732,4 +732,13 @@ svg {
     width: auto;
     z-index: 30;
   }
+
+  .chart-tooltip {
+    left: auto !important;
+    max-width: calc(100% - 16px);
+    right: 8px;
+    top: 8px !important;
+    transform: none;
+    z-index: 5;
+  }
 }
