@@ -4,15 +4,13 @@ on:
   push:
     branches:
       - main
-  workflow_run:
-    workflows:
-      - Scheduled NUMMUS Snapshot
-    types:
-      - completed
+  schedule:
+    # Temporary scheduler test. Restore to "25 6 * * *" after verification.
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -21,8 +19,36 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  collect:
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Collect daily snapshot
+        run: npm run collect
+        env:
+          HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
+
+      - name: Commit snapshot
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update daily NUMMUS snapshot"
+          file_pattern: data/history.json data/snapshots/*.json
+
   deploy:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    needs: collect
+    if: ${{ always() && (github.event_name == 'push' || needs.collect.result == 'success') }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -30,6 +56,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Setup Node
         uses: actions/setup-node@v4
