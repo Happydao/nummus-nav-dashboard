@@ -76,12 +76,16 @@ async function render(): Promise<void> {
             range: selectedRange,
             formatter: usd,
             axisFormatter: usd,
-            yLabel: "USD / NUMMUS",
+            yLabel: "NAV (USD / NUMMUS)",
             yMin: 0,
             secondary: {
               key: "marketPrice",
               label: "NUMMUS Price",
-              formatter: usd
+              formatter: usd,
+              axisFormatter: usd,
+              axisLabel: "NUMMUS Price (USD)",
+              independentAxis: true,
+              yMin: 0
             },
             fullWidth: true,
             info: "This compares NAV with NUMMUS market price in real USD terms. NAV is the treasury value behind each token; the market price is what traders pay. A smaller gap means price is closer to treasury backing."

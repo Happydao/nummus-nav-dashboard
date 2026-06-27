@@ -22,7 +22,12 @@ export interface ChartOptions {
     key: ChartKey;
     label: string;
     formatter?: (value: number) => string;
+    axisFormatter?: (value: number) => string;
+    axisLabel?: string;
     changeMode?: ChangeMode;
+    independentAxis?: boolean;
+    yMin?: number;
+    yMax?: number;
   };
   fullWidth?: boolean;
   action?: {
@@ -53,25 +58,35 @@ export function lineChart(options: ChartOptions): string {
   const allPoints = toPoints(options.records, options.key);
   const points = filterByRange(allPoints, options.range, Boolean(options.includePreviousPoint));
   const secondaryByDate = options.secondary ? toPointMap(options.records, options.secondary.key) : new Map<string, number>();
+  const hasIndependentAxis = Boolean(options.secondary?.independentAxis);
 
   if (points.length === 0) {
     return `<section class="chart"><h2>${options.title}</h2><div class="empty">No snapshots in selected range</div></section>`;
   }
 
-  const values = [
-    ...points.map((point) => point.value),
-    ...points
-      .map((point) => secondaryByDate.get(point.date))
-      .filter((value): value is number => typeof value === "number")
-  ];
+  const secondaryValues = points
+    .map((point) => secondaryByDate.get(point.date))
+    .filter((value): value is number => typeof value === "number");
+  const values = hasIndependentAxis
+    ? points.map((point) => point.value)
+    : [...points.map((point) => point.value), ...secondaryValues];
   const rawMin = options.yMin ?? Math.min(...values);
   const rawMax = options.yMax ?? Math.max(...values);
   const yMin = options.yMin ?? niceFloor(rawMin);
   const yMax = options.yMax ?? niceCeil(rawMax === rawMin ? rawMax + 1 : rawMax);
+  const secondaryRawMin = secondaryValues.length > 0 ? Math.min(...secondaryValues) : yMin;
+  const secondaryRawMax = secondaryValues.length > 0 ? Math.max(...secondaryValues) : yMax;
+  const secondaryYMin = hasIndependentAxis
+    ? (options.secondary?.yMin ?? niceFloor(secondaryRawMin))
+    : yMin;
+  const secondaryYMax = hasIndependentAxis
+    ? (options.secondary?.yMax ?? niceCeil(secondaryRawMax === secondaryRawMin ? secondaryRawMax + 1 : secondaryRawMax))
+    : yMax;
   const xMin = new Date(`${points[0].date}T00:00:00.000Z`).getTime();
   const xMax = new Date(`${points.at(-1)?.date}T00:00:00.000Z`).getTime();
   const xRange = xMax - xMin || 1;
-  const chartWidth = WIDTH - PAD.left - PAD.right;
+  const plotRight = WIDTH - (hasIndependentAxis ? 86 : PAD.right);
+  const chartWidth = plotRight - PAD.left;
   const chartHeight = HEIGHT - PAD.top - PAD.bottom;
   const xForTimestamp = (timestamp: number) =>
     xMax === xMin ? PAD.left + chartWidth / 2 : PAD.left + ((timestamp - xMin) / xRange) * chartWidth;
@@ -86,18 +101,19 @@ export function lineChart(options: ChartOptions): string {
         .map((point) => {
           const value = secondaryByDate.get(point.date);
           if (typeof value !== "number") return null;
-          const y = PAD.top + (1 - (value - yMin) / (yMax - yMin || 1)) * chartHeight;
+          const y = PAD.top + (1 - (value - secondaryYMin) / (secondaryYMax - secondaryYMin || 1)) * chartHeight;
           return { date: point.date, value, x: point.x, y };
         })
         .filter((point): point is ChartPoint & { x: number; y: number } => point !== null)
     : [];
-  const path = makePath(coords);
-  const secondaryPath = secondaryCoords.length > 0 ? makePath(secondaryCoords) : "";
+  const path = makePath(coords, plotRight);
+  const secondaryPath = secondaryCoords.length > 0 ? makePath(secondaryCoords, plotRight) : "";
   const areaPath =
     coords.length > 1
       ? `${path} L ${coords.at(-1)?.x.toFixed(2)} ${HEIGHT - PAD.bottom} L ${coords[0].x.toFixed(2)} ${HEIGHT - PAD.bottom} Z`
       : "";
   const yTicks = makeTicks(yMin, yMax, 5);
+  const secondaryYTicks = hasIndependentAxis ? makeTicks(secondaryYMin, secondaryYMax, 5) : [];
   const xTicks = makeDateTicks(points);
   const latest = points.at(-1);
   const axisFormatter = options.axisFormatter ?? options.formatter;
@@ -122,15 +138,26 @@ export function lineChart(options: ChartOptions): string {
       </div>
       <div class="chart-canvas">
         <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="${options.title}">
-          <text class="axis-title y-axis-title" x="${PAD.left}" y="${PAD.top - 8}">${options.yLabel}</text>
-          <text class="axis-title x-axis-title" x="${WIDTH - PAD.right}" y="${HEIGHT - 7}" text-anchor="end">Date</text>
+          <text class="axis-title y-axis-title${hasIndependentAxis ? " primary-axis-title" : ""}" x="${PAD.left}" y="${PAD.top - 8}">${options.yLabel}</text>
+          ${
+            hasIndependentAxis
+              ? `<text class="axis-title secondary-axis-title" x="${WIDTH - 4}" y="${PAD.top - 8}" text-anchor="end">${escapeHtml(options.secondary?.axisLabel ?? options.secondary?.label ?? "")}</text>`
+              : ""
+          }
+          <text class="axis-title x-axis-title" x="${plotRight}" y="${HEIGHT - 7}" text-anchor="end">Date</text>
           ${yTicks
             .map((tick) => {
               const y = PAD.top + (1 - (tick - yMin) / (yMax - yMin || 1)) * chartHeight;
               return `
-                <line class="grid-line" x1="${PAD.left}" y1="${y}" x2="${WIDTH - PAD.right}" y2="${y}" />
+                <line class="grid-line" x1="${PAD.left}" y1="${y}" x2="${plotRight}" y2="${y}" />
                 <text class="tick-label y-tick" x="${PAD.left - 10}" y="${y + 4}" text-anchor="end">${axisFormatter(tick)}</text>
               `;
+            })
+            .join("")}
+          ${secondaryYTicks
+            .map((tick) => {
+              const y = PAD.top + (1 - (tick - secondaryYMin) / (secondaryYMax - secondaryYMin || 1)) * chartHeight;
+              return `<text class="tick-label secondary-y-tick" x="${plotRight + 10}" y="${y + 4}" text-anchor="start">${(options.secondary?.axisFormatter ?? options.secondary?.formatter ?? options.formatter)(tick)}</text>`;
             })
             .join("")}
           ${xTicks
@@ -142,8 +169,9 @@ export function lineChart(options: ChartOptions): string {
               `;
             })
             .join("")}
-          <line class="axis-line" x1="${PAD.left}" y1="${HEIGHT - PAD.bottom}" x2="${WIDTH - PAD.right}" y2="${HEIGHT - PAD.bottom}" />
+          <line class="axis-line" x1="${PAD.left}" y1="${HEIGHT - PAD.bottom}" x2="${plotRight}" y2="${HEIGHT - PAD.bottom}" />
           <line class="axis-line" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
+          ${hasIndependentAxis ? `<line class="axis-line secondary-axis-line" x1="${plotRight}" y1="${PAD.top}" x2="${plotRight}" y2="${HEIGHT - PAD.bottom}" />` : ""}
           ${areaPath ? `<path class="area-path" d="${areaPath}" />` : ""}
           <path class="series-path" d="${path}" />
           ${secondaryPath ? `<path class="series-path secondary-series-path" d="${secondaryPath}" />` : ""}
@@ -251,9 +279,9 @@ function formatSignedNumber(value: number): string {
   return `${sign}${new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(value)}`;
 }
 
-function makePath(points: Array<ChartPoint & { x: number; y: number }>): string {
+function makePath(points: Array<ChartPoint & { x: number; y: number }>, plotRight: number): string {
   if (points.length === 1) {
-    return `M ${PAD.left} ${points[0].y.toFixed(2)} L ${WIDTH - PAD.right} ${points[0].y.toFixed(2)}`;
+    return `M ${PAD.left} ${points[0].y.toFixed(2)} L ${plotRight} ${points[0].y.toFixed(2)}`;
   }
   return points
     .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`)

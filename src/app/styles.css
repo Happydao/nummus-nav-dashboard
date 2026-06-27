@@ -476,6 +476,19 @@ svg {
   font-weight: 700;
 }
 
+.primary-axis-title {
+  fill: #57c990;
+}
+
+.secondary-axis-title,
+.secondary-y-tick {
+  fill: #d79551;
+}
+
+.secondary-axis-line {
+  stroke: rgba(215, 149, 81, 0.5);
+}
+
 .area-path {
   fill: #47b37f;
   opacity: 0.12;
