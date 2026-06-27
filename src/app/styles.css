@@ -2,7 +2,7 @@
   color: #e8eee9;
   background: #08110d;
   font-family:
-    Cinzel, "Trajan Pro", "Times New Roman", Georgia, serif;
+    "Franklin Gothic Medium", "Franklin Gothic", "Arial Narrow", Arial, sans-serif;
   font-synthesis: none;
 }
 
@@ -59,7 +59,7 @@ body {
 }
 
 .brand strong {
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
   font-size: 19px;
 }
 
@@ -141,7 +141,7 @@ body {
   color: #c3b68a;
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -405,7 +405,7 @@ h2 {
   color: #f4f8f5;
   font-size: 15px;
   font-weight: 800;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
   margin: 0;
 }
 
