@@ -621,6 +621,10 @@ svg {
   color: #9a5a2d;
 }
 
+.chart-tooltip .tooltip-row.neutral b {
+  color: #405a4c;
+}
+
 .interactive-chart.hovering .chart-tooltip {
   display: flex;
 }
@@ -645,6 +649,165 @@ svg {
   color: #61511c;
   margin-top: 18px;
   padding: 14px 16px;
+}
+
+.projection-section {
+  margin-top: 22px;
+}
+
+.projection-head {
+  align-items: flex-start;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+.projection-head > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.projection-head > div:first-child > span,
+.projection-assumptions {
+  color: #a7baaf;
+  font-size: 12px;
+}
+
+.projection-controls {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.projection-selector {
+  background: rgba(232, 238, 233, 0.05);
+  border: 1px solid rgba(232, 238, 233, 0.12);
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(112px, 1fr));
+  padding: 3px;
+}
+
+.projection-selector button {
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: #a7baaf;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  height: 32px;
+  padding: 0 10px;
+}
+
+.projection-selector button.active {
+  background: rgba(87, 201, 144, 0.16);
+  color: #66d59c;
+  box-shadow: inset 0 0 0 1px rgba(87, 201, 144, 0.38);
+}
+
+.horizon-selector {
+  grid-template-columns: repeat(4, minmax(54px, 1fr));
+}
+
+.projection-stats {
+  border-bottom: 1px solid rgba(138, 166, 148, 0.16);
+  border-top: 1px solid rgba(138, 166, 148, 0.16);
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  margin-top: 18px;
+  padding: 14px 0;
+}
+
+.projection-stats > div {
+  border-right: 1px solid rgba(138, 166, 148, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  padding: 0 12px;
+}
+
+.projection-stats > div:first-child {
+  padding-left: 0;
+}
+
+.projection-stats > div:last-child {
+  border-right: 0;
+  padding-right: 0;
+}
+
+.projection-stats span {
+  color: #9fb3a7;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.projection-stats strong {
+  color: #f4f8f5;
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+
+.projection-assumptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 10px;
+}
+
+.projection-legend {
+  margin-top: 14px;
+}
+
+.legend-swatch.projection-vault {
+  background: #57c990;
+}
+
+.legend-swatch.projection-price {
+  background: #d79551;
+}
+
+.projection-canvas {
+  margin-top: 8px;
+}
+
+.projection-path {
+  fill: none;
+  stroke-dasharray: 7 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.projection-vault-path {
+  stroke: #57c990;
+}
+
+.projection-price-path {
+  stroke: #d79551;
+}
+
+.projection-vault-axis,
+.projection-vault-tick {
+  fill: #57c990;
+}
+
+.projection-price-axis,
+.projection-price-tick {
+  fill: #d79551;
+}
+
+.projection-vault-axis-line {
+  stroke: rgba(87, 201, 144, 0.5);
+}
+
+.projection-price-axis-line {
+  stroke: rgba(215, 149, 81, 0.5);
 }
 
 .site-footer {
@@ -714,6 +877,24 @@ svg {
 
   .content {
     max-width: 100%;
+  }
+
+  .projection-head {
+    flex-direction: column;
+  }
+
+  .projection-controls {
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .projection-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 14px;
+  }
+
+  .projection-stats > div:nth-child(3) {
+    border-right: 0;
   }
 }
 
@@ -810,6 +991,36 @@ svg {
   .chart-current,
   .chart-change-list {
     align-items: flex-start;
+  }
+
+  .projection-selector {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .projection-selector button {
+    font-size: 10px;
+    min-width: 0;
+    padding: 0 5px;
+  }
+
+  .horizon-selector {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .projection-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .projection-stats > div,
+  .projection-stats > div:first-child,
+  .projection-stats > div:last-child {
+    border-right: 0;
+    padding: 0 8px 0 0;
+  }
+
+  .projection-stats strong {
+    font-size: 14px;
   }
 
   .range-selector {

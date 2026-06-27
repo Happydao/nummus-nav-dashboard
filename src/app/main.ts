@@ -1,6 +1,11 @@
 import "./styles.css";
 import { attachChartInteractions } from "../charts/interactions.js";
 import { lineChart, rangeButtons, type RangeKey } from "../charts/lineChart.js";
+import {
+  projectionChart,
+  type ProjectionScenario,
+  type ProjectionYears
+} from "../charts/projectionChart.js";
 import { kpi } from "../components/kpi.js";
 import { latestRecord, loadHistory, type DailySnapshot, type SupplySnapshot } from "../utils/history.js";
 import { numberCompact, percent, ratio, tbtcAxis, usd, usdCompact } from "../utils/format.js";
@@ -17,6 +22,8 @@ if (!app) {
 
 const root = app;
 let selectedRange: RangeKey = "ALL";
+let selectedProjectionScenario: ProjectionScenario = "accelerated";
+let selectedProjectionYears: ProjectionYears = 3;
 
 render().catch((error: unknown) => {
   root.innerHTML = `<div class="notice">${error instanceof Error ? error.message : "Unable to load dashboard"}</div>`;
@@ -166,6 +173,12 @@ async function render(): Promise<void> {
             info: "tBTC Accumulation shows how much tBTC the treasury has collected. A rising line means the treasury is accumulating more BTC exposure."
           })}
         </section>
+        ${projectionChart({
+          latest,
+          supplyHistory: history.supplyHistory ?? [],
+          scenario: selectedProjectionScenario,
+          years: selectedProjectionYears
+        })}
         <footer class="site-footer">
           <a class="footer-button" href="https://jup.ag/tokens/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray" target="_blank" rel="noreferrer">Buy on Jupiter</a>
           <p>
@@ -178,7 +191,24 @@ async function render(): Promise<void> {
     </div>
   `;
   attachRangeHandlers();
+  attachProjectionHandlers();
   attachChartInteractions(root);
+}
+
+function attachProjectionHandlers(): void {
+  for (const button of root.querySelectorAll<HTMLButtonElement>("[data-projection-scenario]")) {
+    button.addEventListener("click", () => {
+      selectedProjectionScenario = button.dataset.projectionScenario as ProjectionScenario;
+      void render();
+    });
+  }
+
+  for (const button of root.querySelectorAll<HTMLButtonElement>("[data-projection-years]")) {
+    button.addEventListener("click", () => {
+      selectedProjectionYears = Number(button.dataset.projectionYears) as ProjectionYears;
+      void render();
+    });
+  }
 }
 
 function vaultCompositionDetails(record: DailySnapshot): string {

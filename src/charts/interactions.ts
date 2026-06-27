@@ -15,7 +15,7 @@ export function attachChartInteractions(root: ParentNode = document): void {
         label: string;
         x: number;
         y: number;
-        series?: Array<{ name: string; label: string; kind: "primary" | "secondary" }>;
+        series?: Array<{ name: string; label: string; kind: "primary" | "secondary" | "neutral" }>;
       }>;
     };
     const points = parsed.points;
