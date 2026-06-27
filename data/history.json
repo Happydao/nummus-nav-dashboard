@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T16:24:25.205Z",
+  "generatedAt": "2026-06-27T07:14:07.403Z",
   "records": [
     {
       "date": "2025-12-05",
@@ -8128,6 +8128,74 @@
             "amount": 0.74886342,
             "priceUsd": 59880.059752169625,
             "valueUsd": 44841.98633581,
+            "provider": "jupiter"
+          }
+        ],
+        "ignoredAssets": [
+          {
+            "symbol": "MyNF",
+            "mint": "GGVXuvQD13vxsNi9Dx86AwwpcTHrfNFcJSgsKesbyzn7",
+            "reason": "ignored V1_NFT received by treasury"
+          },
+          {
+            "symbol": "MyNF",
+            "mint": "EUGVqX5GWe6P4b8bYyaWLFhzMwAES8tq79KpYs5UagMY",
+            "reason": "ignored V1_NFT received by treasury"
+          }
+        ],
+        "unpricedAssets": []
+      }
+    },
+    {
+      "date": "2026-06-27",
+      "vaultUsd": 83264.38796307,
+      "supply": 98152101.856498,
+      "marketPrice": 0.007984167383330349,
+      "nav": 0.00084832,
+      "backing": 10.62502775,
+      "premium": 9.41174013,
+      "tbtcAmount": 0.74886342,
+      "valuationReport": {
+        "source": "Helius DAS current vault assets + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
+        "pricedAssets": [
+          {
+            "symbol": "SOL",
+            "mint": "So11111111111111111111111111111111111111112",
+            "amount": 0.104571323,
+            "priceUsd": 71.95243050639475,
+            "valueUsd": 7.52416085,
+            "provider": "jupiter"
+          },
+          {
+            "symbol": "PUNCHY",
+            "mint": "GnYufMbTAMz1DzkSN2DmwkBzjMTLkM22WvQuN1VCbonk",
+            "amount": 25000000,
+            "priceUsd": 0.00006683571109407034,
+            "valueUsd": 1670.89277735,
+            "provider": "jupiter"
+          },
+          {
+            "symbol": "NUMMUS",
+            "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
+            "amount": 25,
+            "priceUsd": 0.007984167383330349,
+            "valueUsd": 0.19960418,
+            "provider": "jupiter"
+          },
+          {
+            "symbol": "PISTA",
+            "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
+            "amount": 25000000,
+            "priceUsd": 0.0014567907614597498,
+            "valueUsd": 36419.76903649,
+            "provider": "jupiter"
+          },
+          {
+            "symbol": "tBTC",
+            "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
+            "amount": 0.74886342,
+            "priceUsd": 60312.73684618659,
+            "valueUsd": 45166.0023842,
             "provider": "jupiter"
           }
         ],
