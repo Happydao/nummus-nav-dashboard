@@ -753,6 +753,16 @@ svg {
   overflow-wrap: anywhere;
 }
 
+.projection-stat-vault span,
+.projection-stat-vault strong {
+  color: #57c990;
+}
+
+.projection-stat-price span,
+.projection-stat-price strong {
+  color: #d79551;
+}
+
 .projection-assumptions {
   display: flex;
   flex-wrap: wrap;

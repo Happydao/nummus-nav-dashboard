@@ -6,6 +6,7 @@ export type ProjectionYears = 1 | 2 | 3 | 5;
 
 interface ProjectionChartOptions {
   latest: DailySnapshot | null;
+  records: DailySnapshot[];
   supplyHistory: SupplySnapshot[];
   scenario: ProjectionScenario;
   years: ProjectionYears;
@@ -25,16 +26,16 @@ interface ProjectionPoint {
 }
 
 const SCENARIOS: Record<ProjectionScenario, { label: string; growth: number }> = {
-  steady: { label: "Steady", growth: 0.5 },
-  strong: { label: "Strong", growth: 1 },
-  accelerated: { label: "Accelerated", growth: 1.5 }
+  steady: { label: "Steady", growth: 1 },
+  strong: { label: "Strong", growth: 1.5 },
+  accelerated: { label: "Accelerated", growth: 2 }
 };
 
 const WIDTH = 1000;
 const HEIGHT = 390;
 const PAD = { top: 28, right: 112, bottom: 48, left: 112 };
 const INFO =
-  "This simulator starts from the latest real Vault Value, supply, NAV, and NUMMUS market premium. Vault Value increases each year by the selected percentage of today's Vault Value, using a linear annual model. Supply decreases using the average daily burn observed between the first reliable supply point and today. Projected NAV equals projected Vault Value divided by projected supply. Projected NUMMUS Price equals projected NAV multiplied by today's premium. These are mathematical scenarios, not guaranteed market forecasts or financial advice.";
+  "This simulator starts from the latest real Vault Value and supply. Vault Value increases each year by the selected percentage of today's Vault Value, using a linear annual model. Supply decreases using the average daily burn observed between the first reliable supply point and today. Projected NAV equals projected Vault Value divided by projected supply. Projected NUMMUS Price equals projected NAV multiplied by the average historical premium across all valid daily records. These are mathematical scenarios, not guaranteed market forecasts or financial advice.";
 
 export function projectionChart(options: ProjectionChartOptions): string {
   const latest = options.latest;
@@ -56,7 +57,7 @@ export function projectionChart(options: ProjectionChartOptions): string {
   }
 
   const burnRate = observedBurnRate(options.supplyHistory, latest);
-  const premium = latest.marketPrice / latest.nav;
+  const premium = historicalAveragePremium(options.records) ?? latest.marketPrice / latest.nav;
   const scenario = SCENARIOS[options.scenario];
   const totalMonths = options.years * 12;
   const rawPoints = Array.from({ length: totalMonths + 1 }, (_, month) => {
@@ -111,12 +112,12 @@ export function projectionChart(options: ProjectionChartOptions): string {
       </div>
 
       <div class="projection-stats">
-        ${stat("Projected Vault", usd(endpoint.vaultUsd))}
+        ${stat("Projected Vault", usd(endpoint.vaultUsd), "projection-stat-vault")}
         ${stat("Projected Supply", numberCompact(endpoint.supply))}
         ${stat("Projected Burns", numberCompact(endpoint.burned))}
         ${stat("Projected NAV", usd(endpoint.nav))}
-        ${stat("Projected Price", usd(endpoint.impliedPrice))}
-        ${stat("Premium Fixed", ratio(premium))}
+        ${stat("Projected NUMMUS Price", usd(endpoint.impliedPrice), "projection-stat-price")}
+        ${stat("Historical Avg Premium", ratio(premium))}
       </div>
 
       <div class="projection-assumptions">
@@ -172,7 +173,7 @@ export function projectionChart(options: ProjectionChartOptions): string {
           label: usd(point.vaultUsd),
           series: [
             { name: "Vault Value", label: usd(point.vaultUsd), kind: "primary" },
-            { name: "Projected Price", label: usd(point.impliedPrice), kind: "secondary" },
+            { name: "Projected NUMMUS Price", label: usd(point.impliedPrice), kind: "secondary" },
             { name: "Supply", label: numberCompact(point.supply), kind: "neutral" },
             { name: "Projected Burns", label: numberCompact(point.burned), kind: "neutral" },
             { name: "NAV", label: usd(point.nav), kind: "neutral" }
@@ -192,6 +193,14 @@ function observedBurnRate(history: SupplySnapshot[], latest: DailySnapshot): { p
   if (elapsedDays <= 0) return { perDay: 0, perYear: 0 };
   const perDay = Math.max(0, first.supply - latest.supply) / elapsedDays;
   return { perDay, perYear: perDay * 365.25 };
+}
+
+function historicalAveragePremium(records: DailySnapshot[]): number | null {
+  const premiums = records
+    .map((record) => record.premium)
+    .filter((premium): premium is number => typeof premium === "number" && Number.isFinite(premium) && premium > 0);
+  if (premiums.length === 0) return null;
+  return premiums.reduce((total, premium) => total + premium, 0) / premiums.length;
 }
 
 function scenarioButtons(selected: ProjectionScenario): string {
@@ -221,8 +230,8 @@ function horizonButtons(selected: ProjectionYears): string {
   `;
 }
 
-function stat(label: string, value: string): string {
-  return `<div><span>${label}</span><strong>${value}</strong></div>`;
+function stat(label: string, value: string, className = ""): string {
+  return `<div class="${className}"><span>${label}</span><strong>${value}</strong></div>`;
 }
 
 function infoTip(text: string): string {

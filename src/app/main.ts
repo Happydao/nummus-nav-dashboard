@@ -175,6 +175,7 @@ async function render(): Promise<void> {
         </section>
         ${projectionChart({
           latest,
+          records,
           supplyHistory: history.supplyHistory ?? [],
           scenario: selectedProjectionScenario,
           years: selectedProjectionYears
