@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-27T22:59:35.301Z",
+  "generatedAt": "2026-06-28T00:05:20.754Z",
   "records": [
     {
       "date": "2025-12-05",
@@ -8213,6 +8213,74 @@
         ],
         "unpricedAssets": []
       }
+    },
+    {
+      "date": "2026-06-28",
+      "vaultUsd": 82782.53132697,
+      "supply": 98152101.856498,
+      "marketPrice": 0.007985289364947818,
+      "nav": 0.00084341,
+      "backing": 10.5620468,
+      "premium": 9.46786185,
+      "tbtcAmount": 0.74886342,
+      "valuationReport": {
+        "source": "Helius DAS current vault assets + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
+        "pricedAssets": [
+          {
+            "symbol": "SOL",
+            "mint": "So11111111111111111111111111111111111111112",
+            "amount": 0.104571323,
+            "priceUsd": 70.3857705373807,
+            "valueUsd": 7.36033315,
+            "provider": "jupiter"
+          },
+          {
+            "symbol": "PUNCHY",
+            "mint": "GnYufMbTAMz1DzkSN2DmwkBzjMTLkM22WvQuN1VCbonk",
+            "amount": 25000000,
+            "priceUsd": 0.00006683571109407034,
+            "valueUsd": 1670.89277735,
+            "provider": "jupiter"
+          },
+          {
+            "symbol": "NUMMUS",
+            "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
+            "amount": 25,
+            "priceUsd": 0.007985289364947818,
+            "valueUsd": 0.19963223,
+            "provider": "jupiter"
+          },
+          {
+            "symbol": "PISTA",
+            "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
+            "amount": 25000000,
+            "priceUsd": 0.0014310300495783397,
+            "valueUsd": 35775.75123946,
+            "provider": "jupiter"
+          },
+          {
+            "symbol": "tBTC",
+            "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
+            "amount": 0.74886342,
+            "priceUsd": 60529.4986164199,
+            "valueUsd": 45328.32734478,
+            "provider": "jupiter"
+          }
+        ],
+        "ignoredAssets": [
+          {
+            "symbol": "MyNF",
+            "mint": "GGVXuvQD13vxsNi9Dx86AwwpcTHrfNFcJSgsKesbyzn7",
+            "reason": "ignored V1_NFT received by treasury"
+          },
+          {
+            "symbol": "MyNF",
+            "mint": "EUGVqX5GWe6P4b8bYyaWLFhzMwAES8tq79KpYs5UagMY",
+            "reason": "ignored V1_NFT received by treasury"
+          }
+        ],
+        "unpricedAssets": []
+      }
     }
   ],
   "tbtcHistory": [
@@ -8634,6 +8702,10 @@
     },
     {
       "date": "2026-06-27",
+      "amount": 0.74886342
+    },
+    {
+      "date": "2026-06-28",
       "amount": 0.74886342
     }
   ],
