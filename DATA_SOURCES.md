@@ -44,13 +44,7 @@ The reconstruction adds 172 dates. At the time of import, 162 are complete and 1
 - 16-22 June 2025: no verifiable NUMMUS price on or before those dates;
 - 30 July-1 August 2025: BUMPER was held before its first verifiable public price.
 
-For complete Vault dates, the importer also reconstructs:
-
-- supply at 100 million before the first recorded burn, then carries forward each real burn-derived supply point;
-- NUMMUS market price from the DefiLlama daily close or latest earlier real observation;
-- NAV, backing, and premium using the dashboard formulas.
-
-Derived metrics remain `null` whenever Vault USD or NUMMUS market price is unavailable. The three BUMPER price gaps therefore remain visible and are not estimated.
+Supply, NUMMUS market price, NAV, backing, and premium remain `null` for these imported early records because this command is scoped specifically to historical Vault Value. It does not claim to reconstruct a complete historical dashboard snapshot.
 
 ## Existing history from 5 December 2025
 
