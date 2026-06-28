@@ -2,7 +2,7 @@
 
 Official daily NAV / Treasury Backing dashboard for NUMMUS.
 
-This repository stores one real daily snapshot from the collector and updates that same date if it is run more than once. Historical vault USD records can also be imported from committed snapshots in `Nummus.VaultDAO`; those imported records are treated as historical snapshot data, not as live on-chain reconstruction.
+This repository stores one real daily snapshot from the collector and updates that same date if it is run more than once. Historical Vault USD records before 5 December 2025 are reconstructed from immutable on-chain balances and public market-price observations. Later historical records can also be imported from committed snapshots in `Nummus.VaultDAO`.
 
 The dashboard focuses only on portfolio-level metrics:
 
@@ -58,6 +58,7 @@ Never hardcode the Helius key. Production should inject it through GitHub Secret
 npm install
 npm run check
 npm run collect
+npm run import:early-vault
 npm run import:vault-history
 npm run build
 ```
@@ -74,6 +75,8 @@ Every run:
 6. appends today's record if it does not exist.
 
 `npm run import:vault-history` imports one daily Vault Value record from the local `Nummus.VaultDAO` Git history. It defaults to `../Nummus.VaultDAO`; set `VAULTDAO_REPO_PATH=/path/to/Nummus.VaultDAO` if the clone is elsewhere. The import keeps the last `data/prices.json` snapshot available for each day and merges those records into `data/history.json`.
+
+`npm run import:early-vault` is a bounded historical reconstruction for 16 June through 4 December 2025. It replays Helius Vault balance changes and combines them with DefiLlama, GeckoTerminal, and on-chain pool closing prices. API responses are cached under the gitignored `data/cache/early-vault/` directory. It never interpolates prices: a missing daily observation uses the latest earlier real market observation; dates before an asset's first verifiable price remain `null` and list that asset under `valuationReport.unpricedAssets`.
 
 ## Data Layout
 

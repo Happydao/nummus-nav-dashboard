@@ -62,6 +62,17 @@ export class HeliusClient {
     return this.fetchJson<T[]>(url.toString());
   }
 
+  async getEnhancedTransactions<T>(signatures: string[]): Promise<T[]> {
+    if (signatures.length === 0) return [];
+    const url = new URL("https://api.helius.xyz/v0/transactions");
+    url.searchParams.set("api-key", this.apiKey);
+    return this.fetchJson<T[]>(url.toString(), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ transactions: signatures })
+    });
+  }
+
   private async fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);

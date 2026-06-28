@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "collect": "tsx collector/collectDailySnapshot.ts",
+    "import:early-vault": "tsx collector/importEarlyVaultHistory.ts",
     "import:vault-history": "tsx collector/importVaultHistory.ts",
     "check": "tsc --noEmit",
     "dev": "VITE_BASE_PATH=/ vite --host 127.0.0.1",
