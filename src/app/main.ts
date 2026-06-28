@@ -15,6 +15,9 @@ const NUMMUS_MINT_URL = "https://solscan.io/token/9JK2U7aEkp3tWaFNuaJowWRgNys5DV
 const REALMS_DAO_URL = "https://app.realms.today/dao/2Czvw7p29thfqNJznuicygBKxh33xoCMuGMH7zbPQ2gp";
 const VAULT_SOLSCAN_URL = "https://solscan.io/account/HtT3yMsAavLQYmd6VSbXSdbAefyZUrrFeEPoTPivde3s";
 const NUMMUS_COINGECKO_URL = "https://www.coingecko.com/en/coins/nummus-aeternitas";
+const INITIAL_NUMMUS_SUPPLY = 100_000_000;
+const SUPPLY_HISTORY_START = "2025-06-23";
+const DAY_BEFORE_FIRST_RECORDED_BURN = "2025-10-16";
 
 if (!app) {
   throw new Error("Missing #app root");
@@ -153,7 +156,7 @@ async function render(): Promise<void> {
               label: "Burn Dashboard",
               href: "https://happydao.github.io/Nummus.burn/"
             },
-            info: "Supply shows how many NUMMUS tokens are circulating. Lower supply can increase NAV per token if treasury value is stable or growing."
+            info: "Supply Reduction starts from the initial 100 million NUMMUS supply on 23 June 2025. It remains flat until the first recorded burn on 17 October, then follows the real burn-derived supply and current daily snapshots. Lower supply can increase NAV per token if treasury value is stable or growing."
           })}
           ${lineChart({
             id: "tbtc",
@@ -296,7 +299,13 @@ function escapeHtml(value: string): string {
 }
 
 function buildSupplyChartRecords(supplyHistory: SupplySnapshot[], records: DailySnapshot[]): SupplySnapshot[] {
-  const byDate = new Map<string, SupplySnapshot>();
+  const byDate = new Map<string, SupplySnapshot>([
+    [SUPPLY_HISTORY_START, { date: SUPPLY_HISTORY_START, supply: INITIAL_NUMMUS_SUPPLY }],
+    [
+      DAY_BEFORE_FIRST_RECORDED_BURN,
+      { date: DAY_BEFORE_FIRST_RECORDED_BURN, supply: INITIAL_NUMMUS_SUPPLY }
+    ]
+  ]);
 
   for (const snapshot of supplyHistory) {
     byDate.set(snapshot.date, snapshot);
