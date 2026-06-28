@@ -76,7 +76,7 @@ Every run:
 
 `npm run import:vault-history` imports one daily Vault Value record from the local `Nummus.VaultDAO` Git history. It defaults to `../Nummus.VaultDAO`; set `VAULTDAO_REPO_PATH=/path/to/Nummus.VaultDAO` if the clone is elsewhere. The import keeps the last `data/prices.json` snapshot available for each day and merges those records into `data/history.json`.
 
-`npm run import:early-vault` is a bounded historical reconstruction for 16 June through 4 December 2025. It replays Helius Vault balance changes and combines them with DefiLlama, GeckoTerminal, and on-chain pool closing prices. API responses are cached under the gitignored `data/cache/early-vault/` directory. It never interpolates prices: a missing daily observation uses the latest earlier real market observation; dates before an asset's first verifiable price remain `null` and list that asset under `valuationReport.unpricedAssets`.
+`npm run import:early-vault` is a bounded historical reconstruction for 16 June through 4 December 2025. It replays Helius Vault balance changes and combines them with DefiLlama, GeckoTerminal, and on-chain pool closing prices. It also derives historical supply, NAV, backing, and premium where all required inputs exist. API responses are cached under the gitignored `data/cache/early-vault/` directory. It never interpolates prices: a missing daily observation uses the latest earlier real market observation; dates before an asset's first verifiable price remain `null` and list that asset under `valuationReport.unpricedAssets`.
 
 ## Data Layout
 

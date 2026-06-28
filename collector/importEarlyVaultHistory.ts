@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import type { DailySnapshot, HistoryFile, PricedAsset, UnpricedAsset } from "./types.js";
 import { HeliusClient } from "./sources/helius.js";
 import { HISTORY_PATH } from "./utils/historyStore.js";
-import { round } from "./utils/math.js";
+import { divideOrNull, round } from "./utils/math.js";
 import { VAULT_WALLET, WRAPPED_SOL_MINT } from "./utils/constants.js";
 
 const START_DATE = "2025-06-16";
@@ -11,6 +11,7 @@ const END_DATE = "2025-12-04";
 const CACHE_DIR = resolve("data/cache/early-vault");
 const DEFILLAMA_URL = "https://coins.llama.fi";
 const GECKOTERMINAL_URL = "https://api.geckoterminal.com/api/v2";
+const INITIAL_NUMMUS_SUPPLY = 100_000_000;
 
 const MINTS = {
   NUMMUS: "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
@@ -292,14 +293,25 @@ function buildRecords(
       });
     }
 
+    const resolvedVaultUsd = unpricedAssets.length === 0 ? round(vaultUsd) : null;
+    const supply = historicalSupply(history, date);
+    const marketPrice = prices.get(MINTS.NUMMUS)?.get(date) ?? null;
+    const nav = round(divideOrNull(resolvedVaultUsd, supply));
+    const backing = round(
+      nav !== null && marketPrice !== null && marketPrice !== 0 ? (nav / marketPrice) * 100 : null
+    );
+    const premium = round(
+      marketPrice !== null && nav !== null && nav !== 0 ? marketPrice / nav : null
+    );
+
     records.push({
       date,
-      vaultUsd: unpricedAssets.length === 0 ? round(vaultUsd) : null,
-      supply: null,
-      marketPrice: null,
-      nav: null,
-      backing: null,
-      premium: null,
+      vaultUsd: resolvedVaultUsd,
+      supply,
+      marketPrice,
+      nav,
+      backing,
+      premium,
       tbtcAmount,
       valuationReport: {
         source:
@@ -321,6 +333,15 @@ function latestTbtcAmount(history: HistoryFile, date: string): number | null {
     amount = point.amount;
   }
   return amount;
+}
+
+function historicalSupply(history: HistoryFile, date: string): number {
+  let supply = INITIAL_NUMMUS_SUPPLY;
+  for (const point of history.supplyHistory ?? []) {
+    if (point.date > date) break;
+    supply = point.supply;
+  }
+  return supply;
 }
 
 function expandDailyPrices(prices: Map<string, number>): Map<string, number> {

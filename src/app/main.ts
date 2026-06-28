@@ -313,6 +313,7 @@ function buildSupplyChartRecords(supplyHistory: SupplySnapshot[], records: Daily
 
   for (const record of records) {
     if (typeof record.supply !== "number") continue;
+    if (record.date < SUPPLY_HISTORY_START) continue;
     if (record.valuationReport?.source?.startsWith("Imported from Nummus.VaultDAO")) continue;
     byDate.set(record.date, {
       date: record.date,
