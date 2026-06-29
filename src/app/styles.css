@@ -58,9 +58,33 @@ body {
   gap: 2px;
 }
 
+.brand .brand-title {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
 .brand strong {
   letter-spacing: 0;
   font-size: 19px;
+}
+
+.github-link {
+  color: #c3b68a;
+  display: inline-flex;
+  flex: 0 0 auto;
+  transition: color 150ms ease, transform 150ms ease;
+}
+
+.github-link:hover {
+  color: #f0dfad;
+  transform: translateY(-1px);
+}
+
+.github-link svg {
+  height: 20px;
+  width: 20px;
 }
 
 .brand span,
