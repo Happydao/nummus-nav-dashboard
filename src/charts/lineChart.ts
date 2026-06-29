@@ -3,6 +3,11 @@ import type { DailySnapshot, SupplySnapshot, TbtcSnapshot } from "../utils/histo
 export type RangeKey = "1D" | "7D" | "30D" | "1Y" | "ALL";
 export type ChartRecord = DailySnapshot | TbtcSnapshot | SupplySnapshot;
 
+export interface ChartZoomWindow {
+  start: number;
+  end: number;
+}
+
 export interface ChartOptions {
   id: string;
   title: string;
@@ -36,6 +41,7 @@ export interface ChartOptions {
     label: string;
     href: string;
   };
+  zoomWindow?: ChartZoomWindow;
 }
 
 type ChangeMode = "standard" | "reduction" | "inverse" | "percentage-points";
@@ -58,7 +64,8 @@ const PAD = {
 
 export function lineChart(options: ChartOptions): string {
   const allPoints = toPoints(options.records, options.key);
-  const points = filterByRange(allPoints, options.range, Boolean(options.includePreviousPoint));
+  const rangePoints = filterByRange(allPoints, options.range, Boolean(options.includePreviousPoint));
+  const points = applyZoomWindow(rangePoints, options.zoomWindow);
   const secondaryByDate = options.secondary ? toPointMap(options.records, options.secondary.key) : new Map<string, number>();
   const hasIndependentAxis = Boolean(options.secondary?.independentAxis);
 
@@ -132,6 +139,7 @@ export function lineChart(options: ChartOptions): string {
             <h2>${options.title}</h2>
             ${options.info ? infoTip(options.info) : ""}
             ${options.action ? chartAction(options.action.label, options.action.href) : ""}
+            ${chartZoomControls(options.id, options.zoomWindow)}
           </div>
           <span>${formatDateShort(points[0].date)} -> ${formatDateShort(points.at(-1)?.date ?? points[0].date)}</span>
           ${options.secondary ? legend(options.primaryLegendLabel ?? "NAV", options.secondary.legendLabel ?? options.secondary.label) : ""}
@@ -352,6 +360,25 @@ export function rangeButtons(selected: RangeKey): string {
         .join("")}
     </div>
   `;
+}
+
+export function chartZoomControls(id: string, zoomWindow?: ChartZoomWindow): string {
+  const isZoomed = Boolean(zoomWindow && (zoomWindow.start > 0 || zoomWindow.end < 1));
+  return `
+    <div class="chart-zoom-controls" aria-label="${escapeHtml(id)} chart zoom controls">
+      <button type="button" data-chart-zoom="out" title="Zoom out" aria-label="Zoom out">-</button>
+      <button type="button" data-chart-zoom="in" title="Zoom in" aria-label="Zoom in">+</button>
+      <button type="button" class="zoom-reset" data-chart-zoom="reset" title="Reset zoom" aria-label="Reset zoom"${isZoomed ? "" : " disabled"}>Reset</button>
+    </div>
+  `;
+}
+
+export function applyZoomWindow<T>(points: T[], zoomWindow?: ChartZoomWindow): T[] {
+  if (!zoomWindow || points.length <= 2) return points;
+  const lastIndex = points.length - 1;
+  const startIndex = Math.max(0, Math.min(lastIndex - 1, Math.floor(zoomWindow.start * lastIndex)));
+  const endIndex = Math.max(startIndex + 1, Math.min(lastIndex, Math.ceil(zoomWindow.end * lastIndex)));
+  return points.slice(startIndex, endIndex + 1);
 }
 
 function toPoints(records: ChartRecord[], key: ChartOptions["key"]): ChartPoint[] {

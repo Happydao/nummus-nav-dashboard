@@ -118,8 +118,8 @@ The dashboard is a Vite app. It reads `data/history.json` and renders:
 - Supply History.
 - tBTC Accumulation.
 
-Charts use a sticky global range selector (`1D`, `7D`, `30D`, `1Y`, `ALL`) and interactive hover tooltips with crosshairs and axis labels.
+Charts use a sticky global range selector (`1D`, `7D`, `30D`, `1Y`, `ALL`) and interactive hover tooltips with crosshairs and axis labels. Every chart also supports independent `-`, `+`, and `Reset` controls, mouse-wheel zoom around the pointer, and two-finger pinch zoom on touch devices.
 
-Supply History in the dashboard uses burn-derived historical supply points plus daily collector snapshots from today forward. The tooltip shows only date and supply.
+Supply History starts at 100 million NUMMUS on 27 June 2025, remains flat until the first recorded burn, and then uses burn-derived historical supply points plus daily collector snapshots. The tooltip shows only date and supply.
 
 At the start there may be only one record. The charts become useful as the daily snapshot history grows.

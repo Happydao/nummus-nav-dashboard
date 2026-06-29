@@ -46,7 +46,7 @@ The reconstruction adds 172 dates. At the time of import, 162 are complete and 1
 
 Historical Vault values before 1 September remain stored for provenance, but the financial metric window begins on `2025-09-01`. From that date the importer reconstructs supply, NUMMUS market price, NAV, backing, and premium. This excludes the Vault initialization period, the missing BUMPER price dates, and BUMPER's initial price-discovery anomaly from financial charts and projection-premium statistics.
 
-Supply and tBTC retain their independent June start dates. Derived financial metrics before 1 September remain `null`.
+Supply and tBTC retain their common 27 June 2025 chart start date. Supply is fixed at the known initial 100 million until the first recorded burn; derived financial metrics before 1 September remain `null`.
 
 ## Existing history from 5 December 2025
 

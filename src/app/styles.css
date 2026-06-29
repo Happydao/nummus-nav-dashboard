@@ -313,6 +313,54 @@ body {
   background: rgba(207, 174, 105, 0.12);
 }
 
+.chart-zoom-controls {
+  align-items: center;
+  background: rgba(4, 11, 8, 0.42);
+  border: 1px solid rgba(138, 166, 148, 0.24);
+  border-radius: 6px;
+  display: inline-flex;
+  height: 26px;
+  overflow: hidden;
+}
+
+.chart-zoom-controls button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-right: 1px solid rgba(138, 166, 148, 0.18);
+  color: #c4d2ca;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  height: 24px;
+  justify-content: center;
+  min-width: 28px;
+  padding: 0 7px;
+}
+
+.chart-zoom-controls button:last-child {
+  border-right: 0;
+}
+
+.chart-zoom-controls button:hover:not(:disabled) {
+  background: rgba(87, 201, 144, 0.12);
+  color: #f4f8f5;
+}
+
+.chart-zoom-controls button:disabled {
+  color: #64766c;
+  cursor: default;
+  opacity: 0.55;
+}
+
+.chart-zoom-controls .zoom-reset {
+  font-size: 9px;
+  min-width: 42px;
+  text-transform: uppercase;
+}
+
 .chart-legend {
   display: flex;
   flex-wrap: wrap;
@@ -487,6 +535,7 @@ svg {
 .chart-canvas {
   margin-top: 14px;
   position: relative;
+  touch-action: pan-y;
 }
 
 .grid-line {
@@ -570,6 +619,7 @@ svg {
 .hover-capture {
   fill: transparent;
   cursor: crosshair;
+  touch-action: pan-y;
 }
 
 .chart-tooltip {
@@ -1080,6 +1130,16 @@ svg {
     font-size: 10px;
     min-width: 0;
     padding: 0 5px;
+  }
+
+  .chart-zoom-controls {
+    height: 25px;
+  }
+
+  .chart-zoom-controls button {
+    height: 23px;
+    min-width: 26px;
+    padding: 0 6px;
   }
 
   .horizon-selector {

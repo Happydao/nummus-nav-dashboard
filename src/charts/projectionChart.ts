@@ -1,5 +1,10 @@
 import type { DailySnapshot, SupplySnapshot } from "../utils/history.js";
 import { numberCompact, ratio, usd, usdCompact } from "../utils/format.js";
+import {
+  applyZoomWindow,
+  chartZoomControls,
+  type ChartZoomWindow
+} from "./lineChart.js";
 
 export type ProjectionScenario = "steady" | "strong" | "accelerated";
 export type ProjectionYears = 1 | 2 | 3 | 5;
@@ -10,6 +15,7 @@ interface ProjectionChartOptions {
   supplyHistory: SupplySnapshot[];
   scenario: ProjectionScenario;
   years: ProjectionYears;
+  zoomWindow?: ChartZoomWindow;
 }
 
 interface ProjectionPoint {
@@ -60,7 +66,7 @@ export function projectionChart(options: ProjectionChartOptions): string {
   const scenario = SCENARIOS[options.scenario];
   const premium = scenarioPremium(options.records, options.scenario) ?? latest.marketPrice / latest.nav;
   const totalMonths = options.years * 12;
-  const rawPoints = Array.from({ length: totalMonths + 1 }, (_, month) => {
+  const allRawPoints = Array.from({ length: totalMonths + 1 }, (_, month) => {
     const date = addUtcMonths(latest.date, month);
     const elapsedDays = daysBetween(latest.date, date);
     const vaultMultiplier = 1 + (scenario.targetMultiplier - 1) * (month / 60);
@@ -78,12 +84,13 @@ export function projectionChart(options: ProjectionChartOptions): string {
     };
   });
 
+  const rawPoints = applyZoomWindow(allRawPoints, options.zoomWindow);
   const vaultMax = niceCeil(Math.max(...rawPoints.map((point) => point.vaultUsd)));
   const priceMax = niceCeil(Math.max(...rawPoints.map((point) => point.impliedPrice)));
   const plotWidth = WIDTH - PAD.left - PAD.right;
   const plotHeight = HEIGHT - PAD.top - PAD.bottom;
   const points: ProjectionPoint[] = rawPoints.map((point, index) => {
-    const x = PAD.left + (index / totalMonths) * plotWidth;
+    const x = PAD.left + (index / Math.max(1, rawPoints.length - 1)) * plotWidth;
     return {
       ...point,
       x,
@@ -91,10 +98,10 @@ export function projectionChart(options: ProjectionChartOptions): string {
       priceY: PAD.top + (1 - point.impliedPrice / priceMax) * plotHeight
     };
   });
-  const endpoint = points.at(-1) as ProjectionPoint;
+  const endpoint = allRawPoints.at(-1) as Omit<ProjectionPoint, "x" | "vaultY" | "priceY">;
   const vaultTicks = makeTicks(0, vaultMax, 5);
   const priceTicks = makeTicks(0, priceMax, 5);
-  const timeTicks = makeTimeTicks(points, options.years);
+  const timeTicks = makeTimeTicks(points);
 
   return `
     <section class="chart chart-full projection-section interactive-chart" data-chart-id="projection">
@@ -103,6 +110,7 @@ export function projectionChart(options: ProjectionChartOptions): string {
           <div class="chart-title-row">
             <h2>Treasury Growth &amp; Projected NUMMUS Price Simulator</h2>
             ${infoTip(INFO)}
+            ${chartZoomControls("projection", options.zoomWindow)}
           </div>
           <span>${scenario.label} scenario · ${scenario.targetMultiplier}x Vault target at 5Y · ${options.years}Y view</span>
         </div>
@@ -278,18 +286,12 @@ function makeTicks(min: number, max: number, count: number): number[] {
   return Array.from({ length: count }, (_, index) => min + step * index);
 }
 
-function makeTimeTicks(points: ProjectionPoint[], years: number): Array<{ x: number; label: string }> {
+function makeTimeTicks(points: ProjectionPoint[]): Array<{ x: number; label: string }> {
   const indexes = [0, 0.25, 0.5, 0.75, 1].map((ratio) => Math.round((points.length - 1) * ratio));
   return [...new Set(indexes)].map((index) => ({
     x: points[index].x,
-    label: index === 0 ? "Today" : formatHorizonMonth(index)
+    label: points[index].dateLabel
   }));
-}
-
-function formatHorizonMonth(month: number): string {
-  if (month < 12) return `${month}M`;
-  if (month % 12 === 0) return `${month / 12}Y`;
-  return `${(month / 12).toFixed(1)}Y`;
 }
 
 function niceCeil(value: number): number {

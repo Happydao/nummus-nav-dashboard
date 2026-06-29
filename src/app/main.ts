@@ -1,6 +1,11 @@
 import "./styles.css";
-import { attachChartInteractions } from "../charts/interactions.js";
-import { lineChart, rangeButtons, type RangeKey } from "../charts/lineChart.js";
+import { attachChartInteractions, type ChartZoomAction } from "../charts/interactions.js";
+import {
+  lineChart,
+  rangeButtons,
+  type ChartZoomWindow,
+  type RangeKey
+} from "../charts/lineChart.js";
 import {
   projectionChart,
   type ProjectionScenario,
@@ -16,7 +21,7 @@ const REALMS_DAO_URL = "https://app.realms.today/dao/2Czvw7p29thfqNJznuicygBKxh3
 const VAULT_SOLSCAN_URL = "https://solscan.io/account/HtT3yMsAavLQYmd6VSbXSdbAefyZUrrFeEPoTPivde3s";
 const NUMMUS_COINGECKO_URL = "https://www.coingecko.com/en/coins/nummus-aeternitas";
 const INITIAL_NUMMUS_SUPPLY = 100_000_000;
-const SUPPLY_HISTORY_START = "2025-06-23";
+const SUPPLY_HISTORY_START = "2025-06-27";
 const DAY_BEFORE_FIRST_RECORDED_BURN = "2025-10-16";
 const FINANCIAL_HISTORY_START = "2025-09-01";
 
@@ -28,6 +33,7 @@ const root = app;
 let selectedRange: RangeKey = "ALL";
 let selectedProjectionScenario: ProjectionScenario = "accelerated";
 let selectedProjectionYears: ProjectionYears = 3;
+const chartZoomWindows = new Map<string, ChartZoomWindow>();
 
 render().catch((error: unknown) => {
   root.innerHTML = `<div class="notice">${error instanceof Error ? error.message : "Unable to load dashboard"}</div>`;
@@ -86,6 +92,7 @@ async function render(): Promise<void> {
             records: financialRecords,
             key: "nav",
             range: selectedRange,
+            zoomWindow: chartZoom("nav"),
             formatter: usd,
             primaryLegendLabel: "NAV (USD)",
             axisFormatter: usd,
@@ -110,6 +117,7 @@ async function render(): Promise<void> {
             records: financialRecords,
             key: "backing",
             range: selectedRange,
+            zoomWindow: chartZoom("backing"),
             formatter: percent,
             axisFormatter: percent,
             yLabel: "Backing %",
@@ -123,6 +131,7 @@ async function render(): Promise<void> {
             records: financialRecords,
             key: "premium",
             range: selectedRange,
+            zoomWindow: chartZoom("premium"),
             formatter: ratio,
             axisFormatter: ratio,
             yLabel: "Market / NAV",
@@ -136,6 +145,7 @@ async function render(): Promise<void> {
             records: financialRecords,
             key: "vaultUsd",
             range: selectedRange,
+            zoomWindow: chartZoom("vault"),
             formatter: usd,
             axisFormatter: usdCompact,
             yLabel: "USD",
@@ -148,6 +158,7 @@ async function render(): Promise<void> {
             records: supplyChartRecords,
             key: "supply",
             range: selectedRange,
+            zoomWindow: chartZoom("supply"),
             formatter: numberCompact,
             axisFormatter: numberCompact,
             yLabel: "NUMMUS",
@@ -158,7 +169,7 @@ async function render(): Promise<void> {
               label: "Burn Dashboard",
               href: "https://happydao.github.io/Nummus.burn/"
             },
-            info: "Supply Reduction starts from the initial 100 million NUMMUS supply on 23 June 2025. It remains flat until the first recorded burn on 17 October, then follows the real burn-derived supply and current daily snapshots. Lower supply can increase NAV per token if treasury value is stable or growing."
+            info: "Supply Reduction starts from the initial 100 million NUMMUS supply on 27 June 2025. It remains flat until the first recorded burn on 17 October, then follows the real burn-derived supply and current daily snapshots. Lower supply can increase NAV per token if treasury value is stable or growing."
           })}
           ${lineChart({
             id: "tbtc",
@@ -166,6 +177,7 @@ async function render(): Promise<void> {
             records: tbtcHistory,
             key: "amount",
             range: selectedRange,
+            zoomWindow: chartZoom("tbtc"),
             formatter: (value) => `${value.toFixed(8)} tBTC`,
             axisFormatter: tbtcAxis,
             yLabel: "tBTC",
@@ -191,7 +203,8 @@ async function render(): Promise<void> {
             records: financialRecords,
             supplyHistory: history.supplyHistory ?? [],
             scenario: selectedProjectionScenario,
-            years: selectedProjectionYears
+            years: selectedProjectionYears,
+            zoomWindow: chartZoom("projection")
           })}
         </div>
       </section>
@@ -209,7 +222,43 @@ async function render(): Promise<void> {
   `;
   attachRangeHandlers();
   attachProjectionHandlers();
-  attachChartInteractions(root);
+  attachChartInteractions(root, { onZoom: updateChartZoom });
+}
+
+function chartZoom(id: string): ChartZoomWindow | undefined {
+  return chartZoomWindows.get(id);
+}
+
+function updateChartZoom(id: string, action: ChartZoomAction, anchor: number): void {
+  if (action === "reset") {
+    chartZoomWindows.delete(id);
+    void render();
+    return;
+  }
+
+  const current = chartZoomWindows.get(id) ?? { start: 0, end: 1 };
+  const width = current.end - current.start;
+  const factor = action === "in" ? 0.72 : 1 / 0.72;
+  const nextWidth = Math.max(0.03, Math.min(1, width * factor));
+  if (nextWidth >= 0.995) {
+    chartZoomWindows.delete(id);
+    void render();
+    return;
+  }
+
+  const focus = current.start + width * Math.max(0, Math.min(1, anchor));
+  let start = focus - nextWidth * anchor;
+  let end = start + nextWidth;
+  if (start < 0) {
+    end -= start;
+    start = 0;
+  }
+  if (end > 1) {
+    start -= end - 1;
+    end = 1;
+  }
+  chartZoomWindows.set(id, { start: Math.max(0, start), end: Math.min(1, end) });
+  void render();
 }
 
 function attachProjectionHandlers(): void {
@@ -223,6 +272,7 @@ function attachProjectionHandlers(): void {
   for (const button of root.querySelectorAll<HTMLButtonElement>("[data-projection-years]")) {
     button.addEventListener("click", () => {
       selectedProjectionYears = Number(button.dataset.projectionYears) as ProjectionYears;
+      chartZoomWindows.delete("projection");
       void render();
     });
   }
@@ -329,6 +379,7 @@ function attachRangeHandlers(): void {
   for (const button of root.querySelectorAll<HTMLButtonElement>("[data-range]")) {
     button.addEventListener("click", () => {
       selectedRange = button.dataset.range as RangeKey;
+      chartZoomWindows.clear();
       render().catch((error: unknown) => {
         root.innerHTML = `<div class="notice">${error instanceof Error ? error.message : "Unable to load dashboard"}</div>`;
       });
