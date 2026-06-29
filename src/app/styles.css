@@ -409,65 +409,73 @@ body {
   margin-top: 10px;
 }
 
-.liquidity-toolbar > span {
+.liquidity-log-label {
   color: #91a49a;
   font-size: 11px;
   font-weight: 700;
 }
 
-.liquidity-scale-selector {
-  background: rgba(4, 11, 8, 0.42);
-  border: 1px solid rgba(138, 166, 148, 0.24);
-  border-radius: 6px;
-  display: inline-grid;
-  grid-template-columns: repeat(2, 1fr);
-  padding: 2px;
-}
-
-.liquidity-scale-selector button {
-  background: transparent;
-  border: 0;
-  border-radius: 4px;
-  color: #9fb3a7;
-  cursor: pointer;
-  font: inherit;
-  font-size: 10px;
-  font-weight: 800;
-  height: 24px;
-  min-width: 54px;
-  padding: 0 8px;
-  text-transform: uppercase;
-}
-
-.liquidity-scale-selector button.active {
-  background: rgba(232, 238, 233, 0.12);
-  color: #f4f8f5;
-}
-
-.liquidity-legend {
-  display: grid;
-  gap: 5px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 9px;
-}
-
-.liquidity-total-label,
-.liquidity-pool-toggle {
+.liquidity-pools-trigger {
   align-items: center;
-  color: #b8c9bf;
-  display: flex;
-  font-size: 9px;
-  font-weight: 700;
+  border-bottom: 1px dotted rgba(195, 182, 138, 0.72);
+  color: #c3b68a;
+  cursor: help;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 800;
+  gap: 5px;
+  position: relative;
+}
+
+.liquidity-pools-trigger > i {
+  align-items: center;
+  border: 1px solid rgba(195, 182, 138, 0.55);
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 8px;
+  font-style: normal;
+  height: 14px;
+  justify-content: center;
+  width: 14px;
+}
+
+.liquidity-pools-popover {
+  background: #e8eee9;
+  border: 1px solid rgba(138, 166, 148, 0.36);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+  color: #10231a;
+  display: none;
+  flex-direction: column;
   gap: 6px;
+  padding: 10px;
+  position: absolute;
+  right: 0;
+  top: 22px;
+  width: 310px;
+  z-index: 12;
+}
+
+.liquidity-pools-trigger:hover .liquidity-pools-popover,
+.liquidity-pools-trigger:focus .liquidity-pools-popover,
+.liquidity-pools-trigger:focus-within .liquidity-pools-popover {
+  display: flex;
+}
+
+.liquidity-pools-popover > strong {
+  color: #10231a;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.liquidity-pool-row {
+  align-items: center;
+  display: flex;
+  gap: 7px;
   min-width: 0;
 }
 
-.liquidity-total-label {
-  grid-column: 1 / -1;
-}
-
-.liquidity-total-label i,
-.liquidity-pool-toggle i,
+.liquidity-pool-row > i,
 .tooltip-swatch {
   border-radius: 999px;
   flex: 0 0 auto;
@@ -475,35 +483,21 @@ body {
   width: 7px;
 }
 
-.liquidity-pool-toggle {
-  background: rgba(4, 11, 8, 0.28);
-  border: 1px solid rgba(138, 166, 148, 0.18);
-  border-radius: 5px;
-  cursor: pointer;
+.liquidity-pool-row em {
+  color: #607268;
+  flex: 1;
   font: inherit;
-  padding: 5px 6px;
-  text-align: left;
-}
-
-.liquidity-pool-toggle:hover {
-  border-color: rgba(207, 174, 105, 0.42);
-}
-
-.liquidity-pool-toggle.inactive {
-  opacity: 0.38;
-}
-
-.liquidity-pool-toggle span {
-  min-width: 0;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.liquidity-pool-toggle b {
-  color: #dcece2;
-  font-size: 9px;
-  margin-left: auto;
+.liquidity-pool-row b {
+  color: #23704d;
+  font-size: 11px;
   white-space: nowrap;
 }
 
@@ -824,18 +818,6 @@ svg {
   display: flex;
   gap: 12px;
   justify-content: space-between;
-}
-
-.liquidity-tooltip {
-  max-width: 340px;
-  min-width: 280px;
-}
-
-.liquidity-tooltip .tooltip-row em {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .chart-tooltip .tooltip-row em {
@@ -1400,18 +1382,15 @@ svg {
     z-index: 5;
   }
 
-  .liquidity-legend {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .liquidity-total-label {
-    grid-column: 1;
-  }
-
-  .liquidity-tooltip {
+  .liquidity-pools-popover {
+    bottom: auto;
+    left: 16px;
     max-height: 240px;
-    min-width: 0;
     overflow-y: auto;
-    width: calc(100% - 28px);
+    position: fixed;
+    right: 16px;
+    top: 86px;
+    width: auto;
+    z-index: 30;
   }
 }

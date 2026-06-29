@@ -7,14 +7,10 @@ import {
   type RangeKey
 } from "./lineChart.js";
 
-export type LiquidityScale = "linear" | "log";
-
 interface DexLiquidityChartOptions {
   records: DailySnapshot[];
   range: RangeKey;
   zoomWindow?: ChartZoomWindow;
-  scale: LiquidityScale;
-  hiddenPools: Set<string>;
 }
 
 interface LiquidityPool {
@@ -52,7 +48,6 @@ export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
   }
 
   const poolMeta = buildPoolMeta(records);
-  const visiblePools = poolMeta.filter((pool) => !options.hiddenPools.has(pool.pairAddress));
   const xMin = dateTimestamp(records[0].date);
   const xMax = dateTimestamp(records.at(-1)?.date ?? records[0].date);
   const plotRight = WIDTH - PAD.right;
@@ -65,16 +60,16 @@ export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
 
   const visibleValues = records.flatMap((record) => [
     record.totalLiquidityUsd,
-    ...visiblePools.map((pool) => poolValue(record, pool.pairAddress)).filter((value) => value > 0)
+    ...poolMeta.map((pool) => poolValue(record, pool.pairAddress)).filter((value) => value > 0)
   ]);
-  const scale = makeScale(visibleValues, options.scale, chartHeight);
+  const scale = makeLogScale(visibleValues, chartHeight);
   const totalPoints = records.map((record) => ({
     x: xForDate(record.date),
     y: scale.y(record.totalLiquidityUsd),
     value: record.totalLiquidityUsd
   }));
   const totalPath = pathFor(totalPoints, plotRight);
-  const poolPaths = visiblePools.map((pool) => {
+  const poolPaths = poolMeta.map((pool) => {
     const points = records.map((record) => {
       const value = poolValue(record, pool.pairAddress);
       return { x: xForDate(record.date), y: value > 0 ? scale.y(value) : null, value };
@@ -103,19 +98,12 @@ export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
         </div>
       </div>
       <div class="liquidity-toolbar">
-        <div class="liquidity-scale-selector" aria-label="Liquidity chart scale">
-          ${scaleButton("linear", "Linear", options.scale)}
-          ${scaleButton("log", "Log", options.scale)}
-        </div>
-        <span>${latest.pools.length} pools tracked</span>
-      </div>
-      <div class="liquidity-legend" aria-label="Liquidity pool legend">
-        <span class="liquidity-total-label"><i style="background:${TOTAL_COLOR}"></i>Total</span>
-        ${poolMeta.map((pool) => poolLegendButton(pool, options.hiddenPools.has(pool.pairAddress))).join("")}
+        <span class="liquidity-log-label">Logarithmic scale</span>
+        ${poolSummary(poolMeta)}
       </div>
       <div class="chart-canvas">
         <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="NUMMUS DEX Liquidity by pool">
-          <text class="axis-title y-axis-title" x="${PAD.left}" y="${PAD.top - 8}">Pool Liquidity (USD) · ${options.scale === "log" ? "Log" : "Linear"}</text>
+          <text class="axis-title y-axis-title" x="${PAD.left}" y="${PAD.top - 8}">Pool Liquidity (USD) · Log</text>
           <text class="axis-title x-axis-title" x="${plotRight}" y="${HEIGHT - 7}" text-anchor="end">Date</text>
           ${scale.ticks.map((tick) => {
             const y = scale.y(tick);
@@ -144,13 +132,7 @@ export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
           x: totalPoints[index].x,
           y: totalPoints[index].y,
           series: [
-            { name: "Total", label: usd(record.totalLiquidityUsd), kind: "neutral", color: TOTAL_COLOR },
-            ...poolMeta.map((pool) => ({
-              name: pool.name,
-              label: usd(poolValue(record, pool.pairAddress)),
-              kind: "neutral",
-              color: pool.color
-            }))
+            { name: "Total Liquidity", label: usd(record.totalLiquidityUsd), kind: "neutral", color: TOTAL_COLOR }
           ]
         }))
       })}</script>
@@ -196,25 +178,17 @@ function buildPoolMeta(records: LiquidityRecord[]): PoolMeta[] {
     }));
 }
 
-function makeScale(values: number[], type: LiquidityScale, chartHeight: number): { y: (value: number) => number; ticks: number[] } {
+function makeLogScale(values: number[], chartHeight: number): { y: (value: number) => number; ticks: number[] } {
   const positive = values.filter((value) => value > 0);
   const max = Math.max(...positive, 1);
-  if (type === "log") {
-    const minPower = Math.floor(Math.log10(Math.min(...positive, 1)));
-    const maxPower = Math.ceil(Math.log10(max));
-    const allTicks = Array.from({ length: maxPower - minPower + 1 }, (_, index) => 10 ** (minPower + index));
-    const ticks = sampleTicks(allTicks, 6);
-    const minLog = Math.log10(10 ** minPower);
-    const maxLog = Math.log10(10 ** maxPower);
-    return {
-      y: (value) => PAD.top + (1 - (Math.log10(Math.max(value, 10 ** minPower)) - minLog) / (maxLog - minLog || 1)) * chartHeight,
-      ticks
-    };
-  }
-  const yMax = niceCeil(max);
-  const ticks = Array.from({ length: 5 }, (_, index) => (yMax * index) / 4);
+  const minPower = Math.floor(Math.log10(Math.min(...positive, 1)));
+  const maxPower = Math.ceil(Math.log10(max));
+  const allTicks = Array.from({ length: maxPower - minPower + 1 }, (_, index) => 10 ** (minPower + index));
+  const ticks = sampleTicks(allTicks, 6);
+  const minLog = Math.log10(10 ** minPower);
+  const maxLog = Math.log10(10 ** maxPower);
   return {
-    y: (value) => PAD.top + (1 - value / yMax) * chartHeight,
+    y: (value) => PAD.top + (1 - (Math.log10(Math.max(value, 10 ** minPower)) - minLog) / (maxLog - minLog || 1)) * chartHeight,
     ticks
   };
 }
@@ -268,21 +242,20 @@ function changeSummary(records: LiquidityRecord[]): string {
   return `<span class="chart-change ${state}">${direction} ${change > 0 ? "+" : ""}${change.toFixed(2)}%</span>`;
 }
 
-function poolLegendButton(pool: PoolMeta, hidden: boolean): string {
-  return `<button type="button" class="liquidity-pool-toggle${hidden ? " inactive" : ""}" data-liquidity-pool="${escapeHtml(pool.pairAddress)}" title="${hidden ? "Show" : "Hide"} ${escapeHtml(pool.name)}"><i style="background:${pool.color}"></i><span>${escapeHtml(pool.name)}</span><b>${usd(pool.latestLiquidityUsd)}</b></button>`;
-}
-
-function scaleButton(value: LiquidityScale, label: string, selected: LiquidityScale): string {
-  return `<button type="button" data-liquidity-scale="${value}" class="${selected === value ? "active" : ""}">${label}</button>`;
+function poolSummary(pools: PoolMeta[]): string {
+  return `
+    <span class="liquidity-pools-trigger" tabindex="0" aria-label="Show latest liquidity for ${pools.length} tracked pools">
+      ${pools.length} pools tracked <i>i</i>
+      <span class="liquidity-pools-popover" role="tooltip">
+        <strong>Latest pool liquidity</strong>
+        ${pools.map((pool) => `<span class="liquidity-pool-row"><i style="background:${pool.color}"></i><em>${escapeHtml(pool.name)}</em><b>${usd(pool.latestLiquidityUsd)}</b></span>`).join("")}
+      </span>
+    </span>
+  `;
 }
 
 function infoTip(text: string): string {
   return `<span class="info-tip" tabindex="0" aria-label="${escapeHtml(text)}">i<span class="info-popover" role="tooltip">${escapeHtml(text)}</span></span>`;
-}
-
-function niceCeil(value: number): number {
-  const magnitude = 10 ** Math.floor(Math.log10(Math.abs(value || 1)));
-  return Math.ceil(value / magnitude) * magnitude;
 }
 
 function sampleTicks(ticks: number[], maxCount: number): number[] {

@@ -8,7 +8,7 @@ import {
   type ChartZoomWindow,
   type RangeKey
 } from "../charts/lineChart.js";
-import { dexLiquidityChart, type LiquidityScale } from "../charts/dexLiquidityChart.js";
+import { dexLiquidityChart } from "../charts/dexLiquidityChart.js";
 import {
   projectionChart,
   type ProjectionScenario,
@@ -38,8 +38,6 @@ let selectedRange: RangeKey = "ALL";
 let selectedProjectionScenario: ProjectionScenario = "accelerated";
 let selectedProjectionYears: ProjectionYears = 3;
 const chartZoomWindows = new Map<string, ChartZoomWindow>();
-let dexLiquidityScale: LiquidityScale = "linear";
-const hiddenLiquidityPools = new Set<string>();
 
 render().catch((error: unknown) => {
   root.innerHTML = `<div class="notice">${error instanceof Error ? error.message : "Unable to load dashboard"}</div>`;
@@ -243,9 +241,7 @@ async function render(): Promise<void> {
           ${dexLiquidityChart({
             records,
             range: selectedRange,
-            zoomWindow: chartZoom("dex-liquidity"),
-            scale: dexLiquidityScale,
-            hiddenPools: hiddenLiquidityPools
+            zoomWindow: chartZoom("dex-liquidity")
           })}
         </section>
       </div>
@@ -280,7 +276,6 @@ async function render(): Promise<void> {
   `;
   attachRangeHandlers();
   attachProjectionHandlers();
-  attachLiquidityHandlers();
   attachChartInteractions(root, { onZoom: updateChartZoom, onPan: updateChartPan });
 }
 
@@ -358,28 +353,6 @@ function attachProjectionHandlers(): void {
     button.addEventListener("click", () => {
       selectedProjectionYears = Number(button.dataset.projectionYears) as ProjectionYears;
       chartZoomWindows.delete("projection");
-      void render();
-    });
-  }
-}
-
-function attachLiquidityHandlers(): void {
-  for (const button of root.querySelectorAll<HTMLButtonElement>("[data-liquidity-scale]")) {
-    button.addEventListener("click", () => {
-      dexLiquidityScale = button.dataset.liquidityScale as LiquidityScale;
-      void render();
-    });
-  }
-
-  for (const button of root.querySelectorAll<HTMLButtonElement>("[data-liquidity-pool]")) {
-    button.addEventListener("click", () => {
-      const pairAddress = button.dataset.liquidityPool;
-      if (!pairAddress) return;
-      if (hiddenLiquidityPools.has(pairAddress)) {
-        hiddenLiquidityPools.delete(pairAddress);
-      } else {
-        hiddenLiquidityPools.add(pairAddress);
-      }
       void render();
     });
   }

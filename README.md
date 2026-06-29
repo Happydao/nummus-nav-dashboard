@@ -135,14 +135,11 @@ This chart tracks the combined USD liquidity reported across the Solana liquidit
 
 For every daily snapshot, the collector requests the list of NUMMUS pairs from DexScreener, verifies that NUMMUS is one side of each pair, removes duplicate pair addresses and stores the valid `liquidity.usd` value of every pool. It also stores their sum as Total DEX Liquidity. These values represent capital deposited in pools, not trading volume, market capitalization or treasury value.
 
-The total and every individual pool are displayed as separate lines. The interactive legend identifies each pool by DEX, token pair and abbreviated pool address; selecting a pool hides or restores its line without removing it from the daily tooltip.
+The total and every individual pool are displayed as separate lines. The `pools tracked` control opens the chart legend and reports the latest available USD liquidity for each pool, identified by DEX, token pair and an abbreviated pool address where required.
 
-The chart provides two vertical scales:
+The chart uses a **logarithmic USD scale**. Each vertical step represents a multiplication rather than an equal dollar increment, allowing pools with only a few dollars and pools with tens of thousands of dollars to remain visible in the same chart. Exact latest pool values remain available in the interactive legend.
 
-- **Linear** preserves the real proportional difference between pools and makes the dominant sources of liquidity immediately visible.
-- **Log** separates values across multiple orders of magnitude, allowing small pools to remain visible when one pool contains most of the available liquidity.
-
-The tooltip always reports Total DEX Liquidity followed by the USD liquidity of every tracked pool for the selected date.
+The daily chart tooltip reports only Total DEX Liquidity. Individual lines are intended to show the continuity and direction of each pool's liquidity over time without turning every historical tooltip into a large table.
 
 Higher DEX Liquidity generally means that more capital is available to support trading. It does not, however, reveal how that liquidity is distributed across prices. Concentrated-liquidity pools can report substantial total liquidity while offering less executable liquidity near the current price. For this reason, DEX Liquidity should be evaluated together with NUMMUS Market Depth.
 
