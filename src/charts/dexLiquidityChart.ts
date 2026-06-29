@@ -246,11 +246,13 @@ function changeSummary(records: LiquidityRecord[]): string {
 }
 
 function poolSummary(pools: PoolMeta[]): string {
+  const totalLiquidityUsd = pools.reduce((sum, pool) => sum + pool.latestLiquidityUsd, 0);
   return `
     <span class="liquidity-pools-trigger" tabindex="0" aria-label="Show latest liquidity for ${pools.length} tracked pools">
       ${pools.length} pools tracked <i>i</i>
       <span class="liquidity-pools-popover" role="tooltip">
         <strong>Latest pool liquidity</strong>
+        <span class="liquidity-pool-row liquidity-pool-total"><i style="background:${TOTAL_COLOR}"></i><em>Total Liquidity</em><b>${usd(totalLiquidityUsd)}</b></span>
         ${pools.map((pool) => `<span class="liquidity-pool-row"><i style="background:${pool.color}"></i><em>${escapeHtml(pool.name)}</em><b>${usd(pool.latestLiquidityUsd)}</b></span>`).join("")}
       </span>
     </span>
