@@ -36,8 +36,8 @@ interface PoolMeta {
 const WIDTH = 760;
 const HEIGHT = 310;
 const PAD = { top: 22, right: 22, bottom: 44, left: 82 };
-const TOTAL_COLOR = "#e7d18b";
-const POOL_COLORS = ["#57c990", "#d79551", "#68a7d8", "#c778c8", "#d6c45d", "#8b9ee8", "#d87575", "#74b9a5"];
+const TOTAL_COLOR = "#57c990";
+const POOL_COLORS = ["#d79551", "#68a7d8", "#c778c8", "#d6c45d", "#8b9ee8", "#d87575", "#74b9a5", "#b98cd9"];
 
 export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
   const allRecords = toLiquidityRecords(options.records);
@@ -98,7 +98,10 @@ export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
         </div>
       </div>
       <div class="liquidity-toolbar">
-        <span class="liquidity-log-label">Logarithmic scale</span>
+        <span class="liquidity-toolbar-labels">
+          <span class="liquidity-log-label">Logarithmic scale</span>
+          <span class="liquidity-total-key"><i></i>Total</span>
+        </span>
         ${poolSummary(poolMeta)}
       </div>
       <div class="chart-canvas">

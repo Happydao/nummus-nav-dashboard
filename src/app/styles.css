@@ -415,6 +415,29 @@ body {
   font-weight: 700;
 }
 
+.liquidity-toolbar-labels {
+  align-items: center;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.liquidity-total-key {
+  align-items: center;
+  color: #b8c9bf;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 800;
+  gap: 5px;
+}
+
+.liquidity-total-key i {
+  background: #57c990;
+  border-radius: 999px;
+  height: 3px;
+  width: 18px;
+}
+
 .liquidity-pools-trigger {
   align-items: center;
   border-bottom: 1px dotted rgba(195, 182, 138, 0.72);
@@ -735,8 +758,8 @@ svg {
 }
 
 .liquidity-total-path {
-  stroke: #e7d18b;
-  stroke-width: 2;
+  stroke: #57c990;
+  stroke-width: 2.4;
 }
 
 .liquidity-pool-path {
@@ -744,7 +767,7 @@ svg {
 }
 
 .liquidity-hover-dot {
-  stroke: #e7d18b;
+  stroke: #57c990;
 }
 
 .series-marker {
