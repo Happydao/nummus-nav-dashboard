@@ -222,7 +222,7 @@ async function render(): Promise<void> {
   `;
   attachRangeHandlers();
   attachProjectionHandlers();
-  attachChartInteractions(root, { onZoom: updateChartZoom });
+  attachChartInteractions(root, { onZoom: updateChartZoom, onPan: updateChartPan });
 }
 
 function chartZoom(id: string): ChartZoomWindow | undefined {
@@ -258,6 +258,19 @@ function updateChartZoom(id: string, action: ChartZoomAction, anchor: number): v
     end = 1;
   }
   chartZoomWindows.set(id, { start: Math.max(0, start), end: Math.min(1, end) });
+  void render();
+}
+
+function updateChartPan(id: string, delta: number): void {
+  const current = chartZoomWindows.get(id);
+  if (!current) return;
+  const width = current.end - current.start;
+  const shift = delta * width;
+  let start = current.start + shift;
+  start = Math.max(0, Math.min(1 - width, start));
+  const end = start + width;
+  if (Math.abs(start - current.start) < 0.0001) return;
+  chartZoomWindows.set(id, { start, end });
   void render();
 }
 

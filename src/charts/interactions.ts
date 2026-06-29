@@ -2,6 +2,7 @@ export type ChartZoomAction = "in" | "out" | "reset";
 
 interface ChartInteractionOptions {
   onZoom?: (chartId: string, action: ChartZoomAction, anchor: number) => void;
+  onPan?: (chartId: string, delta: number) => void;
 }
 
 interface InteractivePoint {
@@ -30,6 +31,8 @@ export function attachChartInteractions(
     const parsed = JSON.parse(dataNode.textContent ?? "{}") as { points: InteractivePoint[] };
     const points = parsed.points;
     if (points.length === 0) continue;
+    const resetButton = chart.querySelector<HTMLButtonElement>('[data-chart-zoom="reset"]');
+    const isZoomed = (): boolean => Boolean(resetButton && !resetButton.disabled);
 
     const showNearest = (clientX: number, clientY: number): void => {
       const svg = capture.ownerSVGElement;
@@ -64,6 +67,7 @@ export function attachChartInteractions(
 
     capture.addEventListener("pointermove", (event) => {
       if (event.pointerType === "touch" && !event.isPrimary) return;
+      if (chart.classList.contains("panning")) return;
       showNearest(event.clientX, event.clientY);
     });
 
@@ -78,42 +82,132 @@ export function attachChartInteractions(
       });
     }
 
+    let wheelZoomDelta = 0;
+    let wheelZoomAnchor = 0.5;
+    let wheelPanDelta = 0;
+    let wheelTimer: ReturnType<typeof setTimeout> | null = null;
+    const flushWheel = (): void => {
+      if (wheelZoomDelta !== 0) {
+        options.onZoom?.(chartId, wheelZoomDelta < 0 ? "in" : "out", wheelZoomAnchor);
+      } else if (wheelPanDelta !== 0 && isZoomed()) {
+        options.onPan?.(chartId, wheelPanDelta);
+      }
+      wheelZoomDelta = 0;
+      wheelPanDelta = 0;
+      wheelTimer = null;
+    };
+
     capture.addEventListener(
       "wheel",
       (event) => {
-        if (!options.onZoom) return;
-        event.preventDefault();
-        options.onZoom(chartId, event.deltaY < 0 ? "in" : "out", pointerAnchor(capture, event.clientX));
+        const horizontal = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+        if ((event.ctrlKey || event.metaKey) && options.onZoom) {
+          event.preventDefault();
+          wheelZoomDelta += event.deltaY;
+          wheelZoomAnchor = pointerAnchor(capture, event.clientX);
+        } else if (horizontal && isZoomed() && options.onPan) {
+          event.preventDefault();
+          wheelPanDelta += event.deltaX / Math.max(1, capture.getBoundingClientRect().width);
+        } else {
+          return;
+        }
+        if (wheelTimer) clearTimeout(wheelTimer);
+        wheelTimer = setTimeout(flushWheel, 70);
       },
       { passive: false }
     );
 
-    let pinchDistance: number | null = null;
+    let gesture:
+      | { kind: "pinch"; startDistance: number; scale: number; centerX: number }
+      | { kind: "pan"; startX: number; startY: number; deltaX: number; deltaY: number }
+      | null = null;
     capture.addEventListener(
       "touchstart",
       (event) => {
-        if (event.touches.length === 2) pinchDistance = touchDistance(event.touches);
+        if (event.touches.length === 2) {
+          gesture = {
+            kind: "pinch",
+            startDistance: touchDistance(event.touches),
+            scale: 1,
+            centerX: (event.touches[0].clientX + event.touches[1].clientX) / 2
+          };
+        } else if (event.touches.length === 1 && isZoomed()) {
+          gesture = {
+            kind: "pan",
+            startX: event.touches[0].clientX,
+            startY: event.touches[0].clientY,
+            deltaX: 0,
+            deltaY: 0
+          };
+        }
       },
       { passive: true }
     );
     capture.addEventListener(
       "touchmove",
       (event) => {
-        if (!options.onZoom || event.touches.length !== 2 || pinchDistance === null) return;
-        event.preventDefault();
-        const nextDistance = touchDistance(event.touches);
-        const ratio = nextDistance / pinchDistance;
-        if (ratio > 1.08 || ratio < 0.92) {
-          const centerX = (event.touches[0].clientX + event.touches[1].clientX) / 2;
-          options.onZoom(chartId, ratio > 1 ? "in" : "out", pointerAnchor(capture, centerX));
-          pinchDistance = nextDistance;
+        if (gesture?.kind === "pinch" && event.touches.length === 2) {
+          event.preventDefault();
+          gesture.scale = touchDistance(event.touches) / gesture.startDistance;
+          chart.classList.add("panning");
+        } else if (gesture?.kind === "pan" && event.touches.length === 1) {
+          gesture.deltaX = event.touches[0].clientX - gesture.startX;
+          gesture.deltaY = event.touches[0].clientY - gesture.startY;
+          if (Math.abs(gesture.deltaX) > 8 && Math.abs(gesture.deltaX) > Math.abs(gesture.deltaY)) {
+            event.preventDefault();
+            chart.classList.add("panning");
+          }
         }
       },
       { passive: false }
     );
     capture.addEventListener("touchend", () => {
-      pinchDistance = null;
+      if (gesture?.kind === "pinch" && options.onZoom) {
+        if (gesture.scale > 1.05 || gesture.scale < 0.95) {
+          options.onZoom(
+            chartId,
+            gesture.scale > 1 ? "in" : "out",
+            pointerAnchor(capture, gesture.centerX)
+          );
+        }
+      } else if (gesture?.kind === "pan" && options.onPan && chart.classList.contains("panning")) {
+        options.onPan(
+          chartId,
+          -gesture.deltaX / Math.max(1, capture.getBoundingClientRect().width)
+        );
+      }
+      gesture = null;
+      chart.classList.remove("panning");
     });
+
+    let mousePanStart: number | null = null;
+    let mousePanDelta = 0;
+    capture.addEventListener("pointerdown", (event) => {
+      if (event.pointerType !== "mouse" || event.button !== 0 || !isZoomed()) return;
+      mousePanStart = event.clientX;
+      mousePanDelta = 0;
+      capture.setPointerCapture(event.pointerId);
+      chart.classList.add("panning");
+    });
+    capture.addEventListener("pointermove", (event) => {
+      if (mousePanStart === null || event.pointerType !== "mouse") return;
+      mousePanDelta = event.clientX - mousePanStart;
+    });
+    const finishMousePan = (event: PointerEvent): void => {
+      if (mousePanStart === null) return;
+      if (Math.abs(mousePanDelta) > 3) {
+        options.onPan?.(
+          chartId,
+          -mousePanDelta / Math.max(1, capture.getBoundingClientRect().width)
+        );
+      }
+      mousePanStart = null;
+      mousePanDelta = 0;
+      chart.classList.remove("panning");
+      if (capture.hasPointerCapture(event.pointerId)) capture.releasePointerCapture(event.pointerId);
+    };
+    capture.addEventListener("pointerup", finishMousePan);
+    capture.addEventListener("pointercancel", finishMousePan);
   }
 }
 

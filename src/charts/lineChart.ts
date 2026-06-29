@@ -123,16 +123,17 @@ export function lineChart(options: ChartOptions): string {
       : "";
   const yTicks = makeTicks(yMin, yMax, 5);
   const secondaryYTicks = hasIndependentAxis ? makeTicks(secondaryYMin, secondaryYMax, 5) : [];
-  const xTicks = makeDateTicks(points);
+  const xTicks = makeDateTicks(points, responsiveTickCount());
   const latest = points.at(-1);
   const axisFormatter = options.axisFormatter ?? options.formatter;
   const changeSummary = renderChangeSummary(options, points, secondaryCoords);
   const dualAxisSummary = hasIndependentAxis
     ? renderDualAxisSummary(options, points, secondaryCoords)
     : "";
+  const zoomed = Boolean(options.zoomWindow && (options.zoomWindow.start > 0 || options.zoomWindow.end < 1));
 
   return `
-    <section class="chart interactive-chart${options.fullWidth ? " chart-full" : ""}" data-chart-id="${options.id}">
+    <section class="chart interactive-chart${options.fullWidth ? " chart-full" : ""}${zoomed ? " chart-zoomed" : ""}" data-chart-id="${options.id}">
       <div class="chart-head">
         <div>
           <div class="chart-title-row">
@@ -179,6 +180,7 @@ export function lineChart(options: ChartOptions): string {
             .map((tick) => {
               const x = xForTimestamp(tick.timestamp);
               return `
+                <line class="x-grid-line" x1="${x}" y1="${PAD.top}" x2="${x}" y2="${HEIGHT - PAD.bottom}" />
                 <line class="x-tick-line" x1="${x}" y1="${HEIGHT - PAD.bottom}" x2="${x}" y2="${HEIGHT - PAD.bottom + 5}" />
                 <text class="tick-label x-tick" x="${x}" y="${HEIGHT - 18}" text-anchor="middle">${tick.label}</text>
               `;
@@ -425,16 +427,23 @@ function makeTicks(min: number, max: number, count: number): number[] {
   return Array.from({ length: count }, (_, index) => min + step * index);
 }
 
-function makeDateTicks(points: ChartPoint[]): Array<{ timestamp: number; label: string }> {
-  const indexes = points.length <= 2 ? [0, points.length - 1] : [0, Math.floor((points.length - 1) / 2), points.length - 1];
-  return [...new Set(indexes)].map((index) => {
-    const point = points[index];
-    const date = new Date(`${point.date}T00:00:00.000Z`);
-    return {
-      timestamp: date.getTime(),
-      label: formatDateShort(point.date)
-    };
+function makeDateTicks(
+  points: ChartPoint[],
+  maxCount: number
+): Array<{ timestamp: number; label: string }> {
+  const start = new Date(`${points[0].date}T00:00:00.000Z`).getTime();
+  const end = new Date(`${points.at(-1)?.date ?? points[0].date}T00:00:00.000Z`).getTime();
+  const visibleDays = Math.max(1, Math.round((end - start) / 86_400_000));
+  const count = Math.max(2, Math.min(maxCount, visibleDays + 1));
+  return Array.from({ length: count }, (_, index) => {
+    const timestamp = start + ((end - start) * index) / Math.max(1, count - 1);
+    const date = new Date(timestamp).toISOString().slice(0, 10);
+    return { timestamp, label: formatDateShort(date) };
   });
+}
+
+function responsiveTickCount(): number {
+  return typeof window !== "undefined" && window.innerWidth <= 620 ? 4 : 8;
 }
 
 function marker(point: ChartPoint & { x: number; y: number }, index: number): string {

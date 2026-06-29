@@ -543,6 +543,12 @@ svg {
   stroke-width: 1;
 }
 
+.x-grid-line {
+  stroke: rgba(138, 166, 148, 0.09);
+  stroke-dasharray: 2 5;
+  stroke-width: 1;
+}
+
 .axis-line,
 .x-tick-line {
   stroke: rgba(138, 166, 148, 0.36);
@@ -620,6 +626,21 @@ svg {
   fill: transparent;
   cursor: crosshair;
   touch-action: pan-y;
+}
+
+.chart-zoomed .hover-capture {
+  cursor: grab;
+}
+
+.interactive-chart.panning .hover-capture {
+  cursor: grabbing;
+}
+
+.interactive-chart.panning .chart-tooltip,
+.interactive-chart.panning .crosshair,
+.interactive-chart.panning .hover-dot {
+  display: none;
+  opacity: 0;
 }
 
 .chart-tooltip {

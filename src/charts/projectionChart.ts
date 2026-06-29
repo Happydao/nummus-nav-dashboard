@@ -101,10 +101,11 @@ export function projectionChart(options: ProjectionChartOptions): string {
   const endpoint = allRawPoints.at(-1) as Omit<ProjectionPoint, "x" | "vaultY" | "priceY">;
   const vaultTicks = makeTicks(0, vaultMax, 5);
   const priceTicks = makeTicks(0, priceMax, 5);
-  const timeTicks = makeTimeTicks(points);
+  const timeTicks = makeTimeTicks(points, responsiveTickCount());
+  const zoomed = Boolean(options.zoomWindow && (options.zoomWindow.start > 0 || options.zoomWindow.end < 1));
 
   return `
-    <section class="chart chart-full projection-section interactive-chart" data-chart-id="projection">
+    <section class="chart chart-full projection-section interactive-chart${zoomed ? " chart-zoomed" : ""}" data-chart-id="projection">
       <div class="projection-head">
         <div>
           <div class="chart-title-row">
@@ -157,6 +158,7 @@ export function projectionChart(options: ProjectionChartOptions): string {
           ${timeTicks
             .map(
               (tick) => `
+                <line class="x-grid-line" x1="${tick.x}" y1="${PAD.top}" x2="${tick.x}" y2="${HEIGHT - PAD.bottom}" />
                 <line class="x-tick-line" x1="${tick.x}" y1="${HEIGHT - PAD.bottom}" x2="${tick.x}" y2="${HEIGHT - PAD.bottom + 5}" />
                 <text class="tick-label x-tick" x="${tick.x}" y="${HEIGHT - 17}" text-anchor="middle">${tick.label}</text>
               `
@@ -286,12 +288,24 @@ function makeTicks(min: number, max: number, count: number): number[] {
   return Array.from({ length: count }, (_, index) => min + step * index);
 }
 
-function makeTimeTicks(points: ProjectionPoint[]): Array<{ x: number; label: string }> {
-  const indexes = [0, 0.25, 0.5, 0.75, 1].map((ratio) => Math.round((points.length - 1) * ratio));
+function makeTimeTicks(points: ProjectionPoint[], maxCount: number): Array<{ x: number; label: string }> {
+  const count = Math.max(2, Math.min(maxCount, points.length));
+  const indexes = Array.from({ length: count }, (_, index) =>
+    Math.round(((points.length - 1) * index) / Math.max(1, count - 1))
+  );
   return [...new Set(indexes)].map((index) => ({
     x: points[index].x,
-    label: points[index].dateLabel
+    label: formatDateShort(points[index].date)
   }));
+}
+
+function responsiveTickCount(): number {
+  return typeof window !== "undefined" && window.innerWidth <= 620 ? 4 : 7;
+}
+
+function formatDateShort(date: string): string {
+  const [year, month, day] = date.split("-");
+  return `${day}-${month}-${year.slice(2)}`;
 }
 
 function niceCeil(value: number): number {
