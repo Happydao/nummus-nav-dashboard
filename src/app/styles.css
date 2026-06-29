@@ -401,6 +401,112 @@ body {
   gap: 6px;
 }
 
+.liquidity-toolbar {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.liquidity-toolbar > span {
+  color: #91a49a;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.liquidity-scale-selector {
+  background: rgba(4, 11, 8, 0.42);
+  border: 1px solid rgba(138, 166, 148, 0.24);
+  border-radius: 6px;
+  display: inline-grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 2px;
+}
+
+.liquidity-scale-selector button {
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  color: #9fb3a7;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  height: 24px;
+  min-width: 54px;
+  padding: 0 8px;
+  text-transform: uppercase;
+}
+
+.liquidity-scale-selector button.active {
+  background: rgba(232, 238, 233, 0.12);
+  color: #f4f8f5;
+}
+
+.liquidity-legend {
+  display: grid;
+  gap: 5px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 9px;
+}
+
+.liquidity-total-label,
+.liquidity-pool-toggle {
+  align-items: center;
+  color: #b8c9bf;
+  display: flex;
+  font-size: 9px;
+  font-weight: 700;
+  gap: 6px;
+  min-width: 0;
+}
+
+.liquidity-total-label {
+  grid-column: 1 / -1;
+}
+
+.liquidity-total-label i,
+.liquidity-pool-toggle i,
+.tooltip-swatch {
+  border-radius: 999px;
+  flex: 0 0 auto;
+  height: 7px;
+  width: 7px;
+}
+
+.liquidity-pool-toggle {
+  background: rgba(4, 11, 8, 0.28);
+  border: 1px solid rgba(138, 166, 148, 0.18);
+  border-radius: 5px;
+  cursor: pointer;
+  font: inherit;
+  padding: 5px 6px;
+  text-align: left;
+}
+
+.liquidity-pool-toggle:hover {
+  border-color: rgba(207, 174, 105, 0.42);
+}
+
+.liquidity-pool-toggle.inactive {
+  opacity: 0.38;
+}
+
+.liquidity-pool-toggle span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.liquidity-pool-toggle b {
+  color: #dcece2;
+  font-size: 9px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
 .legend-swatch {
   border-radius: 999px;
   display: inline-block;
@@ -627,6 +733,26 @@ svg {
   stroke: #d79551;
 }
 
+.liquidity-total-path,
+.liquidity-pool-path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.liquidity-total-path {
+  stroke: #e7d18b;
+  stroke-width: 2;
+}
+
+.liquidity-pool-path {
+  stroke-width: 1.2;
+}
+
+.liquidity-hover-dot {
+  stroke: #e7d18b;
+}
+
 .series-marker {
   fill: #47b37f;
 }
@@ -698,6 +824,18 @@ svg {
   display: flex;
   gap: 12px;
   justify-content: space-between;
+}
+
+.liquidity-tooltip {
+  max-width: 340px;
+  min-width: 280px;
+}
+
+.liquidity-tooltip .tooltip-row em {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chart-tooltip .tooltip-row em {
@@ -1260,5 +1398,20 @@ svg {
     top: 14px !important;
     transform: none;
     z-index: 5;
+  }
+
+  .liquidity-legend {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .liquidity-total-label {
+    grid-column: 1;
+  }
+
+  .liquidity-tooltip {
+    max-height: 240px;
+    min-width: 0;
+    overflow-y: auto;
+    width: calc(100% - 28px);
   }
 }

@@ -32,6 +32,15 @@ export interface DexLiquidity {
   totalLiquidityUsd: number | null;
   poolCount: number | null;
   provider: "dexscreener";
+  pools: DexLiquidityPool[];
+}
+
+export interface DexLiquidityPool {
+  pairAddress: string;
+  dexId: string;
+  pairLabel: string;
+  liquidityUsd: number;
+  url: string | null;
 }
 
 export interface TbtcSnapshot {

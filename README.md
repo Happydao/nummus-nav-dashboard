@@ -133,7 +133,16 @@ Historical Jupiter quotes cannot be reconstructed reliably. This series therefor
 
 This chart tracks the combined USD liquidity reported across the Solana liquidity pools that contain NUMMUS. It begins with the first collected liquidity snapshot and does not use reconstructed historical values.
 
-For every daily snapshot, the collector requests the list of NUMMUS pairs from DexScreener, verifies that NUMMUS is one side of each pair, removes duplicate pair addresses and sums the valid `liquidity.usd` values. The number represents capital deposited in the pools, not trading volume, market capitalization or treasury value.
+For every daily snapshot, the collector requests the list of NUMMUS pairs from DexScreener, verifies that NUMMUS is one side of each pair, removes duplicate pair addresses and stores the valid `liquidity.usd` value of every pool. It also stores their sum as Total DEX Liquidity. These values represent capital deposited in pools, not trading volume, market capitalization or treasury value.
+
+The total and every individual pool are displayed as separate lines. The interactive legend identifies each pool by DEX, token pair and abbreviated pool address; selecting a pool hides or restores its line without removing it from the daily tooltip.
+
+The chart provides two vertical scales:
+
+- **Linear** preserves the real proportional difference between pools and makes the dominant sources of liquidity immediately visible.
+- **Log** separates values across multiple orders of magnitude, allowing small pools to remain visible when one pool contains most of the available liquidity.
+
+The tooltip always reports Total DEX Liquidity followed by the USD liquidity of every tracked pool for the selected date.
 
 Higher DEX Liquidity generally means that more capital is available to support trading. It does not, however, reveal how that liquidity is distributed across prices. Concentrated-liquidity pools can report substantial total liquidity while offering less executable liquidity near the current price. For this reason, DEX Liquidity should be evaluated together with NUMMUS Market Depth.
 

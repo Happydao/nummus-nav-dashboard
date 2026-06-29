@@ -17,6 +17,13 @@ export interface DailySnapshot {
     totalLiquidityUsd: number | null;
     poolCount: number | null;
     provider: "dexscreener";
+    pools?: Array<{
+      pairAddress: string;
+      dexId: string;
+      pairLabel: string;
+      liquidityUsd: number;
+      url: string | null;
+    }>;
   };
   valuationReport?: {
     source?: string;

@@ -12,7 +12,12 @@ interface InteractivePoint {
   label: string;
   x: number;
   y: number;
-  series?: Array<{ name: string; label: string; kind: "primary" | "secondary" | "neutral" }>;
+  series?: Array<{
+    name: string;
+    label: string;
+    kind: "primary" | "secondary" | "neutral";
+    color?: string;
+  }>;
 }
 
 export function attachChartInteractions(
@@ -56,11 +61,11 @@ export function attachChartInteractions(
         ? nearest.series
             .map(
               (item) =>
-                `<span class="tooltip-row ${item.kind}"><em>${item.name}</em><b>${item.label}</b></span>`
+                `<span class="tooltip-row ${item.kind}">${item.color ? `<i class="tooltip-swatch" style="background:${item.color}"></i>` : ""}<em>${escapeHtml(item.name)}</em><b${item.color ? ` style="color:${item.color}"` : ""}>${escapeHtml(item.label)}</b></span>`
             )
             .join("")
-        : `<span>${nearest.label}</span>`;
-      tooltip.innerHTML = `<strong>${nearest.dateLabel ?? nearest.date}</strong>${series}`;
+        : `<span>${escapeHtml(nearest.label)}</span>`;
+      tooltip.innerHTML = `<strong>${escapeHtml(nearest.dateLabel ?? nearest.date)}</strong>${series}`;
       tooltip.style.left = `${Math.min(Math.max(nearest.x, 90), 650)}px`;
       tooltip.style.top = `${Math.max(nearest.y - 52, 12)}px`;
     };
@@ -221,4 +226,13 @@ function touchDistance(touches: TouchList): number {
   const x = touches[0].clientX - touches[1].clientX;
   const y = touches[0].clientY - touches[1].clientY;
   return Math.hypot(x, y);
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }

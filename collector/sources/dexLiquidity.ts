@@ -5,16 +5,27 @@ const DEXSCREENER_TOKEN_PAIRS_URL = "https://api.dexscreener.com/token-pairs/v1/
 
 interface DexScreenerPair {
   chainId?: string;
+  dexId?: string;
   pairAddress?: string;
-  baseToken?: { address?: string };
-  quoteToken?: { address?: string };
+  url?: string;
+  baseToken?: { address?: string; symbol?: string };
+  quoteToken?: { address?: string; symbol?: string };
   liquidity?: { usd?: number };
+}
+
+export interface DexLiquidityPool {
+  pairAddress: string;
+  dexId: string;
+  pairLabel: string;
+  liquidityUsd: number;
+  url: string | null;
 }
 
 export interface DexLiquidity {
   totalLiquidityUsd: number | null;
   poolCount: number | null;
   provider: "dexscreener";
+  pools: DexLiquidityPool[];
 }
 
 export async function getCurrentDexLiquidity(): Promise<DexLiquidity> {
@@ -25,7 +36,7 @@ export async function getCurrentDexLiquidity(): Promise<DexLiquidity> {
     const pairs = (await response.json()) as DexScreenerPair[];
     if (!Array.isArray(pairs)) return unavailableLiquidity();
 
-    const uniquePools = new Map<string, number>();
+    const uniquePools = new Map<string, DexLiquidityPool>();
     for (const pair of pairs) {
       const pairAddress = pair.pairAddress?.trim();
       const containsNummus =
@@ -41,15 +52,23 @@ export async function getCurrentDexLiquidity(): Promise<DexLiquidity> {
       ) {
         continue;
       }
-      uniquePools.set(pairAddress.toLowerCase(), liquidityUsd);
+      uniquePools.set(pairAddress.toLowerCase(), {
+        pairAddress,
+        dexId: pair.dexId?.trim() || "unknown",
+        pairLabel: `${pair.baseToken?.symbol ?? "?"}/${pair.quoteToken?.symbol ?? "?"}`,
+        liquidityUsd: round(liquidityUsd, 2) ?? liquidityUsd,
+        url: pair.url ?? null
+      });
     }
 
     if (uniquePools.size === 0) return unavailableLiquidity();
-    const totalLiquidityUsd = [...uniquePools.values()].reduce((sum, value) => sum + value, 0);
+    const pools = [...uniquePools.values()].sort((a, b) => b.liquidityUsd - a.liquidityUsd);
+    const totalLiquidityUsd = pools.reduce((sum, pool) => sum + pool.liquidityUsd, 0);
     return {
       totalLiquidityUsd: round(totalLiquidityUsd, 2),
       poolCount: uniquePools.size,
-      provider: "dexscreener"
+      provider: "dexscreener",
+      pools
     };
   } catch {
     return unavailableLiquidity();
@@ -60,6 +79,7 @@ function unavailableLiquidity(): DexLiquidity {
   return {
     totalLiquidityUsd: null,
     poolCount: null,
-    provider: "dexscreener"
+    provider: "dexscreener",
+    pools: []
   };
 }

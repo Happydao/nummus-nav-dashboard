@@ -1,0 +1,316 @@
+import type { DailySnapshot } from "../utils/history.js";
+import { usd, usdCompact } from "../utils/format.js";
+import {
+  applyZoomWindow,
+  chartZoomControls,
+  type ChartZoomWindow,
+  type RangeKey
+} from "./lineChart.js";
+
+export type LiquidityScale = "linear" | "log";
+
+interface DexLiquidityChartOptions {
+  records: DailySnapshot[];
+  range: RangeKey;
+  zoomWindow?: ChartZoomWindow;
+  scale: LiquidityScale;
+  hiddenPools: Set<string>;
+}
+
+interface LiquidityPool {
+  pairAddress: string;
+  dexId: string;
+  pairLabel: string;
+  liquidityUsd: number;
+}
+
+interface LiquidityRecord {
+  date: string;
+  totalLiquidityUsd: number;
+  pools: LiquidityPool[];
+}
+
+interface PoolMeta {
+  pairAddress: string;
+  name: string;
+  color: string;
+  latestLiquidityUsd: number;
+}
+
+const WIDTH = 760;
+const HEIGHT = 310;
+const PAD = { top: 22, right: 22, bottom: 44, left: 82 };
+const TOTAL_COLOR = "#e7d18b";
+const POOL_COLORS = ["#57c990", "#d79551", "#68a7d8", "#c778c8", "#d6c45d", "#8b9ee8", "#d87575", "#74b9a5"];
+
+export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
+  const allRecords = toLiquidityRecords(options.records);
+  const rangedRecords = filterByRange(allRecords, options.range);
+  const records = applyZoomWindow(rangedRecords, options.zoomWindow);
+  if (records.length === 0) {
+    return `<section class="chart"><h2>NUMMUS DEX Liquidity</h2><div class="empty">No detailed liquidity snapshots in selected range</div></section>`;
+  }
+
+  const poolMeta = buildPoolMeta(records);
+  const visiblePools = poolMeta.filter((pool) => !options.hiddenPools.has(pool.pairAddress));
+  const xMin = dateTimestamp(records[0].date);
+  const xMax = dateTimestamp(records.at(-1)?.date ?? records[0].date);
+  const plotRight = WIDTH - PAD.right;
+  const chartWidth = plotRight - PAD.left;
+  const chartHeight = HEIGHT - PAD.top - PAD.bottom;
+  const xForDate = (date: string) =>
+    xMax === xMin
+      ? PAD.left + chartWidth / 2
+      : PAD.left + ((dateTimestamp(date) - xMin) / (xMax - xMin)) * chartWidth;
+
+  const visibleValues = records.flatMap((record) => [
+    record.totalLiquidityUsd,
+    ...visiblePools.map((pool) => poolValue(record, pool.pairAddress)).filter((value) => value > 0)
+  ]);
+  const scale = makeScale(visibleValues, options.scale, chartHeight);
+  const totalPoints = records.map((record) => ({
+    x: xForDate(record.date),
+    y: scale.y(record.totalLiquidityUsd),
+    value: record.totalLiquidityUsd
+  }));
+  const totalPath = pathFor(totalPoints, plotRight);
+  const poolPaths = visiblePools.map((pool) => {
+    const points = records.map((record) => {
+      const value = poolValue(record, pool.pairAddress);
+      return { x: xForDate(record.date), y: value > 0 ? scale.y(value) : null, value };
+    });
+    return `<path class="liquidity-pool-path" style="stroke:${pool.color}" d="${pathFor(points, plotRight)}" />`;
+  });
+  const xTicks = makeDateTicks(records, responsiveTickCount());
+  const latest = records.at(-1) as LiquidityRecord;
+  const zoomed = Boolean(options.zoomWindow && (options.zoomWindow.start > 0 || options.zoomWindow.end < 1));
+
+  return `
+    <section class="chart liquidity-chart interactive-chart${zoomed ? " chart-zoomed" : ""}" data-chart-id="dex-liquidity">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title-row">
+            <h2>NUMMUS DEX Liquidity</h2>
+            ${infoTip("NUMMUS DEX Liquidity shows the total USD liquidity and the contribution of every valid Solana pool containing NUMMUS. Linear scale shows their real relative weight; Log scale makes smaller pools visible. Higher liquidity means more capital is deposited in pools, while Market Depth separately measures executable trade size.")}
+            <a class="chart-action" href="https://dexscreener.com/solana/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray" target="_blank" rel="noreferrer">DexScreener</a>
+            ${chartZoomControls("dex-liquidity", options.zoomWindow)}
+          </div>
+          <span>${formatDate(records[0].date)} -> ${formatDate(latest.date)}</span>
+        </div>
+        <div class="chart-current">
+          <strong>${usd(latest.totalLiquidityUsd)}</strong>
+          ${changeSummary(records)}
+        </div>
+      </div>
+      <div class="liquidity-toolbar">
+        <div class="liquidity-scale-selector" aria-label="Liquidity chart scale">
+          ${scaleButton("linear", "Linear", options.scale)}
+          ${scaleButton("log", "Log", options.scale)}
+        </div>
+        <span>${latest.pools.length} pools tracked</span>
+      </div>
+      <div class="liquidity-legend" aria-label="Liquidity pool legend">
+        <span class="liquidity-total-label"><i style="background:${TOTAL_COLOR}"></i>Total</span>
+        ${poolMeta.map((pool) => poolLegendButton(pool, options.hiddenPools.has(pool.pairAddress))).join("")}
+      </div>
+      <div class="chart-canvas">
+        <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="NUMMUS DEX Liquidity by pool">
+          <text class="axis-title y-axis-title" x="${PAD.left}" y="${PAD.top - 8}">Pool Liquidity (USD) · ${options.scale === "log" ? "Log" : "Linear"}</text>
+          <text class="axis-title x-axis-title" x="${plotRight}" y="${HEIGHT - 7}" text-anchor="end">Date</text>
+          ${scale.ticks.map((tick) => {
+            const y = scale.y(tick);
+            return `<line class="grid-line" x1="${PAD.left}" y1="${y}" x2="${plotRight}" y2="${y}" /><text class="tick-label y-tick" x="${PAD.left - 10}" y="${y + 4}" text-anchor="end">${usdCompact(tick)}</text>`;
+          }).join("")}
+          ${xTicks.map((tick) => {
+            const x = xForDate(tick.date);
+            return `<line class="x-grid-line" x1="${x}" y1="${PAD.top}" x2="${x}" y2="${HEIGHT - PAD.bottom}" /><line class="x-tick-line" x1="${x}" y1="${HEIGHT - PAD.bottom}" x2="${x}" y2="${HEIGHT - PAD.bottom + 5}" /><text class="tick-label x-tick" x="${x}" y="${HEIGHT - 18}" text-anchor="middle">${formatDate(tick.date)}</text>`;
+          }).join("")}
+          <line class="axis-line" x1="${PAD.left}" y1="${HEIGHT - PAD.bottom}" x2="${plotRight}" y2="${HEIGHT - PAD.bottom}" />
+          <line class="axis-line" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
+          <path class="liquidity-total-path" d="${totalPath}" />
+          ${poolPaths.join("")}
+          <line class="crosshair" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
+          <circle class="hover-dot liquidity-hover-dot" cx="${totalPoints[0].x}" cy="${totalPoints[0].y}" r="5" />
+          <rect class="hover-capture" x="${PAD.left}" y="${PAD.top}" width="${chartWidth}" height="${chartHeight}" />
+        </svg>
+        <div class="chart-tooltip liquidity-tooltip"></div>
+      </div>
+      <script type="application/json" class="chart-data">${serializeJson({
+        points: records.map((record, index) => ({
+          date: record.date,
+          dateLabel: formatDate(record.date),
+          value: record.totalLiquidityUsd,
+          label: usd(record.totalLiquidityUsd),
+          x: totalPoints[index].x,
+          y: totalPoints[index].y,
+          series: [
+            { name: "Total", label: usd(record.totalLiquidityUsd), kind: "neutral", color: TOTAL_COLOR },
+            ...poolMeta.map((pool) => ({
+              name: pool.name,
+              label: usd(poolValue(record, pool.pairAddress)),
+              kind: "neutral",
+              color: pool.color
+            }))
+          ]
+        }))
+      })}</script>
+    </section>
+  `;
+}
+
+function toLiquidityRecords(records: DailySnapshot[]): LiquidityRecord[] {
+  return records.flatMap((record) => {
+    const liquidity = record.dexLiquidity;
+    if (typeof liquidity?.totalLiquidityUsd !== "number" || !liquidity.pools?.length) return [];
+    return [{
+      date: record.date,
+      totalLiquidityUsd: liquidity.totalLiquidityUsd,
+      pools: liquidity.pools.filter((pool) => Number.isFinite(pool.liquidityUsd) && pool.liquidityUsd >= 0)
+    }];
+  });
+}
+
+function buildPoolMeta(records: LiquidityRecord[]): PoolMeta[] {
+  const latestByAddress = new Map<string, LiquidityPool>();
+  const maxByAddress = new Map<string, number>();
+  for (const record of records) {
+    for (const pool of record.pools) {
+      latestByAddress.set(pool.pairAddress, pool);
+      maxByAddress.set(pool.pairAddress, Math.max(maxByAddress.get(pool.pairAddress) ?? 0, pool.liquidityUsd));
+    }
+  }
+  const pools = [...latestByAddress.values()];
+  const labelCounts = new Map<string, number>();
+  for (const pool of pools) {
+    const key = `${pool.dexId}:${pool.pairLabel}`;
+    labelCounts.set(key, (labelCounts.get(key) ?? 0) + 1);
+  }
+
+  return pools
+    .sort((a, b) => (maxByAddress.get(b.pairAddress) ?? 0) - (maxByAddress.get(a.pairAddress) ?? 0))
+    .map((pool, index) => ({
+      pairAddress: pool.pairAddress,
+      name: `${titleCase(pool.dexId)} · ${pool.pairLabel}${(labelCounts.get(`${pool.dexId}:${pool.pairLabel}`) ?? 0) > 1 ? ` · ${pool.pairAddress.slice(0, 4)}` : ""}`,
+      color: POOL_COLORS[index % POOL_COLORS.length],
+      latestLiquidityUsd: pool.liquidityUsd
+    }));
+}
+
+function makeScale(values: number[], type: LiquidityScale, chartHeight: number): { y: (value: number) => number; ticks: number[] } {
+  const positive = values.filter((value) => value > 0);
+  const max = Math.max(...positive, 1);
+  if (type === "log") {
+    const minPower = Math.floor(Math.log10(Math.min(...positive, 1)));
+    const maxPower = Math.ceil(Math.log10(max));
+    const allTicks = Array.from({ length: maxPower - minPower + 1 }, (_, index) => 10 ** (minPower + index));
+    const ticks = sampleTicks(allTicks, 6);
+    const minLog = Math.log10(10 ** minPower);
+    const maxLog = Math.log10(10 ** maxPower);
+    return {
+      y: (value) => PAD.top + (1 - (Math.log10(Math.max(value, 10 ** minPower)) - minLog) / (maxLog - minLog || 1)) * chartHeight,
+      ticks
+    };
+  }
+  const yMax = niceCeil(max);
+  const ticks = Array.from({ length: 5 }, (_, index) => (yMax * index) / 4);
+  return {
+    y: (value) => PAD.top + (1 - value / yMax) * chartHeight,
+    ticks
+  };
+}
+
+function pathFor(points: Array<{ x: number; y: number | null; value: number }>, plotRight: number): string {
+  if (points.length === 1 && points[0].y !== null) {
+    return `M ${PAD.left} ${points[0].y.toFixed(2)} L ${plotRight} ${points[0].y.toFixed(2)}`;
+  }
+  let connected = false;
+  return points.map((point) => {
+    if (point.y === null) {
+      connected = false;
+      return "";
+    }
+    const command = connected ? "L" : "M";
+    connected = true;
+    return `${command} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`;
+  }).join(" ");
+}
+
+function poolValue(record: LiquidityRecord, pairAddress: string): number {
+  return record.pools.find((pool) => pool.pairAddress === pairAddress)?.liquidityUsd ?? 0;
+}
+
+function filterByRange(records: LiquidityRecord[], range: RangeKey): LiquidityRecord[] {
+  if (range === "ALL" || records.length === 0) return records;
+  const last = dateTimestamp(records.at(-1)?.date ?? records[0].date);
+  const days = range === "1D" ? 1 : range === "7D" ? 7 : range === "30D" ? 30 : 365;
+  const cutoff = last - days * 86_400_000;
+  return records.filter((record) => dateTimestamp(record.date) >= cutoff);
+}
+
+function makeDateTicks(records: LiquidityRecord[], maxCount: number): Array<{ date: string }> {
+  const start = dateTimestamp(records[0].date);
+  const end = dateTimestamp(records.at(-1)?.date ?? records[0].date);
+  const visibleDays = Math.max(1, Math.round((end - start) / 86_400_000));
+  const count = Math.max(2, Math.min(maxCount, visibleDays + 1));
+  return Array.from({ length: count }, (_, index) => ({
+    date: new Date(start + ((end - start) * index) / Math.max(1, count - 1)).toISOString().slice(0, 10)
+  }));
+}
+
+function changeSummary(records: LiquidityRecord[]): string {
+  if (records.length < 2) return `<span class="chart-change neutral">N/A for range</span>`;
+  const first = records[0].totalLiquidityUsd;
+  const last = records.at(-1)?.totalLiquidityUsd ?? first;
+  if (first === 0) return `<span class="chart-change neutral">N/A for range</span>`;
+  const change = ((last - first) / Math.abs(first)) * 100;
+  const direction = change > 0 ? "↑" : change < 0 ? "↓" : "→";
+  const state = change > 0 ? "favorable" : change < 0 ? "adverse" : "neutral";
+  return `<span class="chart-change ${state}">${direction} ${change > 0 ? "+" : ""}${change.toFixed(2)}%</span>`;
+}
+
+function poolLegendButton(pool: PoolMeta, hidden: boolean): string {
+  return `<button type="button" class="liquidity-pool-toggle${hidden ? " inactive" : ""}" data-liquidity-pool="${escapeHtml(pool.pairAddress)}" title="${hidden ? "Show" : "Hide"} ${escapeHtml(pool.name)}"><i style="background:${pool.color}"></i><span>${escapeHtml(pool.name)}</span><b>${usd(pool.latestLiquidityUsd)}</b></button>`;
+}
+
+function scaleButton(value: LiquidityScale, label: string, selected: LiquidityScale): string {
+  return `<button type="button" data-liquidity-scale="${value}" class="${selected === value ? "active" : ""}">${label}</button>`;
+}
+
+function infoTip(text: string): string {
+  return `<span class="info-tip" tabindex="0" aria-label="${escapeHtml(text)}">i<span class="info-popover" role="tooltip">${escapeHtml(text)}</span></span>`;
+}
+
+function niceCeil(value: number): number {
+  const magnitude = 10 ** Math.floor(Math.log10(Math.abs(value || 1)));
+  return Math.ceil(value / magnitude) * magnitude;
+}
+
+function sampleTicks(ticks: number[], maxCount: number): number[] {
+  if (ticks.length <= maxCount) return ticks;
+  return Array.from({ length: maxCount }, (_, index) => ticks[Math.round((index * (ticks.length - 1)) / (maxCount - 1))]);
+}
+
+function responsiveTickCount(): number {
+  return typeof window !== "undefined" && window.innerWidth <= 620 ? 4 : 8;
+}
+
+function dateTimestamp(date: string): number {
+  return new Date(`${date}T00:00:00.000Z`).getTime();
+}
+
+function formatDate(date: string): string {
+  const [year, month, day] = date.split("-");
+  return `${day}-${month}-${year.slice(2)}`;
+}
+
+function titleCase(value: string): string {
+  return value ? `${value[0].toUpperCase()}${value.slice(1)}` : "Unknown";
+}
+
+function escapeHtml(value: string): string {
+  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+}
+
+function serializeJson(value: unknown): string {
+  return JSON.stringify(value).replaceAll("<", "\\u003c").replaceAll(">", "\\u003e").replaceAll("&", "\\u0026");
+}
