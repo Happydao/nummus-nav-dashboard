@@ -1,5 +1,6 @@
 import { getCurrentMarketPrice } from "./sources/marketPrice.js";
 import { collectMarketDepth } from "./sources/marketDepth.js";
+import { getCurrentDexLiquidity } from "./sources/dexLiquidity.js";
 import { getCurrentSupply } from "./sources/supply.js";
 import { collectSupplyHistory } from "./sources/supplyHistory.js";
 import { collectTbtcHistory } from "./sources/tbtcHistory.js";
@@ -15,10 +16,11 @@ function today(): string {
 }
 
 export async function collectDailySnapshot(): Promise<DailySnapshot> {
-  const [{ fungibleAssets, ignoredAssets }, supply, marketPrice] = await Promise.all([
+  const [{ fungibleAssets, ignoredAssets }, supply, marketPrice, dexLiquidity] = await Promise.all([
     getCurrentVaultAssets(),
     getCurrentSupply(),
-    getCurrentMarketPrice()
+    getCurrentMarketPrice(),
+    getCurrentDexLiquidity()
   ]);
   const [{ vaultUsd, valuationReport }, marketDepth] = await Promise.all([
     valueVault(fungibleAssets, ignoredAssets),
@@ -44,6 +46,7 @@ export async function collectDailySnapshot(): Promise<DailySnapshot> {
     premium,
     tbtcAmount,
     marketDepth,
+    dexLiquidity,
     valuationReport
   };
 }

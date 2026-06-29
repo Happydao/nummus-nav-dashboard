@@ -13,6 +13,11 @@ export interface DailySnapshot {
     priceImpactPct: number;
     provider: "jupiter";
   };
+  dexLiquidity?: {
+    totalLiquidityUsd: number | null;
+    poolCount: number | null;
+    provider: "dexscreener";
+  };
   valuationReport?: {
     source?: string;
     pricedAssets: unknown[];

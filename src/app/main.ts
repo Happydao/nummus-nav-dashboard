@@ -5,6 +5,7 @@ import {
   rangeButtons,
   type MarketDepthSnapshot,
   type VaultDrawdownSnapshot,
+  type DexLiquiditySnapshot,
   type ChartZoomWindow,
   type RangeKey
 } from "../charts/lineChart.js";
@@ -50,6 +51,7 @@ async function render(): Promise<void> {
   const supplyChartRecords = buildSupplyChartRecords(history.supplyHistory ?? [], records);
   const marketDepthRecords = buildMarketDepthRecords(records);
   const vaultDrawdownRecords = buildVaultDrawdownRecords(financialRecords);
+  const dexLiquidityRecords = buildDexLiquidityRecords(records);
   const latest = latestRecord(records);
   const unpricedCount = latest?.valuationReport?.unpricedAssets.length ?? 0;
   const vaultComposition = latest ? vaultCompositionDetails(latest) : "";
@@ -236,6 +238,23 @@ async function render(): Promise<void> {
               axisFormatter: usdCompact
             },
             info: "NUMMUS Market Depth estimates how much can be bought or sold through current Jupiter routes before quoted price impact exceeds 1%. The green line is Buy Depth in USDC and the orange line is Sell Depth expressed in USD. Higher and more balanced values indicate a market better able to absorb larger trades. Quotes are observations at snapshot time, not guaranteed execution prices."
+          })}
+          ${lineChart({
+            id: "dex-liquidity",
+            title: "NUMMUS DEX Liquidity",
+            records: dexLiquidityRecords,
+            key: "liquidityUsd",
+            range: selectedRange,
+            zoomWindow: chartZoom("dex-liquidity"),
+            formatter: usd,
+            axisFormatter: usdCompact,
+            yLabel: "Pool Liquidity (USD)",
+            yMin: 0,
+            action: {
+              label: "DexScreener",
+              href: "https://dexscreener.com/solana/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray"
+            },
+            info: "NUMMUS DEX Liquidity is the total USD liquidity reported across valid Solana pools containing NUMMUS. Higher values mean more capital is available in the pools, but they do not guarantee that an order can be executed without price impact; Market Depth measures that separately."
           })}
         </section>
       </div>
@@ -474,6 +493,15 @@ function buildVaultDrawdownRecords(records: DailySnapshot[]): VaultDrawdownSnaps
       drawdown: ((record.vaultUsd / historicalPeak) - 1) * 100
     }];
   });
+}
+
+function buildDexLiquidityRecords(records: DailySnapshot[]): DexLiquiditySnapshot[] {
+  return records
+    .filter((record) => typeof record.dexLiquidity?.totalLiquidityUsd === "number")
+    .map((record) => ({
+      date: record.date,
+      liquidityUsd: record.dexLiquidity?.totalLiquidityUsd as number
+    }));
 }
 
 function attachRangeHandlers(): void {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-29T21:19:23.745Z",
+  "generatedAt": "2026-06-29T21:24:41.074Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -16374,7 +16374,7 @@
     },
     {
       "date": "2026-06-29",
-      "vaultUsd": 84346.50278605,
+      "vaultUsd": 84346.49878071,
       "supply": 98142100.867541,
       "marketPrice": 0.008826604629516193,
       "nav": 0.00085943,
@@ -16382,10 +16382,15 @@
       "premium": 10.27030082,
       "tbtcAmount": 0.7527866,
       "marketDepth": {
-        "buyDepthUsd": 425,
-        "sellDepthUsd": 202.81,
+        "buyDepthUsd": 442.5,
+        "sellDepthUsd": 189.69,
         "priceImpactPct": 1,
         "provider": "jupiter"
+      },
+      "dexLiquidity": {
+        "totalLiquidityUsd": 95458.83,
+        "poolCount": 6,
+        "provider": "dexscreener"
       },
       "valuationReport": {
         "source": "Helius DAS current vault assets + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
@@ -16394,8 +16399,8 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104571323,
-            "priceUsd": 75.43227816215877,
-            "valueUsd": 7.88805312,
+            "priceUsd": 75.39397560894488,
+            "valueUsd": 7.88404778,
             "provider": "jupiter"
           },
           {

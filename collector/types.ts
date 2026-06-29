@@ -17,6 +17,7 @@ export interface DailySnapshot {
   premium: number | null;
   tbtcAmount: number | null;
   marketDepth?: MarketDepth;
+  dexLiquidity?: DexLiquidity;
   valuationReport: ValuationReport;
 }
 
@@ -25,6 +26,12 @@ export interface MarketDepth {
   sellDepthUsd: number | null;
   priceImpactPct: number;
   provider: "jupiter";
+}
+
+export interface DexLiquidity {
+  totalLiquidityUsd: number | null;
+  poolCount: number | null;
+  provider: "dexscreener";
 }
 
 export interface TbtcSnapshot {

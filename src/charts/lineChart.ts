@@ -1,7 +1,7 @@
 import type { DailySnapshot, SupplySnapshot, TbtcSnapshot } from "../utils/history.js";
 
 export type RangeKey = "1D" | "7D" | "30D" | "1Y" | "ALL";
-export type ChartRecord = DailySnapshot | TbtcSnapshot | SupplySnapshot | MarketDepthSnapshot | VaultDrawdownSnapshot;
+export type ChartRecord = DailySnapshot | TbtcSnapshot | SupplySnapshot | MarketDepthSnapshot | VaultDrawdownSnapshot | DexLiquiditySnapshot;
 
 export interface MarketDepthSnapshot {
   date: string;
@@ -12,6 +12,11 @@ export interface MarketDepthSnapshot {
 export interface VaultDrawdownSnapshot {
   date: string;
   drawdown: number;
+}
+
+export interface DexLiquiditySnapshot {
+  date: string;
+  liquidityUsd: number;
 }
 
 export interface ChartZoomWindow {
@@ -60,7 +65,7 @@ export interface ChartOptions {
 
 type ChangeMode = "standard" | "reduction" | "inverse" | "percentage-points";
 
-type ChartKey = keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply" | "marketPrice"> | "amount" | "buyDepthUsd" | "sellDepthUsd" | "drawdown";
+type ChartKey = keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply" | "marketPrice"> | "amount" | "buyDepthUsd" | "sellDepthUsd" | "drawdown" | "liquidityUsd";
 
 interface ChartPoint {
   date: string;

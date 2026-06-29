@@ -129,6 +129,16 @@ Each value is an instantaneous quote observation. Available routes, pool state a
 
 Historical Jupiter quotes cannot be reconstructed reliably. This series therefore begins with the first daily market-depth snapshot and does not backfill earlier dates.
 
+### NUMMUS DEX Liquidity
+
+This chart tracks the combined USD liquidity reported across the Solana liquidity pools that contain NUMMUS. It begins with the first collected liquidity snapshot and does not use reconstructed historical values.
+
+For every daily snapshot, the collector requests the list of NUMMUS pairs from DexScreener, verifies that NUMMUS is one side of each pair, removes duplicate pair addresses and sums the valid `liquidity.usd` values. The number represents capital deposited in the pools, not trading volume, market capitalization or treasury value.
+
+Higher DEX Liquidity generally means that more capital is available to support trading. It does not, however, reveal how that liquidity is distributed across prices. Concentrated-liquidity pools can report substantial total liquidity while offering less executable liquidity near the current price. For this reason, DEX Liquidity should be evaluated together with NUMMUS Market Depth.
+
+DexScreener values are current indexed observations supplied by a third party. A snapshot can change as pool balances, token prices or DexScreener indexing change.
+
 ## Chart Interaction
 
 The global range selector applies `1D`, `7D`, `30D`, `1Y` or `ALL` to every historical chart. Each chart also has independent zoom and reset controls.
@@ -174,6 +184,7 @@ The simulator is an analytical tool, not a price forecast, financial advice or a
 - [Jupiter Swap quotes](https://dev.jup.ag/docs/swap) provide the current routing and price-impact observations used to measure NUMMUS Buy and Sell Depth.
 - Helius asset `price_info` is used when a valid price is available through its asset metadata.
 - [DexScreener](https://docs.dexscreener.com/api/reference) provides a decentralized-market fallback.
+- [DexScreener token-pair data](https://docs.dexscreener.com/api/reference) supplies the current USD liquidity of the Solana pools included in NUMMUS DEX Liquidity.
 - [DefiLlama](https://defillama.com/docs/api) provides current and historical price observations.
 - [GeckoTerminal](https://apiguide.geckoterminal.com/) provides historical decentralized-market OHLCV observations where required.
 - [NUMMUS on CoinGecko](https://www.coingecko.com/en/coins/nummus-aeternitas) provides an independent public market reference for NUMMUS.
