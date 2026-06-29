@@ -16,7 +16,15 @@ export interface DailySnapshot {
   backing: number | null;
   premium: number | null;
   tbtcAmount: number | null;
+  marketDepth?: MarketDepth;
   valuationReport: ValuationReport;
+}
+
+export interface MarketDepth {
+  buyDepthUsd: number | null;
+  sellDepthUsd: number | null;
+  priceImpactPct: number;
+  provider: "jupiter";
 }
 
 export interface TbtcSnapshot {

@@ -3,6 +3,7 @@ import { attachChartInteractions, type ChartZoomAction } from "../charts/interac
 import {
   lineChart,
   rangeButtons,
+  type MarketDepthSnapshot,
   type ChartZoomWindow,
   type RangeKey
 } from "../charts/lineChart.js";
@@ -46,6 +47,7 @@ async function render(): Promise<void> {
   const financialRecords = records.filter((record) => record.date >= FINANCIAL_HISTORY_START);
   const tbtcHistory = history.tbtcHistory ?? [];
   const supplyChartRecords = buildSupplyChartRecords(history.supplyHistory ?? [], records);
+  const marketDepthRecords = buildMarketDepthRecords(records);
   const latest = latestRecord(records);
   const unpricedCount = latest?.valuationReport?.unpricedAssets.length ?? 0;
   const vaultComposition = latest ? vaultCompositionDetails(latest) : "";
@@ -194,6 +196,28 @@ async function render(): Promise<void> {
               href: "https://happydao.github.io/Nummus.VaultDAO/"
             },
             info: "tBTC Accumulation shows how much tBTC the treasury has collected. A rising line means the treasury is accumulating more BTC exposure."
+          })}
+          ${lineChart({
+            id: "market-depth",
+            title: "NUMMUS Market Depth",
+            records: marketDepthRecords,
+            key: "buyDepthUsd",
+            primaryLabel: "Buy Depth",
+            primaryLegendLabel: "Buy Depth at 1% Impact",
+            range: selectedRange,
+            zoomWindow: chartZoom("market-depth"),
+            formatter: usd,
+            axisFormatter: usdCompact,
+            yLabel: "Executable Value (USD)",
+            yMin: 0,
+            secondary: {
+              key: "sellDepthUsd",
+              label: "Sell Depth",
+              legendLabel: "Sell Depth at 1% Impact",
+              formatter: usd,
+              axisFormatter: usdCompact
+            },
+            info: "NUMMUS Market Depth estimates how much can be bought or sold through current Jupiter routes before quoted price impact exceeds 1%. Buy Depth measures executable USDC purchasing capacity; Sell Depth measures the USD value of NUMMUS that can be sold. Higher and more balanced values generally indicate a market better able to absorb larger trades. Quotes are observations at snapshot time, not guaranteed execution prices. The series begins with the first collected depth snapshot and has no reconstructed history."
           })}
         </section>
       </div>
@@ -405,6 +429,20 @@ function buildSupplyChartRecords(supplyHistory: SupplySnapshot[], records: Daily
   }
 
   return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+}
+
+function buildMarketDepthRecords(records: DailySnapshot[]): MarketDepthSnapshot[] {
+  return records
+    .filter(
+      (record) =>
+        typeof record.marketDepth?.buyDepthUsd === "number" &&
+        typeof record.marketDepth?.sellDepthUsd === "number"
+    )
+    .map((record) => ({
+      date: record.date,
+      buyDepthUsd: record.marketDepth?.buyDepthUsd as number,
+      sellDepthUsd: record.marketDepth?.sellDepthUsd as number
+    }));
 }
 
 function attachRangeHandlers(): void {

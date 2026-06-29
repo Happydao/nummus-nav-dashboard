@@ -16381,6 +16381,12 @@
       "backing": 9.75023665,
       "premium": 10.25616132,
       "tbtcAmount": 0.7527866,
+      "marketDepth": {
+        "buyDepthUsd": 434.69,
+        "sellDepthUsd": 176.72,
+        "priceImpactPct": 1,
+        "provider": "jupiter"
+      },
       "valuationReport": {
         "source": "Helius DAS current vault assets + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
         "pricedAssets": [

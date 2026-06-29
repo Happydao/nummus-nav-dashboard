@@ -99,6 +99,19 @@ This chart tracks the amount of tBTC held by the treasury, not its USD value.
 
 An upward movement means additional tBTC entered the treasury. A flat section means the quantity remained unchanged. Changes in the Bitcoin price do not alter this chart because it measures token units rather than their market value.
 
+### NUMMUS Market Depth
+
+This chart estimates how much NUMMUS can be bought or sold through the routes currently available to Jupiter before the quoted price impact exceeds `1%`.
+
+- **Buy Depth** is the maximum USDC notional that can be exchanged for NUMMUS within the impact threshold.
+- **Sell Depth** is the USD notional of NUMMUS that can be exchanged for USDC within the same threshold.
+
+Higher depth means that the market can generally absorb a larger trade without moving the quoted price beyond the selected limit. Similar buy and sell depth indicates more balanced execution conditions, while a large difference can reveal asymmetric routing or available liquidity.
+
+The collector discovers each threshold through progressively larger Jupiter quotes followed by a binary search around the limit. The metric reflects all routes returned by Jupiter rather than the reported TVL of a single pool. It remains an instantaneous quote observation: route availability and execution conditions can change before a transaction is submitted.
+
+Historical Jupiter quotes cannot be reconstructed reliably. This series therefore begins with the first daily market-depth snapshot and does not backfill earlier dates.
+
 ## Chart Interaction
 
 The global range selector applies `1D`, `7D`, `30D`, `1Y` or `ALL` to every historical chart. Each chart also has independent zoom and reset controls.
@@ -141,6 +154,7 @@ The simulator is an analytical tool, not a price forecast, financial advice or a
 ### Market Prices
 
 - [Jupiter](https://dev.jup.ag/) is the primary source for current Solana token prices.
+- [Jupiter Swap quotes](https://dev.jup.ag/docs/swap) provide the current routing and price-impact observations used to measure NUMMUS Buy and Sell Depth.
 - Helius asset `price_info` is used when a valid price is available through its asset metadata.
 - [DexScreener](https://docs.dexscreener.com/api/reference) provides a decentralized-market fallback.
 - [DefiLlama](https://defillama.com/docs/api) provides current and historical price observations.

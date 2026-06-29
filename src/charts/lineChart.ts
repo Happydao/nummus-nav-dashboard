@@ -1,7 +1,13 @@
 import type { DailySnapshot, SupplySnapshot, TbtcSnapshot } from "../utils/history.js";
 
 export type RangeKey = "1D" | "7D" | "30D" | "1Y" | "ALL";
-export type ChartRecord = DailySnapshot | TbtcSnapshot | SupplySnapshot;
+export type ChartRecord = DailySnapshot | TbtcSnapshot | SupplySnapshot | MarketDepthSnapshot;
+
+export interface MarketDepthSnapshot {
+  date: string;
+  buyDepthUsd: number;
+  sellDepthUsd: number;
+}
 
 export interface ChartZoomWindow {
   start: number;
@@ -15,6 +21,7 @@ export interface ChartOptions {
   key: ChartKey;
   range: RangeKey;
   formatter: (value: number) => string;
+  primaryLabel?: string;
   primaryLegendLabel?: string;
   axisFormatter?: (value: number) => string;
   yLabel: string;
@@ -46,7 +53,7 @@ export interface ChartOptions {
 
 type ChangeMode = "standard" | "reduction" | "inverse" | "percentage-points";
 
-type ChartKey = keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply" | "marketPrice"> | "amount";
+type ChartKey = keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply" | "marketPrice"> | "amount" | "buyDepthUsd" | "sellDepthUsd";
 
 interface ChartPoint {
   date: string;
@@ -224,7 +231,7 @@ export function lineChart(options: ChartOptions): string {
                     ]
                   : []),
                 {
-                  name: "NAV",
+                  name: options.primaryLabel ?? "NAV",
                   label: options.formatter(point.value),
                   kind: "primary"
                 }
@@ -249,7 +256,7 @@ function renderDualAxisSummary(
     <div class="dual-axis-summary">
       <div class="dual-axis-metric primary">
         <strong>${typeof primaryLatest === "number" ? options.formatter(primaryLatest) : "n/a"}</strong>
-        ${changeLine(primaryPoints, options.changeMode ?? "standard", "NAV")}
+        ${changeLine(primaryPoints, options.changeMode ?? "standard", options.primaryLabel ?? "NAV")}
       </div>
       <div class="dual-axis-metric secondary">
         <strong>${typeof secondaryLatest === "number" ? secondaryFormatter(secondaryLatest) : "n/a"}</strong>
@@ -267,7 +274,7 @@ function renderChangeSummary(
   if (options.secondary) {
     return `
       <div class="chart-change-list">
-        ${changeLine(points, options.changeMode ?? "standard", "NAV")}
+        ${changeLine(points, options.changeMode ?? "standard", options.primaryLabel ?? "NAV")}
         ${changeLine(secondaryPoints, options.secondary.changeMode ?? "standard", options.secondary.label)}
       </div>
     `;

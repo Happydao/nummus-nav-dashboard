@@ -1,4 +1,5 @@
 import { getCurrentMarketPrice } from "./sources/marketPrice.js";
+import { collectMarketDepth } from "./sources/marketDepth.js";
 import { getCurrentSupply } from "./sources/supply.js";
 import { collectSupplyHistory } from "./sources/supplyHistory.js";
 import { collectTbtcHistory } from "./sources/tbtcHistory.js";
@@ -19,7 +20,10 @@ export async function collectDailySnapshot(): Promise<DailySnapshot> {
     getCurrentSupply(),
     getCurrentMarketPrice()
   ]);
-  const { vaultUsd, valuationReport } = await valueVault(fungibleAssets, ignoredAssets);
+  const [{ vaultUsd, valuationReport }, marketDepth] = await Promise.all([
+    valueVault(fungibleAssets, ignoredAssets),
+    collectMarketDepth(marketPrice)
+  ]);
 
   const nav = round(divideOrNull(vaultUsd, supply));
   const backing = round(
@@ -39,6 +43,7 @@ export async function collectDailySnapshot(): Promise<DailySnapshot> {
     backing,
     premium,
     tbtcAmount,
+    marketDepth,
     valuationReport
   };
 }
