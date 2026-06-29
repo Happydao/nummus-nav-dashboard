@@ -4,6 +4,7 @@ import {
   lineChart,
   rangeButtons,
   type MarketDepthSnapshot,
+  type VaultDrawdownSnapshot,
   type ChartZoomWindow,
   type RangeKey
 } from "../charts/lineChart.js";
@@ -48,6 +49,7 @@ async function render(): Promise<void> {
   const tbtcHistory = history.tbtcHistory ?? [];
   const supplyChartRecords = buildSupplyChartRecords(history.supplyHistory ?? [], records);
   const marketDepthRecords = buildMarketDepthRecords(records);
+  const vaultDrawdownRecords = buildVaultDrawdownRecords(financialRecords);
   const latest = latestRecord(records);
   const unpricedCount = latest?.valuationReport?.unpricedAssets.length ?? 0;
   const vaultComposition = latest ? vaultCompositionDetails(latest) : "";
@@ -159,6 +161,21 @@ async function render(): Promise<void> {
             yLabel: "USD",
             yMin: 0,
             info: "Vault Value is the total USD value of the treasury assets counted in the snapshot. Higher value means a larger treasury backing NUMMUS."
+          })}
+          ${lineChart({
+            id: "vault-drawdown",
+            title: "Vault Drawdown",
+            records: vaultDrawdownRecords,
+            key: "drawdown",
+            range: selectedRange,
+            zoomWindow: chartZoom("vault-drawdown"),
+            formatter: percent,
+            axisFormatter: percent,
+            yLabel: "Below Historical Peak",
+            yMax: 0,
+            showArea: false,
+            changeMode: "percentage-points",
+            info: "Vault Drawdown shows how far the current Vault Value is below its highest value previously recorded. 0% means the vault is at a new high; -20% means it is 20% below its historical peak. More negative values indicate a deeper contraction."
           })}
           ${lineChart({
             id: "supply",
@@ -444,6 +461,19 @@ function buildMarketDepthRecords(records: DailySnapshot[]): MarketDepthSnapshot[
       buyDepthUsd: record.marketDepth?.buyDepthUsd as number,
       sellDepthUsd: record.marketDepth?.sellDepthUsd as number
     }));
+}
+
+function buildVaultDrawdownRecords(records: DailySnapshot[]): VaultDrawdownSnapshot[] {
+  let historicalPeak = 0;
+
+  return records.flatMap((record) => {
+    if (typeof record.vaultUsd !== "number" || record.vaultUsd <= 0) return [];
+    historicalPeak = Math.max(historicalPeak, record.vaultUsd);
+    return [{
+      date: record.date,
+      drawdown: ((record.vaultUsd / historicalPeak) - 1) * 100
+    }];
+  });
 }
 
 function attachRangeHandlers(): void {

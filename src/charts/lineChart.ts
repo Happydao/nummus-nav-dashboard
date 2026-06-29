@@ -1,12 +1,17 @@
 import type { DailySnapshot, SupplySnapshot, TbtcSnapshot } from "../utils/history.js";
 
 export type RangeKey = "1D" | "7D" | "30D" | "1Y" | "ALL";
-export type ChartRecord = DailySnapshot | TbtcSnapshot | SupplySnapshot | MarketDepthSnapshot;
+export type ChartRecord = DailySnapshot | TbtcSnapshot | SupplySnapshot | MarketDepthSnapshot | VaultDrawdownSnapshot;
 
 export interface MarketDepthSnapshot {
   date: string;
   buyDepthUsd: number;
   sellDepthUsd: number;
+}
+
+export interface VaultDrawdownSnapshot {
+  date: string;
+  drawdown: number;
 }
 
 export interface ChartZoomWindow {
@@ -29,6 +34,7 @@ export interface ChartOptions {
   yMin?: number;
   yMax?: number;
   showMarkers?: boolean;
+  showArea?: boolean;
   includePreviousPoint?: boolean;
   changeMode?: ChangeMode;
   info?: string;
@@ -54,7 +60,7 @@ export interface ChartOptions {
 
 type ChangeMode = "standard" | "reduction" | "inverse" | "percentage-points";
 
-type ChartKey = keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply" | "marketPrice"> | "amount" | "buyDepthUsd" | "sellDepthUsd";
+type ChartKey = keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply" | "marketPrice"> | "amount" | "buyDepthUsd" | "sellDepthUsd" | "drawdown";
 
 interface ChartPoint {
   date: string;
@@ -197,7 +203,7 @@ export function lineChart(options: ChartOptions): string {
           <line class="axis-line" x1="${PAD.left}" y1="${HEIGHT - PAD.bottom}" x2="${plotRight}" y2="${HEIGHT - PAD.bottom}" />
           <line class="axis-line${hasIndependentAxis ? " primary-axis-line" : ""}" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
           ${hasIndependentAxis ? `<line class="axis-line secondary-axis-line" x1="${plotRight}" y1="${PAD.top}" x2="${plotRight}" y2="${HEIGHT - PAD.bottom}" />` : ""}
-          ${areaPath ? `<path class="area-path" d="${areaPath}" />` : ""}
+          ${areaPath && options.showArea !== false ? `<path class="area-path" d="${areaPath}" />` : ""}
           <path class="series-path" d="${path}" />
           ${secondaryPath ? `<path class="series-path secondary-series-path" d="${secondaryPath}" />` : ""}
           ${
@@ -317,8 +323,8 @@ function changeLine(points: ChartPoint[], mode: ChangeMode, label?: string): str
   }
 
   if (mode === "percentage-points") {
-    const relativeText = relative === null ? "N/A" : formatChange(relative);
-    return `<span class="chart-change ${state}">${direction} ${relativeText} · ${formatSignedNumber(delta)} pp</span>`;
+    const relativeText = relative === null ? "" : `${formatChange(relative)} · `;
+    return `<span class="chart-change ${state}">${direction} ${relativeText}${formatSignedNumber(delta)} pp</span>`;
   }
 
   const value = relative === null ? "N/A" : formatChange(relative);

@@ -87,6 +87,19 @@ Its movement reflects both blockchain balance changes and market-price changes. 
 
 The comparable financial series displayed by the dashboard begins on **1 September 2025**. This common starting date excludes the treasury's initial formation and early price-discovery phase, when exceptional asset valuations would distort NAV, backing and premium comparisons.
 
+### Vault Drawdown
+
+Vault Drawdown measures how far the Vault Value is below the highest value it had previously reached. It is derived entirely from Vault Value History and uses the same starting date of **1 September 2025**.
+
+```text
+Historical Peak = Highest Vault Value recorded up to that date
+Vault Drawdown % = ((Vault Value / Historical Peak) - 1) x 100
+```
+
+A value of `0%` means the vault is at a new historical high. A value of `-20%` means the current Vault Value is 20% below its previous peak. When the vault partially recovers, drawdown moves back toward zero; when it exceeds the earlier peak, drawdown returns to zero and a new peak is established.
+
+Unlike the percentage shown above Vault Value History, which compares the beginning and end of the currently selected range, drawdown always compares each observation with the highest value recorded before or on that date. It therefore measures the depth and duration of treasury contractions rather than ordinary period performance.
+
 ### Supply Reduction
 
 This chart tracks the reduction of NUMMUS supply from the initial `100,000,000` tokens.
