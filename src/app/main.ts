@@ -18,6 +18,7 @@ const NUMMUS_COINGECKO_URL = "https://www.coingecko.com/en/coins/nummus-aeternit
 const INITIAL_NUMMUS_SUPPLY = 100_000_000;
 const SUPPLY_HISTORY_START = "2025-06-23";
 const DAY_BEFORE_FIRST_RECORDED_BURN = "2025-10-16";
+const FINANCIAL_HISTORY_START = "2025-09-01";
 
 if (!app) {
   throw new Error("Missing #app root");
@@ -35,6 +36,7 @@ render().catch((error: unknown) => {
 async function render(): Promise<void> {
   const history = await loadHistory();
   const records = history.records;
+  const financialRecords = records.filter((record) => record.date >= FINANCIAL_HISTORY_START);
   const tbtcHistory = history.tbtcHistory ?? [];
   const supplyChartRecords = buildSupplyChartRecords(history.supplyHistory ?? [], records);
   const latest = latestRecord(records);
@@ -81,7 +83,7 @@ async function render(): Promise<void> {
           ${lineChart({
             id: "nav",
             title: "NAV vs NUMMUS Price",
-            records,
+            records: financialRecords,
             key: "nav",
             range: selectedRange,
             formatter: usd,
@@ -105,7 +107,7 @@ async function render(): Promise<void> {
           ${lineChart({
             id: "backing",
             title: "Treasury Backing History",
-            records,
+            records: financialRecords,
             key: "backing",
             range: selectedRange,
             formatter: percent,
@@ -118,7 +120,7 @@ async function render(): Promise<void> {
           ${lineChart({
             id: "premium",
             title: "Premium vs NAV History",
-            records,
+            records: financialRecords,
             key: "premium",
             range: selectedRange,
             formatter: ratio,
@@ -131,7 +133,7 @@ async function render(): Promise<void> {
           ${lineChart({
             id: "vault",
             title: "Vault Value History",
-            records,
+            records: financialRecords,
             key: "vaultUsd",
             range: selectedRange,
             formatter: usd,
@@ -186,7 +188,7 @@ async function render(): Promise<void> {
           </header>
           ${projectionChart({
             latest,
-            records,
+            records: financialRecords,
             supplyHistory: history.supplyHistory ?? [],
             scenario: selectedProjectionScenario,
             years: selectedProjectionYears

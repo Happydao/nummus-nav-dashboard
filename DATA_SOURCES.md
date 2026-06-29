@@ -44,7 +44,9 @@ The reconstruction adds 172 dates. At the time of import, 162 are complete and 1
 - 16-22 June 2025: no verifiable NUMMUS price on or before those dates;
 - 30 July-1 August 2025: BUMPER was held before its first verifiable public price.
 
-Supply, NUMMUS market price, NAV, backing, and premium remain `null` for these imported early records because this command is scoped specifically to historical Vault Value. It does not claim to reconstruct a complete historical dashboard snapshot.
+Historical Vault values before 1 September remain stored for provenance, but the financial metric window begins on `2025-09-01`. From that date the importer reconstructs supply, NUMMUS market price, NAV, backing, and premium. This excludes the Vault initialization period, the missing BUMPER price dates, and BUMPER's initial price-discovery anomaly from financial charts and projection-premium statistics.
+
+Supply and tBTC retain their independent June start dates. Derived financial metrics before 1 September remain `null`.
 
 ## Existing history from 5 December 2025
 
