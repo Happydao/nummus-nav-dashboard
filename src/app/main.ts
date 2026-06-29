@@ -204,6 +204,7 @@ async function render(): Promise<void> {
             key: "buyDepthUsd",
             primaryLabel: "Buy Depth",
             primaryLegendLabel: "Buy Depth at 1% Impact",
+            tooltipOrder: "primary-first",
             range: selectedRange,
             zoomWindow: chartZoom("market-depth"),
             formatter: usd,
@@ -217,7 +218,7 @@ async function render(): Promise<void> {
               formatter: usd,
               axisFormatter: usdCompact
             },
-            info: "NUMMUS Market Depth estimates how much can be bought or sold through current Jupiter routes before quoted price impact exceeds 1%. Buy Depth measures executable USDC purchasing capacity; Sell Depth measures the USD value of NUMMUS that can be sold. Higher and more balanced values generally indicate a market better able to absorb larger trades. Quotes are observations at snapshot time, not guaranteed execution prices. The series begins with the first collected depth snapshot and has no reconstructed history."
+            info: "NUMMUS Market Depth estimates how much can be bought or sold through current Jupiter routes before quoted price impact exceeds 1%. The green line is Buy Depth in USDC and the orange line is Sell Depth expressed in USD. Higher and more balanced values indicate a market better able to absorb larger trades. Quotes are observations at snapshot time, not guaranteed execution prices."
           })}
         </section>
       </div>

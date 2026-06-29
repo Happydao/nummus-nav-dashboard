@@ -108,7 +108,11 @@ This chart estimates how much NUMMUS can be bought or sold through the routes cu
 
 Higher depth means that the market can generally absorb a larger trade without moving the quoted price beyond the selected limit. Similar buy and sell depth indicates more balanced execution conditions, while a large difference can reveal asymmetric routing or available liquidity.
 
-The collector discovers each threshold through progressively larger Jupiter quotes followed by a binary search around the limit. The metric reflects all routes returned by Jupiter rather than the reported TVL of a single pool. It remains an instantaneous quote observation: route availability and execution conditions can change before a transaction is submitted.
+The collector discovers each threshold through progressively larger Jupiter quotes followed by a binary search around the limit. It uses Jupiter's API `priceImpactPct` field as the common technical threshold and reflects all routes returned by Jupiter rather than the reported TVL of a single pool.
+
+The API price-impact percentage is not necessarily identical to the total value difference displayed by the Jupiter interface. The interface may also reflect its current USD reference prices, pool fees, route composition and price changes between observations. Market Depth should therefore be read as a standardized liquidity measurement, not as a guaranteed net execution result.
+
+Each value is an instantaneous quote observation. Available routes, pool state and execution conditions can change before a transaction is submitted, and no swap is executed by the collector.
 
 Historical Jupiter quotes cannot be reconstructed reliably. This series therefore begins with the first daily market-depth snapshot and does not backfill earlier dates.
 

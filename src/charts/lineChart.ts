@@ -23,6 +23,7 @@ export interface ChartOptions {
   formatter: (value: number) => string;
   primaryLabel?: string;
   primaryLegendLabel?: string;
+  tooltipOrder?: "primary-first" | "secondary-first";
   axisFormatter?: (value: number) => string;
   yLabel: string;
   yMin?: number;
@@ -220,27 +221,41 @@ export function lineChart(options: ChartOptions): string {
           y: point.y,
           label: options.formatter(point.value),
           series: options.secondary
-            ? [
-                ...(typeof secondaryByDate.get(point.date) === "number"
-                  ? [
-                      {
-                        name: options.secondary.label,
-                        label: (options.secondary.formatter ?? options.formatter)(secondaryByDate.get(point.date) as number),
-                        kind: "secondary"
-                      }
-                    ]
-                  : []),
-                {
-                  name: options.primaryLabel ?? "NAV",
-                  label: options.formatter(point.value),
-                  kind: "primary"
-                }
-              ]
+            ? tooltipSeries(
+                options,
+                point.value,
+                secondaryByDate.get(point.date)
+              )
             : undefined
         }))
       })}</script>
     </section>
   `;
+}
+
+function tooltipSeries(
+  options: ChartOptions,
+  primaryValue: number,
+  secondaryValue: number | undefined
+): Array<{ name: string; label: string; kind: "primary" | "secondary" }> {
+  const primary = {
+    name: options.primaryLabel ?? "NAV",
+    label: options.formatter(primaryValue),
+    kind: "primary" as const
+  };
+  const secondary =
+    typeof secondaryValue === "number"
+      ? {
+          name: options.secondary?.label ?? "Secondary",
+          label: (options.secondary?.formatter ?? options.formatter)(secondaryValue),
+          kind: "secondary" as const
+        }
+      : null;
+
+  if (!secondary) return [primary];
+  return options.tooltipOrder === "primary-first"
+    ? [primary, secondary]
+    : [secondary, primary];
 }
 
 function renderDualAxisSummary(
