@@ -1,17 +1,20 @@
 # NUMMUS NAV Dashboard
 
-The NUMMUS NAV Dashboard tracks the evolution of the treasury value supporting NUMMUS.
+The NUMMUS NAV Dashboard tracks the treasury backing, market valuation and liquidity conditions supporting NUMMUS over time.
 
-It is not a treasury-composition dashboard. Its purpose is to show the historical relationship between:
+It is not primarily a treasury-composition dashboard. Current asset holdings are available as supporting context, while the dashboard's main purpose is to preserve and explain the historical relationship between:
 
-- the treasury's USD value;
-- the circulating NUMMUS supply;
-- the treasury value attributable to each token;
-- the NUMMUS market price;
-- supply reduction;
-- tBTC accumulation.
+- the treasury's total USD value and its drawdown from previous peaks;
+- the circulating NUMMUS supply and its reduction through verified burns;
+- NAV, the treasury value attributable to each token;
+- the NUMMUS market price, Treasury Backing and the market premium over NAV;
+- the quantity of tBTC accumulated by the treasury;
+- the buy-side and sell-side market depth available through Jupiter routes;
+- the total and per-pool DEX liquidity reported for NUMMUS markets.
 
-Current data is recorded through recurring snapshots and retained to build a verifiable historical series.
+The historical dashboard is complemented by a separate projection simulator. The simulator combines the latest verified Vault Value and supply with explicit treasury-growth, burn-rate and premium assumptions. Its results are hypothetical scenarios, not historical observations or price forecasts.
+
+Current data is recorded through recurring complete snapshots and retained to build a verifiable historical series. A snapshot is accepted only when every required metric is available and valid, keeping all charts aligned to the same observation date.
 
 ## Core Metrics
 
@@ -173,6 +176,14 @@ The selected scenario determines the five-year Vault Value multiplier and the hi
 For shorter periods, the selected five-year growth is distributed progressively across the chosen time horizon. As new observations are added, the starting treasury value, supply-reduction pace and historical premium statistics can change, so the projections also update.
 
 The simulator is an analytical tool, not a price forecast, financial advice or a promise of future performance.
+
+## Snapshot Integrity and Update Status
+
+Every daily update is treated as one complete dataset. The collector retrieves and validates Vault Value, supply, NUMMUS price, NAV, backing, premium, tBTC, Market Depth, total DEX liquidity and every tracked pool before publishing any new observation.
+
+If any required source or metric is unavailable, the attempted update is rejected and neither the daily history nor the latest valid snapshot is replaced. The workflow retries the complete collection three times. If all attempts fail, the GitHub Actions run reports an error while the dashboard continues to display the most recent verified dataset. Failed attempts are never represented as new dates by copying values from the previous day.
+
+The dashboard displays a red warning when the last complete update is more than **48 hours old**. This indicates that the visible values remain the latest verified observations but should no longer be considered current.
 
 ## Data Sources
 

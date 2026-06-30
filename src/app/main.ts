@@ -28,6 +28,7 @@ const INITIAL_NUMMUS_SUPPLY = 100_000_000;
 const SUPPLY_HISTORY_START = "2025-06-27";
 const DAY_BEFORE_FIRST_RECORDED_BURN = "2025-10-16";
 const FINANCIAL_HISTORY_START = "2025-09-01";
+const STALE_AFTER_MS = 48 * 60 * 60 * 1000;
 
 if (!app) {
   throw new Error("Missing #app root");
@@ -54,6 +55,8 @@ async function render(): Promise<void> {
   const latest = latestRecord(records);
   const unpricedCount = latest?.valuationReport?.unpricedAssets.length ?? 0;
   const vaultComposition = latest ? vaultCompositionDetails(latest) : "";
+  const isStale =
+    history.generatedAt !== null && Date.now() - new Date(history.generatedAt).getTime() > STALE_AFTER_MS;
 
   root.innerHTML = `
     <div class="shell">
@@ -72,10 +75,15 @@ async function render(): Promise<void> {
         </div>
         <div class="topbar-tools">
           ${rangeButtons(selectedRange)}
-          <span class="updated">${history.generatedAt ? `Updated ${formatUtcTimestamp(history.generatedAt)} UTC` : "No snapshot collected yet"}</span>
+          <span class="updated${isStale ? " updated-stale" : ""}">${history.generatedAt ? `Updated ${formatUtcTimestamp(history.generatedAt)} UTC` : "No snapshot collected yet"}</span>
         </div>
       </header>
       <div class="content">
+        ${
+          isStale
+            ? `<div class="notice stale-notice" role="alert">Data update delayed: the last complete snapshot is more than 48 hours old. The dashboard is showing the most recent verified data.</div>`
+            : ""
+        }
         <section class="kpis">
           ${kpi(
             "Nummus Aeternitas Vault DAO",

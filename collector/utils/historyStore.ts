@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { DailySnapshot, HistoryFile } from "../types.js";
@@ -16,28 +16,23 @@ export async function readHistory(): Promise<HistoryFile> {
   return JSON.parse(await readFile(HISTORY_PATH, "utf8")) as HistoryFile;
 }
 
-export async function upsertToday(snapshot: DailySnapshot): Promise<HistoryFile> {
-  const history = await readHistory();
-  const recordsByDate = new Map(history.records.map((record) => [record.date, record]));
-  recordsByDate.set(snapshot.date, snapshot);
+export async function commitSnapshot(snapshot: DailySnapshot, history: HistoryFile): Promise<void> {
+  await mkdir(dirname(HISTORY_PATH), { recursive: true });
+  await mkdir(SNAPSHOTS_DIR, { recursive: true });
 
-  const next: HistoryFile = {
-    ...history,
-    generatedAt: new Date().toISOString(),
-    records: [...recordsByDate.values()].sort((a, b) => a.date.localeCompare(b.date))
-  };
+  const snapshotPath = resolve(SNAPSHOTS_DIR, `${snapshot.date}.json`);
+  const snapshotTempPath = `${snapshotPath}.tmp`;
+  const historyTempPath = `${HISTORY_PATH}.tmp`;
 
-  await writeDailySnapshot(snapshot);
-  await writeHistory(next);
-  return next;
+  await writeFile(snapshotTempPath, `${JSON.stringify(snapshot, null, 2)}\n`);
+  await writeFile(historyTempPath, `${JSON.stringify(history, null, 2)}\n`);
+
+  // history.json is the dashboard's commit marker, so publish it last.
+  await rename(snapshotTempPath, snapshotPath);
+  await rename(historyTempPath, HISTORY_PATH);
 }
 
 export async function writeHistory(history: HistoryFile): Promise<void> {
   await mkdir(dirname(HISTORY_PATH), { recursive: true });
   await writeFile(HISTORY_PATH, `${JSON.stringify(history, null, 2)}\n`);
-}
-
-export async function writeDailySnapshot(snapshot: DailySnapshot): Promise<void> {
-  await mkdir(SNAPSHOTS_DIR, { recursive: true });
-  await writeFile(resolve(SNAPSHOTS_DIR, `${snapshot.date}.json`), `${JSON.stringify(snapshot, null, 2)}\n`);
 }

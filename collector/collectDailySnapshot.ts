@@ -5,11 +5,51 @@ import { getCurrentSupply } from "./sources/supply.js";
 import { collectSupplyHistory } from "./sources/supplyHistory.js";
 import { collectTbtcHistory } from "./sources/tbtcHistory.js";
 import { getCurrentVaultAssets } from "./sources/vaultAssets.js";
-import { upsertToday, writeHistory } from "./utils/historyStore.js";
+import { commitSnapshot, readHistory } from "./utils/historyStore.js";
 import { divideOrNull, round } from "./utils/math.js";
 import { valueVault } from "./pricing/valueVault.js";
 import type { DailySnapshot } from "./types.js";
 import { TBTC_MINT } from "./utils/constants.js";
+
+function requirePositive(label: string, value: number | null | undefined): void {
+  if (value === null || value === undefined || !Number.isFinite(value) || value <= 0) {
+    throw new Error(`Incomplete snapshot: ${label} is missing or invalid`);
+  }
+}
+
+function requireNonNegative(label: string, value: number | null | undefined): void {
+  if (value === null || value === undefined || !Number.isFinite(value) || value < 0) {
+    throw new Error(`Incomplete snapshot: ${label} is missing or invalid`);
+  }
+}
+
+export function validateSnapshot(snapshot: DailySnapshot): void {
+  requirePositive("Vault Value", snapshot.vaultUsd);
+  requirePositive("NUMMUS supply", snapshot.supply);
+  requirePositive("NUMMUS market price", snapshot.marketPrice);
+  requirePositive("NAV", snapshot.nav);
+  requirePositive("Treasury Backing", snapshot.backing);
+  requirePositive("Premium vs NAV", snapshot.premium);
+  requireNonNegative("tBTC amount", snapshot.tbtcAmount);
+  requirePositive("Market Depth buy side", snapshot.marketDepth?.buyDepthUsd);
+  requirePositive("Market Depth sell side", snapshot.marketDepth?.sellDepthUsd);
+  requirePositive("DEX total liquidity", snapshot.dexLiquidity?.totalLiquidityUsd);
+  requirePositive("DEX pool count", snapshot.dexLiquidity?.poolCount);
+
+  if (
+    !snapshot.dexLiquidity ||
+    snapshot.dexLiquidity.pools.length !== snapshot.dexLiquidity.poolCount ||
+    snapshot.dexLiquidity.pools.some((pool) => !Number.isFinite(pool.liquidityUsd) || pool.liquidityUsd <= 0)
+  ) {
+    throw new Error("Incomplete snapshot: DEX pool data is missing or invalid");
+  }
+
+  if (snapshot.valuationReport.unpricedAssets.length > 0) {
+    throw new Error(
+      `Incomplete snapshot: ${snapshot.valuationReport.unpricedAssets.length} vault asset(s) could not be priced`
+    );
+  }
+}
 
 function today(): string {
   return new Date().toISOString().slice(0, 10);
@@ -53,7 +93,8 @@ export async function collectDailySnapshot(): Promise<DailySnapshot> {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const snapshot = await collectDailySnapshot();
-  const history = await upsertToday(snapshot);
+  validateSnapshot(snapshot);
+  const history = await readHistory();
   const tbtc = await collectTbtcHistory(history.tbtcHistory ?? [], history.tbtcCursor);
   const supply = await collectSupplyHistory(
     snapshot.supply ?? 0,
@@ -73,7 +114,12 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   history.tbtcCursor = tbtc.cursor;
   history.supplyHistory = supply.history;
   history.supplyCursor = supply.cursor;
-  await writeHistory(history);
+  const recordsByDate = new Map(history.records.map((record) => [record.date, record]));
+  recordsByDate.set(snapshot.date, snapshot);
+  history.records = [...recordsByDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+  history.generatedAt = new Date().toISOString();
+
+  await commitSnapshot(snapshot, history);
   console.log(
     `Saved ${snapshot.date} snapshot. History records: ${history.records.length}. tBTC points: ${history.tbtcHistory?.length ?? 0}. Supply points: ${history.supplyHistory?.length ?? 0}`
   );

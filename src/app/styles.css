@@ -101,6 +101,19 @@ body {
   gap: 8px;
 }
 
+.updated-stale {
+  color: #ff8b82;
+  font-weight: 700;
+}
+
+.notice.stale-notice {
+  background: rgba(145, 25, 25, 0.28);
+  border-color: rgba(255, 104, 94, 0.72);
+  color: #ffd2ce;
+  margin-bottom: 18px;
+  margin-top: 0;
+}
+
 .range-selector {
   background: rgba(232, 238, 233, 0.06);
   border: 1px solid rgba(232, 238, 233, 0.12);

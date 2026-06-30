@@ -36,7 +36,19 @@ jobs:
         run: npm ci
 
       - name: Collect daily snapshot
-        run: npm run collect
+        run: |
+          for attempt in 1 2 3; do
+            echo "Collection attempt $attempt of 3"
+            if npm run collect; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "Incomplete collection; retrying in 5 minutes"
+              sleep 300
+            fi
+          done
+          echo "All collection attempts failed; existing history remains unchanged"
+          exit 1
         env:
           HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
 
