@@ -1342,6 +1342,7 @@ svg {
 
 [data-theme="light"] .kpi strong,
 [data-theme="light"] .chart-head h2,
+[data-theme="light"] .chart-head strong,
 [data-theme="light"] .chart-current strong,
 [data-theme="light"] .chart-change strong,
 [data-theme="light"] .projection-intro h2,
@@ -1422,6 +1423,155 @@ svg {
 
 [data-theme="light"] .projection-stats > div {
   border-right-color: rgba(31, 66, 49, 0.14);
+}
+
+[data-theme="light"] .kpi-links a,
+[data-theme="light"] .chart-action {
+  border-color: rgba(118, 89, 29, 0.42);
+  color: #76591d;
+}
+
+[data-theme="light"] .kpi-breakdown {
+  border-top-color: rgba(31, 66, 49, 0.16);
+}
+
+[data-theme="light"] .kpi-breakdown small,
+[data-theme="light"] .kpi-breakdown li span,
+[data-theme="light"] .kpi-breakdown li span small {
+  color: #52665b;
+}
+
+[data-theme="light"] .kpi-breakdown li strong,
+[data-theme="light"] .dual-axis-metric strong {
+  color: #183126;
+}
+
+[data-theme="light"] .chart-zoom-controls {
+  background: rgba(16, 35, 26, 0.08);
+  border-color: rgba(16, 35, 26, 0.24);
+}
+
+[data-theme="light"] .chart-zoom-controls button {
+  border-right-color: rgba(16, 35, 26, 0.18);
+  color: #28483a;
+}
+
+[data-theme="light"] .chart-zoom-controls button:hover:not(:disabled) {
+  background: rgba(35, 112, 77, 0.12);
+  color: #10231a;
+}
+
+[data-theme="light"] .chart-zoom-controls button:disabled {
+  color: #607268;
+  opacity: 0.72;
+}
+
+[data-theme="light"] .chart-legend span,
+[data-theme="light"] .liquidity-log-label,
+[data-theme="light"] .liquidity-total-key,
+[data-theme="light"] .chart-change,
+[data-theme="light"] .chart-change.neutral,
+[data-theme="light"] .info-tip,
+[data-theme="light"] .chart-head .info-tip {
+  color: #52665b;
+}
+
+[data-theme="light"] .grid-line {
+  stroke: rgba(31, 66, 49, 0.16);
+}
+
+[data-theme="light"] .x-grid-line {
+  stroke: rgba(31, 66, 49, 0.1);
+}
+
+[data-theme="light"] .axis-line,
+[data-theme="light"] .x-tick-line {
+  stroke: rgba(31, 66, 49, 0.34);
+}
+
+[data-theme="light"] .tick-label,
+[data-theme="light"] .axis-title {
+  fill: #52665b;
+}
+
+[data-theme="light"] .crosshair {
+  stroke: #294c3b;
+}
+
+[data-theme="light"] .hover-dot {
+  fill: #f7faf8;
+}
+
+[data-theme="light"] .projection-head h2,
+[data-theme="light"] .projection-stats strong {
+  color: #183126;
+}
+
+[data-theme="light"] .projection-intro > span {
+  color: #76591d;
+}
+
+[data-theme="light"] .projection-head > div:first-child > span,
+[data-theme="light"] .projection-assumptions,
+[data-theme="light"] .projection-stats span {
+  color: #52665b;
+}
+
+[data-theme="light"] .projection-selector {
+  background: rgba(16, 35, 26, 0.06);
+  border-color: rgba(16, 35, 26, 0.16);
+}
+
+[data-theme="light"] .projection-selector button {
+  color: #52665b;
+}
+
+[data-theme="light"] .projection-selector button.active {
+  background: rgba(35, 112, 77, 0.13);
+  color: #145c3b;
+  box-shadow: inset 0 0 0 1px rgba(35, 112, 77, 0.3);
+}
+
+[data-theme="light"] .projection-stat-vault span,
+[data-theme="light"] .projection-stat-vault strong {
+  color: #168453;
+}
+
+[data-theme="light"] .projection-stat-price span,
+[data-theme="light"] .projection-stat-price strong {
+  color: #a85f20;
+}
+
+[data-theme="light"] .primary-axis-title,
+[data-theme="light"] .primary-y-tick,
+[data-theme="light"] .projection-vault-axis,
+[data-theme="light"] .projection-vault-tick {
+  fill: #168453;
+}
+
+[data-theme="light"] .secondary-axis-title,
+[data-theme="light"] .secondary-y-tick,
+[data-theme="light"] .projection-price-axis,
+[data-theme="light"] .projection-price-tick {
+  fill: #a85f20;
+}
+
+[data-theme="light"] .chart-change.favorable,
+[data-theme="light"] .dual-axis-metric.primary .chart-change {
+  color: #168453;
+}
+
+[data-theme="light"] .chart-change.adverse,
+[data-theme="light"] .dual-axis-metric.secondary .chart-change {
+  color: #a85f20;
+}
+
+[data-theme="light"] .site-footer {
+  color: #52665b;
+}
+
+[data-theme="light"] .site-footer a {
+  color: #76591d;
 }
 
 @media (max-width: 980px) {
