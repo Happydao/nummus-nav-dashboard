@@ -29,12 +29,16 @@ const SUPPLY_HISTORY_START = "2025-06-27";
 const DAY_BEFORE_FIRST_RECORDED_BURN = "2025-10-16";
 const FINANCIAL_HISTORY_START = "2025-09-01";
 const STALE_AFTER_MS = 48 * 60 * 60 * 1000;
+const THEME_STORAGE_KEY = "nummus-dashboard-theme";
+type Theme = "dark" | "light";
 
 if (!app) {
   throw new Error("Missing #app root");
 }
 
 const root = app;
+let selectedTheme: Theme = localStorage.getItem(THEME_STORAGE_KEY) === "light" ? "light" : "dark";
+document.documentElement.dataset.theme = selectedTheme;
 let selectedRange: RangeKey = "ALL";
 let selectedProjectionScenario: ProjectionScenario = "accelerated";
 let selectedProjectionYears: ProjectionYears = 3;
@@ -74,7 +78,10 @@ async function render(): Promise<void> {
           </div>
         </div>
         <div class="topbar-tools">
-          ${rangeButtons(selectedRange)}
+          <div class="topbar-controls">
+            ${themeToggle(selectedTheme)}
+            ${rangeButtons(selectedRange)}
+          </div>
           <span class="updated${isStale ? " updated-stale" : ""}">${history.generatedAt ? `Updated ${formatUtcTimestamp(history.generatedAt)} UTC` : "No snapshot collected yet"}</span>
         </div>
       </header>
@@ -283,8 +290,34 @@ async function render(): Promise<void> {
     </div>
   `;
   attachRangeHandlers();
+  attachThemeHandler();
   attachProjectionHandlers();
   attachChartInteractions(root, { onZoom: updateChartZoom, onPan: updateChartPan });
+}
+
+function themeToggle(theme: Theme): string {
+  const isLight = theme === "light";
+  return `<button class="theme-toggle" type="button" data-theme-toggle aria-pressed="${isLight}" aria-label="${isLight ? "Use dark theme" : "Use light theme"}" title="${isLight ? "Dark theme" : "Light theme"}">
+    <span class="theme-toggle-track" aria-hidden="true">
+      <span class="theme-icon theme-icon-moon">☾</span>
+      <span class="theme-icon theme-icon-sun">☀</span>
+      <span class="theme-toggle-thumb"></span>
+    </span>
+  </button>`;
+}
+
+function attachThemeHandler(): void {
+  root.querySelector<HTMLButtonElement>("[data-theme-toggle]")?.addEventListener("click", () => {
+    selectedTheme = selectedTheme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = selectedTheme;
+    localStorage.setItem(THEME_STORAGE_KEY, selectedTheme);
+    const button = root.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+    if (!button) return;
+    const isLight = selectedTheme === "light";
+    button.setAttribute("aria-pressed", String(isLight));
+    button.setAttribute("aria-label", isLight ? "Use dark theme" : "Use light theme");
+    button.title = isLight ? "Dark theme" : "Light theme";
+  });
 }
 
 function formatUtcTimestamp(timestamp: string): string {

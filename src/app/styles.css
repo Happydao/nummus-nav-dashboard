@@ -101,6 +101,76 @@ body {
   gap: 8px;
 }
 
+.topbar-controls {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.theme-toggle {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  flex: 0 0 auto;
+  padding: 0;
+}
+
+.theme-toggle-track {
+  align-items: center;
+  background: rgba(232, 238, 233, 0.06);
+  border: 1px solid rgba(232, 238, 233, 0.16);
+  border-radius: 999px;
+  display: flex;
+  height: 38px;
+  justify-content: space-around;
+  padding: 3px;
+  position: relative;
+  width: 68px;
+}
+
+.theme-icon {
+  color: #a7baaf;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1;
+  position: relative;
+  width: 28px;
+  z-index: 1;
+}
+
+.theme-toggle-thumb {
+  background: #e8eee9;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+  height: 28px;
+  left: 4px;
+  position: absolute;
+  top: 4px;
+  transition: transform 180ms ease;
+  width: 28px;
+}
+
+.theme-icon-moon {
+  color: #08110d;
+}
+
+[data-theme="light"] .theme-toggle-thumb {
+  transform: translateX(30px);
+}
+
+[data-theme="light"] .theme-icon-moon {
+  color: #718078;
+}
+
+[data-theme="light"] .theme-icon-sun {
+  color: #3b3422;
+}
+
+.theme-toggle:focus-visible .theme-toggle-track {
+  outline: 2px solid #57c990;
+  outline-offset: 2px;
+}
+
 .updated-stale {
   color: #ff8b82;
   font-weight: 700;
@@ -1187,6 +1257,173 @@ svg {
   background: rgba(207, 174, 105, 0.12);
 }
 
+/* Light theme keeps the same data-series colors while increasing surface contrast. */
+[data-theme="light"] {
+  background: #edf3ef;
+  color: #183126;
+}
+
+[data-theme="light"] body {
+  background:
+    radial-gradient(circle at top left, rgba(71, 179, 127, 0.14), transparent 34rem),
+    linear-gradient(180deg, #f7faf8 0%, #edf3ef 48%, #e5ede8 100%);
+}
+
+[data-theme="light"] .topbar {
+  background: rgba(247, 250, 248, 0.9);
+  border-bottom-color: rgba(35, 112, 77, 0.2);
+  color: #10231a;
+}
+
+[data-theme="light"] .brand img {
+  border-color: rgba(35, 112, 77, 0.28);
+}
+
+[data-theme="light"] .github-link,
+[data-theme="light"] .kpi > span,
+[data-theme="light"] .chart-info-trigger,
+[data-theme="light"] .liquidity-pools-trigger,
+[data-theme="light"] .projection-eyebrow,
+[data-theme="light"] .footer-button {
+  color: #76591d;
+}
+
+[data-theme="light"] .github-link:hover,
+[data-theme="light"] .chart-info-trigger:hover,
+[data-theme="light"] .projection-footer a {
+  color: #4d390e;
+}
+
+[data-theme="light"] .brand span,
+[data-theme="light"] .updated,
+[data-theme="light"] .chart-head span,
+[data-theme="light"] .chart-label,
+[data-theme="light"] .projection-intro p,
+[data-theme="light"] .projection-control > span,
+[data-theme="light"] .projection-stat-label,
+[data-theme="light"] .projection-note,
+[data-theme="light"] .empty {
+  color: #607268;
+}
+
+[data-theme="light"] .updated-stale {
+  color: #b42318;
+}
+
+[data-theme="light"] .theme-toggle-track,
+[data-theme="light"] .range-selector,
+[data-theme="light"] .projection-options {
+  background: rgba(16, 35, 26, 0.06);
+  border-color: rgba(16, 35, 26, 0.16);
+}
+
+[data-theme="light"] .theme-toggle-thumb,
+[data-theme="light"] .range-selector button.active {
+  background: #173c2b;
+}
+
+[data-theme="light"] .range-selector button {
+  color: #52665b;
+}
+
+[data-theme="light"] .range-selector button.active {
+  color: #fff;
+}
+
+[data-theme="light"] .kpi,
+[data-theme="light"] .chart {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 245, 0.99));
+  border-color: rgba(159, 119, 38, 0.38);
+  box-shadow:
+    0 14px 34px rgba(24, 49, 38, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 0 1px 0 #fff;
+}
+
+[data-theme="light"] .kpi strong,
+[data-theme="light"] .chart-head h2,
+[data-theme="light"] .chart-current strong,
+[data-theme="light"] .chart-change strong,
+[data-theme="light"] .projection-intro h2,
+[data-theme="light"] .projection-stat-value {
+  color: #142c21;
+}
+
+[data-theme="light"] .kpi small,
+[data-theme="light"] .formula,
+[data-theme="light"] .chart-legend,
+[data-theme="light"] .chart-meta,
+[data-theme="light"] .chart-control,
+[data-theme="light"] .projection-control button {
+  color: #52665b;
+}
+
+[data-theme="light"] .chart-control,
+[data-theme="light"] .footer-button {
+  border-color: rgba(118, 89, 29, 0.38);
+}
+
+[data-theme="light"] .chart-control:hover,
+[data-theme="light"] .footer-button:hover {
+  background: rgba(118, 89, 29, 0.09);
+}
+
+[data-theme="light"] .chart-grid,
+[data-theme="light"] .projection-grid {
+  stroke: rgba(31, 66, 49, 0.14);
+}
+
+[data-theme="light"] .chart-axis,
+[data-theme="light"] .projection-axis {
+  stroke: rgba(31, 66, 49, 0.3);
+}
+
+[data-theme="light"] .chart-axis-label,
+[data-theme="light"] .projection-axis-label {
+  fill: #52665b;
+}
+
+[data-theme="light"] .chart-crosshair {
+  stroke: #294c3b;
+}
+
+[data-theme="light"] .chart-focus-dot {
+  fill: #f7faf8;
+}
+
+[data-theme="light"] .projection-section {
+  background: linear-gradient(180deg, #f3f0e8, #e9eee9);
+  border-color: rgba(159, 119, 38, 0.42);
+}
+
+[data-theme="light"] .projection-zone {
+  background:
+    radial-gradient(circle at 82% 12%, rgba(169, 119, 52, 0.1), transparent 26rem),
+    linear-gradient(180deg, #f7f4ed 0%, #e9efeb 100%);
+  border-bottom-color: rgba(159, 119, 38, 0.22);
+  border-top-color: rgba(159, 119, 38, 0.42);
+  box-shadow: inset 0 1px 0 #fff;
+}
+
+[data-theme="light"] .projection-options button {
+  color: #607268;
+}
+
+[data-theme="light"] .projection-options button.active {
+  background: rgba(35, 112, 77, 0.13);
+  color: #145c3b;
+  box-shadow: inset 0 0 0 1px rgba(35, 112, 77, 0.3);
+}
+
+[data-theme="light"] .projection-stats {
+  border-bottom-color: rgba(31, 66, 49, 0.14);
+  border-top-color: rgba(31, 66, 49, 0.14);
+}
+
+[data-theme="light"] .projection-stats > div {
+  border-right-color: rgba(31, 66, 49, 0.14);
+}
+
 @media (max-width: 980px) {
   .kpis,
   .charts {
@@ -1267,6 +1504,15 @@ svg {
   .topbar-tools {
     align-items: stretch;
     width: 100%;
+  }
+
+  .topbar-controls {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .range-selector {
+    flex: 1 1 auto;
   }
 
   .content {
