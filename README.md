@@ -137,7 +137,7 @@ For every daily snapshot, the collector requests the list of NUMMUS pairs from D
 
 The total and every individual pool are displayed as separate lines. The `pools tracked` control opens the chart legend and reports the latest available USD liquidity for each pool, identified by DEX, token pair and an abbreviated pool address where required.
 
-The chart uses a **logarithmic USD scale**. Each vertical step represents a multiplication rather than an equal dollar increment, allowing pools with only a few dollars and pools with tens of thousands of dollars to remain visible in the same chart. Exact latest pool values remain available in the interactive legend.
+The chart uses only a **logarithmic USD scale** because NUMMUS pools differ substantially in size. Each vertical step represents a multiplication rather than an equal dollar increment, allowing pools with only a few dollars and pools with tens of thousands of dollars to remain visible in the same chart. The visual distance between lines must therefore be interpreted as a ratio, not as an equal dollar difference. Exact latest pool values remain available in the interactive legend.
 
 The daily chart tooltip reports only Total DEX Liquidity. Individual lines are intended to show the continuity and direction of each pool's liquidity over time without turning every historical tooltip into a large table.
 

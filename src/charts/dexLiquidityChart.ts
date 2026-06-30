@@ -86,7 +86,7 @@ export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
         <div>
           <div class="chart-title-row">
             <h2>NUMMUS DEX Liquidity</h2>
-            ${infoTip("NUMMUS DEX Liquidity shows the total USD liquidity and the contribution of every valid Solana pool containing NUMMUS. Linear scale shows their real relative weight; Log scale makes smaller pools visible. Higher liquidity means more capital is deposited in pools, while Market Depth separately measures executable trade size.")}
+            ${infoTip("NUMMUS DEX Liquidity shows the total USD liquidity and the evolution of every valid Solana pool containing NUMMUS. The logarithmic scale uses multiplicative steps, making both large and small pools visible in one chart. Higher liquidity means more capital is deposited in pools, while Market Depth separately measures executable trade size.")}
             <a class="chart-action" href="https://dexscreener.com/solana/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray" target="_blank" rel="noreferrer">DexScreener</a>
             ${chartZoomControls("dex-liquidity", options.zoomWindow)}
           </div>
