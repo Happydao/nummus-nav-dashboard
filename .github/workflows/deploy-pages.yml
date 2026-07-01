@@ -56,7 +56,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Update daily NUMMUS snapshot"
-          file_pattern: data/history.json data/snapshots/*.json
+          file_pattern: data/history.json data/holder-state.json data/snapshots/*.json
 
   deploy:
     needs: collect

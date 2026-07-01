@@ -1,7 +1,7 @@
 import type { DailySnapshot, SupplySnapshot, TbtcSnapshot } from "../utils/history.js";
 
 export type RangeKey = "1D" | "7D" | "30D" | "1Y" | "ALL";
-export type ChartRecord = DailySnapshot | TbtcSnapshot | SupplySnapshot | MarketDepthSnapshot | VaultDrawdownSnapshot | DexLiquiditySnapshot;
+export type ChartRecord = DailySnapshot | TbtcSnapshot | SupplySnapshot | MarketDepthSnapshot | VaultDrawdownSnapshot | DexLiquiditySnapshot | HolderGrowthSnapshot | HolderConcentrationSnapshot;
 
 export interface MarketDepthSnapshot {
   date: string;
@@ -17,6 +17,28 @@ export interface VaultDrawdownSnapshot {
 export interface DexLiquiditySnapshot {
   date: string;
   liquidityUsd: number;
+}
+
+export interface HolderGrowthSnapshot {
+  date: string;
+  holderCount: number;
+  newHolders: number | null;
+  exitedHolders: number | null;
+}
+
+export interface HolderConcentrationSnapshot {
+  date: string;
+  holderCount: number;
+  newHolders: number | null;
+  exitedHolders: number | null;
+  topHolderPct: number;
+  top10Pct: number;
+  top50Pct: number;
+  othersPct: number;
+  topHolderAmount: number;
+  top10Amount: number;
+  top50Amount: number;
+  othersAmount: number;
 }
 
 export interface ChartZoomWindow {
@@ -43,6 +65,16 @@ export interface ChartOptions {
   includePreviousPoint?: boolean;
   changeMode?: ChangeMode;
   info?: string;
+  tooltipExtras?: Array<{ key: ChartKey; label: string; formatter?: (value: number) => string }>;
+  additionalSeries?: Array<{
+    key: ChartKey;
+    label: string;
+    legendLabel?: string;
+    formatter?: (value: number) => string;
+    className: string;
+    changeMode?: ChangeMode;
+  }>;
+  showAllSeriesSummary?: boolean;
   secondary?: {
     key: ChartKey;
     label: string;
@@ -65,7 +97,7 @@ export interface ChartOptions {
 
 type ChangeMode = "standard" | "reduction" | "inverse" | "percentage-points";
 
-type ChartKey = keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply" | "marketPrice"> | "amount" | "buyDepthUsd" | "sellDepthUsd" | "drawdown" | "liquidityUsd";
+type ChartKey = keyof Pick<DailySnapshot, "nav" | "backing" | "premium" | "vaultUsd" | "supply" | "marketPrice"> | "amount" | "buyDepthUsd" | "sellDepthUsd" | "drawdown" | "liquidityUsd" | "holderCount" | "newHolders" | "exitedHolders" | "topHolderPct" | "top10Pct" | "top50Pct" | "othersPct" | "topHolderAmount" | "top10Amount" | "top50Amount" | "othersAmount";
 
 interface ChartPoint {
   date: string;
@@ -86,6 +118,12 @@ export function lineChart(options: ChartOptions): string {
   const rangePoints = filterByRange(allPoints, options.range, Boolean(options.includePreviousPoint));
   const points = applyZoomWindow(rangePoints, options.zoomWindow);
   const secondaryByDate = options.secondary ? toPointMap(options.records, options.secondary.key) : new Map<string, number>();
+  const extrasByKey = new Map(
+    (options.tooltipExtras ?? []).map((extra) => [extra.key, toPointMap(options.records, extra.key)])
+  );
+  const additionalByKey = new Map(
+    (options.additionalSeries ?? []).map((series) => [series.key, toPointMap(options.records, series.key)])
+  );
   const hasIndependentAxis = Boolean(options.secondary?.independentAxis);
 
   if (points.length === 0) {
@@ -95,9 +133,12 @@ export function lineChart(options: ChartOptions): string {
   const secondaryValues = points
     .map((point) => secondaryByDate.get(point.date))
     .filter((value): value is number => typeof value === "number");
+  const additionalValues = [...additionalByKey.values()].flatMap((byDate) =>
+    points.map((point) => byDate.get(point.date)).filter((value): value is number => typeof value === "number")
+  );
   const values = hasIndependentAxis
     ? points.map((point) => point.value)
-    : [...points.map((point) => point.value), ...secondaryValues];
+    : [...points.map((point) => point.value), ...secondaryValues, ...additionalValues];
   const rawMin = options.yMin ?? Math.min(...values);
   const rawMax = options.yMax ?? Math.max(...values);
   const yMin = options.yMin ?? niceFloor(rawMin);
@@ -134,6 +175,15 @@ export function lineChart(options: ChartOptions): string {
         })
         .filter((point): point is ChartPoint & { x: number; y: number } => point !== null)
     : [];
+  const additionalCoords = (options.additionalSeries ?? []).map((series) => ({
+    series,
+    points: coords.flatMap((point) => {
+      const value = additionalByKey.get(series.key)?.get(point.date);
+      if (typeof value !== "number") return [];
+      const y = PAD.top + (1 - (value - yMin) / (yMax - yMin || 1)) * chartHeight;
+      return [{ date: point.date, value, x: point.x, y }];
+    })
+  }));
   const path = makePath(coords, plotRight);
   const secondaryPath = secondaryCoords.length > 0 ? makePath(secondaryCoords, plotRight) : "";
   const areaPath =
@@ -149,6 +199,9 @@ export function lineChart(options: ChartOptions): string {
   const dualAxisSummary = hasIndependentAxis
     ? renderDualAxisSummary(options, points, secondaryCoords)
     : "";
+  const allSeriesSummary = options.showAllSeriesSummary
+    ? renderAllSeriesSummary(options, points, secondaryCoords, additionalCoords)
+    : "";
   const zoomed = Boolean(options.zoomWindow && (options.zoomWindow.start > 0 || options.zoomWindow.end < 1));
 
   return `
@@ -162,15 +215,16 @@ export function lineChart(options: ChartOptions): string {
             ${chartZoomControls(options.id, options.zoomWindow)}
           </div>
           <span>${formatDateShort(points[0].date)} -> ${formatDateShort(points.at(-1)?.date ?? points[0].date)}</span>
-          ${options.secondary ? legend(options.primaryLegendLabel ?? "NAV", options.secondary.legendLabel ?? options.secondary.label) : ""}
+          ${options.secondary ? legend(options.primaryLegendLabel ?? "NAV", options.secondary.legendLabel ?? options.secondary.label, options.additionalSeries) : ""}
         </div>
         ${
-          hasIndependentAxis
+          hasIndependentAxis || options.showAllSeriesSummary
             ? ""
             : `<div class="chart-current"><strong>${latest ? options.formatter(latest.value) : "n/a"}</strong>${changeSummary}</div>`
         }
       </div>
       ${dualAxisSummary}
+      ${allSeriesSummary}
       <div class="chart-canvas">
         <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="${options.title}">
           <text class="axis-title y-axis-title${hasIndependentAxis ? " primary-axis-title" : ""}" x="${PAD.left}" y="${PAD.top - 8}">${options.yLabel}</text>
@@ -211,6 +265,9 @@ export function lineChart(options: ChartOptions): string {
           ${areaPath && options.showArea !== false ? `<path class="area-path" d="${areaPath}" />` : ""}
           <path class="series-path" d="${path}" />
           ${secondaryPath ? `<path class="series-path secondary-series-path" d="${secondaryPath}" />` : ""}
+          ${additionalCoords.map(({ series, points: seriesPoints }) => seriesPoints.length > 0
+            ? `<path class="series-path ${escapeHtml(series.className)}" d="${makePath(seriesPoints, plotRight)}" />`
+            : "").join("")}
           ${
             options.showMarkers || coords.length === 1
               ? coords.map((point, index) => marker(point, index)).join("")
@@ -231,11 +288,14 @@ export function lineChart(options: ChartOptions): string {
           x: point.x,
           y: point.y,
           label: options.formatter(point.value),
-          series: options.secondary
+          series: options.secondary || options.tooltipExtras?.length || options.additionalSeries?.length
             ? tooltipSeries(
                 options,
                 point.value,
-                secondaryByDate.get(point.date)
+                secondaryByDate.get(point.date),
+                point.date,
+                extrasByKey,
+                additionalByKey
               )
             : undefined
         }))
@@ -247,8 +307,11 @@ export function lineChart(options: ChartOptions): string {
 function tooltipSeries(
   options: ChartOptions,
   primaryValue: number,
-  secondaryValue: number | undefined
-): Array<{ name: string; label: string; kind: "primary" | "secondary" }> {
+  secondaryValue: number | undefined,
+  date: string,
+  extrasByKey: Map<ChartKey, Map<string, number>>,
+  additionalByKey: Map<ChartKey, Map<string, number>>
+): Array<{ name: string; label: string; kind: "primary" | "secondary" | "neutral" }> {
   const primary = {
     name: options.primaryLabel ?? "NAV",
     label: options.formatter(primaryValue),
@@ -263,10 +326,43 @@ function tooltipSeries(
         }
       : null;
 
-  if (!secondary) return [primary];
-  return options.tooltipOrder === "primary-first"
+  const main = !secondary ? [primary] : options.tooltipOrder === "primary-first"
     ? [primary, secondary]
     : [secondary, primary];
+  const extras = (options.tooltipExtras ?? []).flatMap((extra) => {
+    const value = extrasByKey.get(extra.key)?.get(date);
+    return typeof value === "number"
+      ? [{ name: extra.label, label: extra.formatter?.(value) ?? numberInteger(value), kind: "neutral" as const }]
+      : [];
+  });
+  const additional = (options.additionalSeries ?? []).flatMap((series) => {
+    const value = additionalByKey.get(series.key)?.get(date);
+    return typeof value === "number"
+      ? [{ name: series.label, label: (series.formatter ?? options.formatter)(value), kind: "neutral" as const }]
+      : [];
+  });
+  return [...main, ...additional, ...extras];
+}
+
+function renderAllSeriesSummary(
+  options: ChartOptions,
+  primaryPoints: ChartPoint[],
+  secondaryPoints: ChartPoint[],
+  additional: Array<{ series: NonNullable<ChartOptions["additionalSeries"]>[number]; points: ChartPoint[] }>
+): string {
+  const series = [
+    { label: options.primaryLabel ?? "Primary", points: primaryPoints, formatter: options.formatter, className: "primary", changeMode: options.changeMode ?? "standard" },
+    ...(options.secondary ? [{ label: options.secondary.label, points: secondaryPoints, formatter: options.secondary.formatter ?? options.formatter, className: "secondary", changeMode: options.secondary.changeMode ?? "standard" }] : []),
+    ...additional.map((item) => ({ label: item.series.label, points: item.points, formatter: item.series.formatter ?? options.formatter, className: item.series.className, changeMode: item.series.changeMode ?? "standard" }))
+  ];
+  return `<div class="multi-series-summary">${series.map((item) => {
+    const latest = item.points.at(-1)?.value;
+    return `<div class="multi-series-metric ${escapeHtml(item.className)}"><span>${escapeHtml(item.label)}</span><strong>${typeof latest === "number" ? item.formatter(latest) : "n/a"}</strong>${changeLine(item.points, item.changeMode)}</div>`;
+  }).join("")}</div>`;
+}
+
+function numberInteger(value: number): string {
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value);
 }
 
 function renderDualAxisSummary(
@@ -361,11 +457,12 @@ function makePath(points: Array<ChartPoint & { x: number; y: number }>, plotRigh
     .join(" ");
 }
 
-function legend(primaryLabel: string, secondaryLabel: string): string {
+function legend(primaryLabel: string, secondaryLabel: string, additional: ChartOptions["additionalSeries"] = []): string {
   return `
     <div class="chart-legend" aria-label="Chart legend">
       <span><i class="legend-swatch primary"></i>${escapeHtml(primaryLabel)}</span>
       <span><i class="legend-swatch secondary"></i>${escapeHtml(secondaryLabel)}</span>
+      ${(additional ?? []).map((series) => `<span><i class="legend-swatch ${escapeHtml(series.className)}"></i>${escapeHtml(series.legendLabel ?? series.label)}</span>`).join("")}
     </div>
   `;
 }

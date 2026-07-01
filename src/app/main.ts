@@ -4,11 +4,13 @@ import {
   lineChart,
   rangeButtons,
   type MarketDepthSnapshot,
+  type HolderConcentrationSnapshot,
   type VaultDrawdownSnapshot,
   type ChartZoomWindow,
   type RangeKey
 } from "../charts/lineChart.js";
 import { dexLiquidityChart } from "../charts/dexLiquidityChart.js";
+import { holderConcentrationChart } from "../charts/holderConcentrationChart.js";
 import {
   projectionChart,
   type ProjectionScenario,
@@ -56,6 +58,7 @@ async function render(): Promise<void> {
   const supplyChartRecords = buildSupplyChartRecords(history.supplyHistory ?? [], records);
   const marketDepthRecords = buildMarketDepthRecords(records);
   const vaultDrawdownRecords = buildVaultDrawdownRecords(financialRecords);
+  const holderConcentrationRecords = buildHolderConcentrationRecords(records);
   const latest = latestRecord(records);
   const unpricedCount = latest?.valuationReport?.unpricedAssets.length ?? 0;
   const vaultComposition = latest ? vaultCompositionDetails(latest) : "";
@@ -258,6 +261,7 @@ async function render(): Promise<void> {
             range: selectedRange,
             zoomWindow: chartZoom("dex-liquidity")
           })}
+          ${holderConcentrationChart({ records: holderConcentrationRecords, range: selectedRange, zoomWindow: chartZoom("holder-concentration") })}
         </section>
       </div>
       <section class="projection-zone" aria-labelledby="projection-zone-title">
@@ -521,6 +525,22 @@ function buildVaultDrawdownRecords(records: DailySnapshot[]): VaultDrawdownSnaps
       drawdown: ((record.vaultUsd / historicalPeak) - 1) * 100
     }];
   });
+}
+
+function buildHolderConcentrationRecords(records: DailySnapshot[]): HolderConcentrationSnapshot[] {
+  return records.flatMap((record) => record.holderGrowth?.concentration
+    ? [{
+        date: record.date,
+        holderCount: record.holderGrowth.holderCount,
+        newHolders: record.holderGrowth.newHolders,
+        exitedHolders: record.holderGrowth.exitedHolders,
+        ...record.holderGrowth.concentration
+      }]
+    : []);
+}
+
+function integer(value: number): string {
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value);
 }
 
 function attachRangeHandlers(): void {

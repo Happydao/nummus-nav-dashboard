@@ -11,6 +11,7 @@ It is not primarily a treasury-composition dashboard. Current asset holdings are
 - the quantity of tBTC accumulated by the treasury;
 - the buy-side and sell-side market depth available through Jupiter routes;
 - the total and per-pool DEX liquidity reported for NUMMUS markets.
+- the growth of unique NUMMUS holder wallets.
 
 The historical dashboard is complemented by a separate projection simulator. The simulator combines the latest verified Vault Value and supply with explicit treasury-growth, burn-rate and premium assumptions. Its results are hypothetical scenarios, not historical observations or price forecasts.
 
@@ -148,6 +149,37 @@ Higher DEX Liquidity generally means that more capital is available to support t
 
 DexScreener values are current indexed observations supplied by a third party. A snapshot can change as pool balances, token prices or DexScreener indexing change.
 
+### Holder Distribution
+
+Holder Distribution combines holder growth and ownership concentration in one historical chart with a shared date axis, range selection, zoom, crosshair and tooltip. The two measurements use independent Y-axes because wallet count and ownership percentage are different units and must not be compared on one numerical scale.
+
+#### Unique Holder Wallets
+
+The green line uses the adaptive left axis and counts unique wallet owners with a positive NUMMUS balance, regardless of the quantity held. Multiple SPL token accounts controlled by the same wallet are aggregated and counted as one holder, preventing account structure from artificially inflating the result. The adaptive axis preserves the visibility of changes as the holder count evolves; its vertical position must be read against the left-axis values, not against the percentage areas behind it.
+
+The tooltip reports total, new and exited holder wallets. New and exited values compare each observation with the preceding daily snapshot: a new holder had no positive balance in the baseline snapshot, while an exited holder no longer has a positive balance. Multiple collector runs on the same date continue to use the preceding date as their baseline, so an intraday refresh does not reset the daily change to zero.
+
+Holder count includes every owner returned for the NUMMUS mint, including treasury, burn, pool and other technical owners when they have a positive balance. It measures wallet addresses rather than verified people or institutions: one entity can control several wallets, while a custodian or protocol can represent multiple underlying users.
+
+#### Ownership Concentration
+
+The stacked areas use the fixed right `0–100%` axis and measure how the adjusted NUMMUS balance is distributed. Before ranking, all token accounts belonging to the same owner are aggregated. The chart divides ownership into four mutually exclusive groups:
+
+- the largest single holder;
+- holders ranked from 2 through 10;
+- holders ranked from 11 through 50;
+- all holders outside the Top 50.
+
+These four areas always sum to 100%. Above the chart, Unique Holder Wallets, Largest Holder, cumulative Top 10, cumulative Top 50 and Outside Top 50 are presented with their changes over the selected period. The areas themselves are exclusive, while the Top 10 and Top 50 headline values are cumulative.
+
+Broader distribution generally appears as a declining Largest Holder, Top 10 and Top 50 share together with a growing Outside Top 50 share. The opposite movement indicates increasing concentration. This is descriptive rather than a guarantee of decentralization because several wallets can belong to one beneficial owner and custodial wallets can represent many users.
+
+Concentration is calculated against the adjusted holder set. The DAO treasury, burn wallet and verified NUMMUS vault owners used by tracked DEX pools are excluded because treasury custody, destroyed supply and pooled liquidity should not be interpreted as individual whales. Holder count remains unadjusted and therefore follows a different inclusion rule.
+
+Pool identification follows the current DexScreener pool list. Orca vaults are verified through Orca pool data; Raydium and Meteora vaults are identified from recurring NUMMUS token-account activity in pool transactions. A new pool must be identified unambiguously before the complete daily snapshot can be published, and verified mappings are retained for subsequent collections.
+
+Holder data is retrieved through paginated Helius DAS `getTokenAccounts` requests. Each page contains up to 1,000 token accounts and costs 10 Helius credits. The same collected balances supply both holder count and concentration, so concentration adds no recurring holder-pagination calls. The reliable historical series begins with the first successfully collected snapshot; earlier values are not estimated or copied from current data.
+
 ## Chart Interaction
 
 The global range selector applies `1D`, `7D`, `30D`, `1Y` or `ALL` to every historical chart. Each chart also has independent zoom and reset controls.
@@ -179,7 +211,7 @@ The simulator is an analytical tool, not a price forecast, financial advice or a
 
 ## Snapshot Integrity and Update Status
 
-Every daily update is treated as one complete dataset. The collector retrieves and validates Vault Value, supply, NUMMUS price, NAV, backing, premium, tBTC, Market Depth, total DEX liquidity and every tracked pool before publishing any new observation.
+Every daily update is treated as one complete dataset. The collector retrieves and validates Vault Value, supply, NUMMUS price, NAV, backing, premium, tBTC, Market Depth, total DEX liquidity, every tracked pool and Holder Growth before publishing any new observation.
 
 If any required source or metric is unavailable, the attempted update is rejected and neither the daily history nor the latest valid snapshot is replaced. The workflow retries the complete collection three times. If all attempts fail, the GitHub Actions run reports an error while the dashboard continues to display the most recent verified dataset. Failed attempts are never represented as new dates by copying values from the previous day.
 

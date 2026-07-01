@@ -31,6 +31,22 @@ export interface DailySnapshot {
     ignoredAssets: unknown[];
     unpricedAssets: unknown[];
   };
+  holderGrowth?: {
+    holderCount: number;
+    newHolders: number | null;
+    exitedHolders: number | null;
+    concentration: {
+      topHolderPct: number;
+      top10Pct: number;
+      top50Pct: number;
+      othersPct: number;
+      topHolderAmount: number;
+      top10Amount: number;
+      top50Amount: number;
+      othersAmount: number;
+      excludedPoolCount: number;
+    };
+  };
 }
 
 export interface HistoryFile {

@@ -5,6 +5,7 @@ export interface HistoryFile {
   tbtcCursor?: TbtcCursor;
   supplyHistory?: SupplySnapshot[];
   supplyCursor?: SupplyCursor;
+  holderCursor?: HolderCursor;
 }
 
 export interface DailySnapshot {
@@ -19,6 +20,35 @@ export interface DailySnapshot {
   marketDepth?: MarketDepth;
   dexLiquidity?: DexLiquidity;
   valuationReport: ValuationReport;
+  holderGrowth?: HolderSnapshot;
+}
+
+export interface HolderSnapshot {
+  holderCount: number;
+  newHolders: number | null;
+  exitedHolders: number | null;
+  concentration: HolderConcentration;
+}
+
+export interface HolderConcentration {
+  topHolderPct: number;
+  top10Pct: number;
+  top50Pct: number;
+  othersPct: number;
+  topHolderAmount: number;
+  top10Amount: number;
+  top50Amount: number;
+  othersAmount: number;
+  excludedPoolCount: number;
+}
+
+export interface HolderCursor {
+  date: string;
+  owners: string[];
+  baselineDate?: string;
+  baselineOwners?: string[];
+  poolVaults?: Record<string, string>;
+  poolVaultVersion?: number;
 }
 
 export interface MarketDepth {

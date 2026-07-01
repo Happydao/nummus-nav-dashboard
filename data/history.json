@@ -16739,6 +16739,22 @@
           }
         ],
         "unpricedAssets": []
+      },
+      "holderGrowth": {
+        "holderCount": 7387,
+        "newHolders": null,
+        "exitedHolders": null,
+        "concentration": {
+          "topHolderPct": 2.5946,
+          "top10Pct": 14.5441,
+          "top50Pct": 35.603,
+          "othersPct": 64.3969,
+          "topHolderAmount": 2408413.461535,
+          "top10Amount": 13500317.321028,
+          "top50Amount": 33047703.602007,
+          "othersAmount": 59775038.344946,
+          "excludedPoolCount": 4
+        }
       }
     }
   ],

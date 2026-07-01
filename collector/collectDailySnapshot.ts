@@ -5,11 +5,12 @@ import { getCurrentSupply } from "./sources/supply.js";
 import { collectSupplyHistory } from "./sources/supplyHistory.js";
 import { collectTbtcHistory } from "./sources/tbtcHistory.js";
 import { getCurrentVaultAssets } from "./sources/vaultAssets.js";
-import { commitSnapshot, readHistory } from "./utils/historyStore.js";
+import { commitSnapshot, readHistory, readHolderState } from "./utils/historyStore.js";
 import { divideOrNull, round } from "./utils/math.js";
 import { valueVault } from "./pricing/valueVault.js";
 import type { DailySnapshot } from "./types.js";
 import { TBTC_MINT } from "./utils/constants.js";
+import { collectHolderGrowth } from "./sources/holderGrowth.js";
 
 function requirePositive(label: string, value: number | null | undefined): void {
   if (value === null || value === undefined || !Number.isFinite(value) || value <= 0) {
@@ -49,6 +50,10 @@ export function validateSnapshot(snapshot: DailySnapshot): void {
       `Incomplete snapshot: ${snapshot.valuationReport.unpricedAssets.length} vault asset(s) could not be priced`
     );
   }
+
+  requirePositive("holder count", snapshot.holderGrowth?.holderCount);
+  requirePositive("Top 10 holder concentration", snapshot.holderGrowth?.concentration.top10Pct);
+  requirePositive("Top 50 holder concentration", snapshot.holderGrowth?.concentration.top50Pct);
 }
 
 function today(): string {
@@ -93,9 +98,21 @@ export async function collectDailySnapshot(): Promise<DailySnapshot> {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const snapshot = await collectDailySnapshot();
-  validateSnapshot(snapshot);
   const history = await readHistory();
-  const tbtc = await collectTbtcHistory(history.tbtcHistory ?? [], history.tbtcCursor);
+  const holderState = await readHolderState() ?? history.holderCursor;
+  const [tbtc, holders] = await Promise.all([
+    collectTbtcHistory(history.tbtcHistory ?? [], history.tbtcCursor),
+    collectHolderGrowth(
+      snapshot.date,
+      snapshot.dexLiquidity?.pools.map((pool) => ({
+        pairAddress: pool.pairAddress,
+        dexId: pool.dexId
+      })) ?? [],
+      holderState
+    )
+  ]);
+  snapshot.holderGrowth = holders.snapshot;
+  validateSnapshot(snapshot);
   const supply = await collectSupplyHistory(
     snapshot.supply ?? 0,
     history.supplyHistory ?? [],
@@ -114,12 +131,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   history.tbtcCursor = tbtc.cursor;
   history.supplyHistory = supply.history;
   history.supplyCursor = supply.cursor;
+  delete history.holderCursor;
   const recordsByDate = new Map(history.records.map((record) => [record.date, record]));
   recordsByDate.set(snapshot.date, snapshot);
   history.records = [...recordsByDate.values()].sort((a, b) => a.date.localeCompare(b.date));
   history.generatedAt = new Date().toISOString();
 
-  await commitSnapshot(snapshot, history);
+  await commitSnapshot(snapshot, history, holders.cursor);
   console.log(
     `Saved ${snapshot.date} snapshot. History records: ${history.records.length}. tBTC points: ${history.tbtcHistory?.length ?? 0}. Supply points: ${history.supplyHistory?.length ?? 0}`
   );
