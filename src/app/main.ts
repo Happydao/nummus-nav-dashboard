@@ -79,6 +79,7 @@ async function render(): Promise<void> {
               </a>
             </div>
             <span>Measure the intrinsic value behind every NUMMUS token.</span>
+            <span class="updated${isStale ? " updated-stale" : ""}">${history.generatedAt ? `Updated ${formatUtcTimestamp(history.generatedAt)} UTC` : "No snapshot collected yet"}</span>
           </div>
         </div>
         <div class="topbar-tools">
@@ -86,7 +87,13 @@ async function render(): Promise<void> {
             ${themeToggle(selectedTheme)}
             ${rangeButtons(selectedRange)}
           </div>
-          <span class="updated${isStale ? " updated-stale" : ""}">${history.generatedAt ? `Updated ${formatUtcTimestamp(history.generatedAt)} UTC` : "No snapshot collected yet"}</span>
+          <div class="topbar-meta">
+            <div class="change-meaning" aria-label="Arrows show numerical direction. Green means favorable and red means unfavorable.">
+              <span class="change-direction">${directionInfoTip()} ↑↓ Direction</span>
+              <span class="change-favorable">Green favorable</span>
+              <span class="change-adverse">Red unfavorable</span>
+            </div>
+          </div>
         </div>
       </header>
       <div class="content">
@@ -111,8 +118,8 @@ async function render(): Promise<void> {
           )}
           ${kpi("NAV", usd(latest?.nav ?? null), formula("Vault Value / Supply"), rangeChange(latest?.nav, rangeStartValue(financialRecords, selectedRange, (record) => record.nav)))}
           ${kpi("Treasury Backing", percent(latest?.backing ?? null), formula("NAV / NUMMUS Price x 100"), rangeChange(latest?.backing, rangeStartValue(financialRecords, selectedRange, (record) => record.backing), "pp"))}
-          ${kpi("Premium vs NAV", ratio(latest?.premium ?? null), formula("NUMMUS Price / NAV"), rangeChange(latest?.premium, rangeStartValue(financialRecords, selectedRange, (record) => record.premium)))}
-          ${kpi("NUMMUS Supply", numberCompact(latest?.supply ?? null), externalLinks([["Mint Solscan", NUMMUS_MINT_URL]]), rangeChange(latest?.supply, rangeStartValue(records, selectedRange, (record) => record.supply)))}
+          ${kpi("Premium vs NAV", ratio(latest?.premium ?? null), formula("NUMMUS Price / NAV"), rangeChange(latest?.premium, rangeStartValue(financialRecords, selectedRange, (record) => record.premium), "percent", false, "down"))}
+          ${kpi("NUMMUS Supply", numberCompact(latest?.supply ?? null), externalLinks([["Mint Solscan", NUMMUS_MINT_URL]]), rangeChange(latest?.supply, rangeStartValue(records, selectedRange, (record) => record.supply), "percent", false, "down"))}
           ${kpi(
             "Unique Holder Wallets",
             `<span class="holder-count-value">${latest?.holderGrowth ? integer(latest.holderGrowth.holderCount) : "n/a"}</span>`,
@@ -348,6 +355,11 @@ function themeToggle(theme: Theme): string {
   </button>`;
 }
 
+function directionInfoTip(): string {
+  const text = "The arrow shows the numerical direction of change: up means the value increased and down means it decreased. Color shows the effect: green is favorable, red is unfavorable and grey is unchanged. A red upward arrow therefore means the value increased but the movement is considered unfavorable for that metric.";
+  return `<span class="info-tip direction-info-tip" tabindex="0" aria-label="${escapeHtml(text)}">i<span class="info-popover" role="tooltip">${escapeHtml(text)}</span></span>`;
+}
+
 function attachThemeHandler(): void {
   root.querySelector<HTMLButtonElement>("[data-theme-toggle]")?.addEventListener("click", () => {
     selectedTheme = selectedTheme === "dark" ? "light" : "dark";
@@ -492,9 +504,9 @@ function marketStructureDetails(record: DailySnapshot | null, records: DailySnap
   const concentration = record?.holderGrowth?.concentration;
   return `<div class="market-structure-details">
     <dl>
-      <div><dt>Largest Holder</dt><dd>${percent(concentration?.topHolderPct ?? null)} ${rangeChange(concentration?.topHolderPct, rangeStartValue(records, range, (item) => item.holderGrowth?.concentration.topHolderPct), "pp", true)}</dd></div>
-      <div><dt>Top 10</dt><dd>${percent(concentration?.top10Pct ?? null)} ${rangeChange(concentration?.top10Pct, rangeStartValue(records, range, (item) => item.holderGrowth?.concentration.top10Pct), "pp", true)}</dd></div>
-      <div><dt>Top 50</dt><dd>${percent(concentration?.top50Pct ?? null)} ${rangeChange(concentration?.top50Pct, rangeStartValue(records, range, (item) => item.holderGrowth?.concentration.top50Pct), "pp", true)}</dd></div>
+      <div><dt>Largest Holder</dt><dd>${percent(concentration?.topHolderPct ?? null)} ${rangeChange(concentration?.topHolderPct, rangeStartValue(records, range, (item) => item.holderGrowth?.concentration.topHolderPct), "pp", true, "down")}</dd></div>
+      <div><dt>Top 10</dt><dd>${percent(concentration?.top10Pct ?? null)} ${rangeChange(concentration?.top10Pct, rangeStartValue(records, range, (item) => item.holderGrowth?.concentration.top10Pct), "pp", true, "down")}</dd></div>
+      <div><dt>Top 50</dt><dd>${percent(concentration?.top50Pct ?? null)} ${rangeChange(concentration?.top50Pct, rangeStartValue(records, range, (item) => item.holderGrowth?.concentration.top50Pct), "pp", true, "down")}</dd></div>
       <div><dt>Outside Top 50</dt><dd>${percent(concentration?.othersPct ?? null)} ${rangeChange(concentration?.othersPct, rangeStartValue(records, range, (item) => item.holderGrowth?.concentration.othersPct), "pp", true)}</dd></div>
     </dl>
   </div>`;
@@ -521,16 +533,18 @@ function rangeChange(
   current: number | null | undefined,
   start: number | null | undefined,
   mode: "percent" | "pp" = "percent",
-  compact = false
+  compact = false,
+  favorableDirection: "up" | "down" = "up"
 ): string {
   if (typeof current !== "number" || typeof start !== "number" || !Number.isFinite(current) || !Number.isFinite(start)) {
     return `<small class="kpi-change kpi-change-neutral">N/A</small>`;
   }
   const change = mode === "pp" ? current - start : start === 0 ? 0 : ((current / start) - 1) * 100;
   const direction = change > 0.0005 ? "up" : change < -0.0005 ? "down" : "neutral";
+  const state = direction === "neutral" ? "neutral" : direction === favorableDirection ? "favorable" : "adverse";
   const arrow = direction === "up" ? "↑" : direction === "down" ? "↓" : "→";
   const value = `${Math.abs(change).toFixed(2)}${mode === "pp" ? " pp" : "%"}`;
-  return `<small class="kpi-change kpi-change-${direction}${compact ? " kpi-change-compact" : ""}">${arrow} ${value}</small>`;
+  return `<small class="kpi-change kpi-change-${state}${compact ? " kpi-change-compact" : ""}">${arrow} ${value}</small>`;
 }
 
 function formula(value: string): string {
