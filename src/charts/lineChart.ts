@@ -63,6 +63,7 @@ export interface ChartOptions {
   yHeadroom?: number;
   showMarkers?: boolean;
   showArea?: boolean;
+  areaBaseline?: number;
   includePreviousPoint?: boolean;
   changeMode?: ChangeMode;
   info?: string;
@@ -189,7 +190,11 @@ export function lineChart(options: ChartOptions): string {
   const secondaryPath = secondaryCoords.length > 0 ? makePath(secondaryCoords, plotRight) : "";
   const areaPath =
     coords.length > 1
-      ? `${path} L ${coords.at(-1)?.x.toFixed(2)} ${HEIGHT - PAD.bottom} L ${coords[0].x.toFixed(2)} ${HEIGHT - PAD.bottom} Z`
+      ? (() => {
+          const baseline = options.areaBaseline ?? yMin;
+          const baselineY = PAD.top + (1 - (baseline - yMin) / (yMax - yMin || 1)) * chartHeight;
+          return `${path} L ${coords.at(-1)?.x.toFixed(2)} ${baselineY.toFixed(2)} L ${coords[0].x.toFixed(2)} ${baselineY.toFixed(2)} Z`;
+        })()
       : "";
   const yTicks = makeTicks(yMin, yMax, 5);
   const secondaryYTicks = hasIndependentAxis ? makeTicks(secondaryYMin, secondaryYMax, 5) : [];
@@ -204,6 +209,16 @@ export function lineChart(options: ChartOptions): string {
     ? renderAllSeriesSummary(options, points, secondaryCoords, additionalCoords)
     : "";
   const zoomed = Boolean(options.zoomWindow && (options.zoomWindow.start > 0 || options.zoomWindow.end < 1));
+  const drawdownGradient = options.id === "vault-drawdown"
+    ? (() => {
+        const threshold = -40;
+        const offset = Math.max(0, Math.min(100, (1 - (threshold - yMin) / (yMax - yMin || 1)) * 100));
+        return `<defs><linearGradient id="vault-drawdown-risk" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="${offset}%" stop-color="#57c990" />
+          <stop offset="${offset}%" stop-color="#d87575" />
+        </linearGradient></defs>`;
+      })()
+    : "";
 
   return `
     <section class="chart interactive-chart${options.fullWidth ? " chart-full" : ""}${zoomed ? " chart-zoomed" : ""}" data-chart-id="${options.id}">
@@ -228,6 +243,7 @@ export function lineChart(options: ChartOptions): string {
       ${allSeriesSummary}
       <div class="chart-canvas">
         <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="${options.title}">
+          ${drawdownGradient}
           <text class="axis-title y-axis-title${hasIndependentAxis ? " primary-axis-title" : ""}" x="${PAD.left}" y="${PAD.top - 8}">${options.yLabel}</text>
           ${
             hasIndependentAxis

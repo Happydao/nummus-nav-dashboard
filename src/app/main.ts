@@ -45,6 +45,7 @@ let selectedRange: RangeKey = "ALL";
 let selectedProjectionScenario: ProjectionScenario = "accelerated";
 let selectedProjectionYears: ProjectionYears = 3;
 const chartZoomWindows = new Map<string, ChartZoomWindow>();
+let dismissalHandlerAttached = false;
 
 render().catch((error: unknown) => {
   root.innerHTML = `<div class="notice">${error instanceof Error ? error.message : "Unable to load dashboard"}</div>`;
@@ -94,6 +95,10 @@ async function render(): Promise<void> {
             ? `<div class="notice stale-notice" role="alert">Data update delayed: the last complete snapshot is more than 48 hours old. The dashboard is showing the most recent verified data.</div>`
             : ""
         }
+        <header class="section-intro snapshot-intro">
+          <span>Latest verified metrics</span>
+          <h2>Current Snapshot</h2>
+        </header>
         <section class="kpis">
           ${kpi(
             "Nummus Aeternitas Vault DAO",
@@ -101,19 +106,31 @@ async function render(): Promise<void> {
             `${externalLinks([
               ["Realms DAO", REALMS_DAO_URL],
               ["Vault Solscan", VAULT_SOLSCAN_URL]
-            ])}${vaultComposition}`
+            ])}${vaultComposition}`,
+            rangeChange(latest?.vaultUsd, rangeStartValue(financialRecords, selectedRange, (record) => record.vaultUsd))
           )}
-          ${kpi("NAV", usd(latest?.nav ?? null), formula("Vault Value / Supply"))}
-          ${kpi("Treasury Backing", percent(latest?.backing ?? null), formula("NAV / NUMMUS Price x 100"))}
-          ${kpi("Premium vs NAV", ratio(latest?.premium ?? null), formula("NUMMUS Price / NAV"))}
-          ${kpi("NUMMUS Supply", numberCompact(latest?.supply ?? null), externalLinks([["Mint Solscan", NUMMUS_MINT_URL]]))}
-          ${kpi("NUMMUS Price", usd(latest?.marketPrice ?? null), externalLinks([["CoinGecko", NUMMUS_COINGECKO_URL]]))}
+          ${kpi("NAV", usd(latest?.nav ?? null), formula("Vault Value / Supply"), rangeChange(latest?.nav, rangeStartValue(financialRecords, selectedRange, (record) => record.nav)))}
+          ${kpi("Treasury Backing", percent(latest?.backing ?? null), formula("NAV / NUMMUS Price x 100"), rangeChange(latest?.backing, rangeStartValue(financialRecords, selectedRange, (record) => record.backing), "pp"))}
+          ${kpi("Premium vs NAV", ratio(latest?.premium ?? null), formula("NUMMUS Price / NAV"), rangeChange(latest?.premium, rangeStartValue(financialRecords, selectedRange, (record) => record.premium)))}
+          ${kpi("NUMMUS Supply", numberCompact(latest?.supply ?? null), externalLinks([["Mint Solscan", NUMMUS_MINT_URL]]), rangeChange(latest?.supply, rangeStartValue(records, selectedRange, (record) => record.supply)))}
+          ${kpi(
+            "Unique Holder Wallets",
+            `<span class="holder-count-value">${latest?.holderGrowth ? integer(latest.holderGrowth.holderCount) : "n/a"}</span>`,
+            marketStructureDetails(latest, records, selectedRange),
+            rangeChange(latest?.holderGrowth?.holderCount, rangeStartValue(records, selectedRange, (record) => record.holderGrowth?.holderCount))
+          )}
+          ${kpi("NUMMUS Price", usd(latest?.marketPrice ?? null), externalLinks([["CoinGecko", NUMMUS_COINGECKO_URL]]), rangeChange(latest?.marketPrice, rangeStartValue(financialRecords, selectedRange, (record) => record.marketPrice)))}
         </section>
         ${
           unpricedCount > 0
             ? `<div class="notice">${unpricedCount} fungible vault asset(s) could not be priced. Vault Value and derived metrics are left blank for the latest snapshot.</div>`
             : ""
         }
+        <section class="historical-block" aria-labelledby="historical-analytics-title">
+          <header class="section-intro historical-intro">
+            <span>Trends over the selected period</span>
+            <h2 id="historical-analytics-title">Historical Analytics</h2>
+          </header>
         <section class="charts">
           ${lineChart({
             id: "nav",
@@ -192,9 +209,9 @@ async function render(): Promise<void> {
             axisFormatter: percent,
             yLabel: "Below Historical Peak",
             yMax: 0,
-            showArea: false,
+            areaBaseline: 0,
             changeMode: "percentage-points",
-            info: "Vault Drawdown shows how far the current Vault Value is below its highest value previously recorded. 0% means the vault is at a new high; -20% means it is 20% below its historical peak. More negative values indicate a deeper contraction."
+            info: "Vault Drawdown shows how far the current Vault Value is below its highest value previously recorded. 0% means the vault is at a new high; -20% means it is 20% below its historical peak. The line is green above -40% and turns red below -40% to identify a critical contraction. More negative values indicate a deeper drawdown."
           })}
           ${lineChart({
             id: "supply",
@@ -248,6 +265,7 @@ async function render(): Promise<void> {
             yLabel: "Executable Value (USD)",
             yMin: 0,
             yHeadroom: 1.25,
+            showArea: false,
             secondary: {
               key: "sellDepthUsd",
               label: "Sell Depth",
@@ -263,6 +281,7 @@ async function render(): Promise<void> {
             zoomWindow: chartZoom("dex-liquidity")
           })}
           ${holderConcentrationChart({ records: holderConcentrationRecords, range: selectedRange, zoomWindow: chartZoom("holder-concentration") })}
+        </section>
         </section>
       </div>
       <section class="projection-zone" aria-labelledby="projection-zone-title">
@@ -298,6 +317,24 @@ async function render(): Promise<void> {
   attachThemeHandler();
   attachProjectionHandlers();
   attachChartInteractions(root, { onZoom: updateChartZoom, onPan: updateChartPan });
+  attachDismissHandler();
+}
+
+function attachDismissHandler(): void {
+  if (dismissalHandlerAttached) return;
+  dismissalHandlerAttached = true;
+  document.addEventListener("pointerdown", (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const activeDisclosure = target?.closest<HTMLElement>(".info-tip, .liquidity-pools-trigger") ?? null;
+    for (const disclosure of document.querySelectorAll<HTMLElement>(".info-tip, .liquidity-pools-trigger")) {
+      if (disclosure !== activeDisclosure) disclosure.blur();
+    }
+
+    const activeChart = target?.closest(".hover-capture")?.closest(".interactive-chart") ?? null;
+    for (const chart of document.querySelectorAll<HTMLElement>(".interactive-chart.hovering")) {
+      if (chart !== activeChart) chart.classList.remove("hovering");
+    }
+  });
 }
 
 function themeToggle(theme: Theme): string {
@@ -449,6 +486,51 @@ function externalLinks(links: Array<[string, string]>): string {
         .join("")}
     </div>
   `;
+}
+
+function marketStructureDetails(record: DailySnapshot | null, records: DailySnapshot[], range: RangeKey): string {
+  const concentration = record?.holderGrowth?.concentration;
+  return `<div class="market-structure-details">
+    <dl>
+      <div><dt>Largest Holder</dt><dd>${percent(concentration?.topHolderPct ?? null)} ${rangeChange(concentration?.topHolderPct, rangeStartValue(records, range, (item) => item.holderGrowth?.concentration.topHolderPct), "pp", true)}</dd></div>
+      <div><dt>Top 10</dt><dd>${percent(concentration?.top10Pct ?? null)} ${rangeChange(concentration?.top10Pct, rangeStartValue(records, range, (item) => item.holderGrowth?.concentration.top10Pct), "pp", true)}</dd></div>
+      <div><dt>Top 50</dt><dd>${percent(concentration?.top50Pct ?? null)} ${rangeChange(concentration?.top50Pct, rangeStartValue(records, range, (item) => item.holderGrowth?.concentration.top50Pct), "pp", true)}</dd></div>
+      <div><dt>Outside Top 50</dt><dd>${percent(concentration?.othersPct ?? null)} ${rangeChange(concentration?.othersPct, rangeStartValue(records, range, (item) => item.holderGrowth?.concentration.othersPct), "pp", true)}</dd></div>
+    </dl>
+  </div>`;
+}
+
+function rangeStartValue(
+  records: DailySnapshot[],
+  range: RangeKey,
+  getValue: (record: DailySnapshot) => number | null | undefined
+): number | null {
+  const valid = records.flatMap((record) => {
+    const value = getValue(record);
+    return typeof value === "number" && Number.isFinite(value) ? [{ date: record.date, value }] : [];
+  });
+  const latest = valid.at(-1);
+  if (!latest) return null;
+  if (range === "ALL") return valid[0]?.value ?? null;
+  const days = range === "1D" ? 1 : range === "7D" ? 7 : range === "30D" ? 30 : 365;
+  const cutoff = new Date(`${latest.date}T00:00:00Z`).getTime() - days * 86_400_000;
+  return valid.find((point) => new Date(`${point.date}T00:00:00Z`).getTime() >= cutoff)?.value ?? latest.value;
+}
+
+function rangeChange(
+  current: number | null | undefined,
+  start: number | null | undefined,
+  mode: "percent" | "pp" = "percent",
+  compact = false
+): string {
+  if (typeof current !== "number" || typeof start !== "number" || !Number.isFinite(current) || !Number.isFinite(start)) {
+    return `<small class="kpi-change kpi-change-neutral">N/A</small>`;
+  }
+  const change = mode === "pp" ? current - start : start === 0 ? 0 : ((current / start) - 1) * 100;
+  const direction = change > 0.0005 ? "up" : change < -0.0005 ? "down" : "neutral";
+  const arrow = direction === "up" ? "↑" : direction === "down" ? "↓" : "→";
+  const value = `${Math.abs(change).toFixed(2)}${mode === "pp" ? " pp" : "%"}`;
+  return `<small class="kpi-change kpi-change-${direction}${compact ? " kpi-change-compact" : ""}">${arrow} ${value}</small>`;
 }
 
 function formula(value: string): string {

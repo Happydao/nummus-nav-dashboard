@@ -1,5 +1,5 @@
 import type { HolderCursor, HolderSnapshot } from "../types.js";
-import { NUMMUS_MINT } from "../utils/constants.js";
+import { NUMMUS_MINT, PROJECT_OPERATIONAL_OWNERS } from "../utils/constants.js";
 import { HeliusClient } from "./helius.js";
 
 const PAGE_LIMIT = 1_000;
@@ -75,7 +75,7 @@ export async function collectHolderGrowth(
     poolOwners.add(account.owner);
   }
   const adjustedBalances = [...balances.entries()]
-    .filter(([owner]) => !poolOwners.has(owner))
+    .filter(([owner]) => !poolOwners.has(owner) && !PROJECT_OPERATIONAL_OWNERS.has(owner))
     .map(([, amount]) => amount)
     .sort((a, b) => a === b ? 0 : a > b ? -1 : 1);
 

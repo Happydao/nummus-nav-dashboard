@@ -216,6 +216,34 @@ body {
   padding: 28px;
 }
 
+.section-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 14px;
+}
+
+.section-intro > span {
+  color: #8fa69a;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.section-intro h2 {
+  color: #eef5f0;
+  font-size: 20px;
+  margin: 0;
+}
+
+.historical-block {
+  background: linear-gradient(180deg, rgba(18, 38, 28, 0.26), rgba(7, 18, 13, 0.08));
+  border-top: 1px solid rgba(151, 174, 159, 0.18);
+  margin: 34px -18px 0;
+  padding: 28px 18px 6px;
+}
+
 .kpis {
   display: grid;
   gap: 12px;
@@ -252,11 +280,30 @@ body {
   text-transform: uppercase;
 }
 
-.kpi > strong {
+.kpi > strong,
+.kpi-value-row > strong {
   color: #f4f8f5;
   font-size: 22px;
   overflow-wrap: anywhere;
 }
+
+.kpi-value-row {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.kpi-change {
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.kpi-change-up { color: #57c990; }
+.kpi-change-down { color: #df9550; }
+.kpi-change-neutral { color: #91a49a; }
+.kpi-change-compact { font-size: 8px; }
 
 .kpi-formula {
   color: #9fb3a7;
@@ -285,13 +332,63 @@ body {
 }
 
 .kpi:nth-child(5) {
-  grid-column: 3 / span 2;
+  grid-column: 3;
   grid-row: 2;
 }
 
 .kpi:nth-child(6) {
+  grid-column: 4;
+  grid-row: 2;
+}
+
+.kpi:nth-child(7) {
   grid-column: 5;
   grid-row: 2;
+}
+
+.market-structure-details {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.kpi-value-row > strong:has(.holder-count-value) {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.holder-count-label {
+  color: #9fb3a7;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.market-structure-details dl {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+}
+
+.market-structure-details dl > div {
+  align-items: center;
+  display: flex;
+  font-size: 10px;
+  justify-content: space-between;
+}
+
+.market-structure-details dt {
+  color: #91a49a;
+}
+
+.market-structure-details dd {
+  align-items: baseline;
+  color: #dcece2;
+  display: flex;
+  gap: 4px;
+  font-weight: 800;
+  margin: 0;
 }
 
 .kpi-breakdown {
@@ -375,7 +472,7 @@ body {
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 22px;
+  margin-top: 0;
 }
 
 .chart {
@@ -562,7 +659,6 @@ body {
   z-index: 12;
 }
 
-.liquidity-pools-trigger:hover .liquidity-pools-popover,
 .liquidity-pools-trigger:focus .liquidity-pools-popover,
 .liquidity-pools-trigger:focus-within .liquidity-pools-popover {
   display: flex;
@@ -688,9 +784,18 @@ body {
   font-size: 12px;
 }
 
-.info-tip:hover .info-popover,
 .info-tip:focus .info-popover {
   display: block;
+}
+
+@media (hover: hover) {
+  .info-tip:hover .info-popover {
+    display: block;
+  }
+
+  .liquidity-pools-trigger:hover .liquidity-pools-popover {
+    display: flex;
+  }
 }
 
 .chart-head strong {
@@ -851,6 +956,19 @@ svg {
 
 .secondary-series-path {
   stroke: #d79551;
+}
+
+[data-chart-id="vault-drawdown"] .series-path {
+  stroke: url(#vault-drawdown-risk);
+}
+
+[data-chart-id="vault-drawdown"] .area-path {
+  fill: #778c80;
+  opacity: 0.14;
+}
+
+[data-chart-id="vault-drawdown"] .hover-dot {
+  stroke: #57c990;
 }
 
 .series-path.tertiary {
@@ -1354,6 +1472,19 @@ svg {
   color: #10231a;
 }
 
+[data-theme="light"] .section-intro h2 {
+  color: #183126;
+}
+
+[data-theme="light"] .section-intro > span {
+  color: #607268;
+}
+
+[data-theme="light"] .historical-block {
+  background: linear-gradient(180deg, rgba(35, 112, 77, 0.055), rgba(35, 112, 77, 0.015));
+  border-top-color: rgba(35, 112, 77, 0.16);
+}
+
 [data-theme="light"] .brand img {
   border-color: rgba(35, 112, 77, 0.28);
 }
@@ -1522,6 +1653,18 @@ svg {
 
 [data-theme="light"] .kpi-breakdown li strong,
 [data-theme="light"] .dual-axis-metric strong {
+  color: #183126;
+}
+
+[data-theme="light"] .market-structure-details dt {
+  color: #52665b;
+}
+
+[data-theme="light"] .holder-count-label {
+  color: #52665b;
+}
+
+[data-theme="light"] .market-structure-details dd {
   color: #183126;
 }
 
@@ -1820,6 +1963,13 @@ svg {
     min-width: 0;
     padding: 14px;
     width: 100%;
+  }
+
+  .historical-block {
+    margin-left: -6px;
+    margin-right: -6px;
+    padding-left: 6px;
+    padding-right: 6px;
   }
 
   .projection-zone {

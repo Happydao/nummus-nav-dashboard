@@ -58,24 +58,14 @@ export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
       ? PAD.left + chartWidth / 2
       : PAD.left + ((dateTimestamp(date) - xMin) / (xMax - xMin)) * chartWidth;
 
-  const visibleValues = records.flatMap((record) => [
-    record.totalLiquidityUsd,
-    ...poolMeta.map((pool) => poolValue(record, pool.pairAddress)).filter((value) => value > 0)
-  ]);
-  const scale = makeLogScale(visibleValues, chartHeight);
+  const scale = makeLinearScale(records.map((record) => record.totalLiquidityUsd), chartHeight);
   const totalPoints = records.map((record) => ({
     x: xForDate(record.date),
     y: scale.y(record.totalLiquidityUsd),
     value: record.totalLiquidityUsd
   }));
   const totalPath = pathFor(totalPoints, plotRight);
-  const poolPaths = poolMeta.map((pool) => {
-    const points = records.map((record) => {
-      const value = poolValue(record, pool.pairAddress);
-      return { x: xForDate(record.date), y: value > 0 ? scale.y(value) : null, value };
-    });
-    return `<path class="liquidity-pool-path" style="stroke:${pool.color}" d="${pathFor(points, plotRight)}" />`;
-  });
+  const totalAreaPath = `${totalPath} L ${plotRight} ${HEIGHT - PAD.bottom} L ${PAD.left} ${HEIGHT - PAD.bottom} Z`;
   const xTicks = makeDateTicks(records, responsiveTickCount());
   const latest = records.at(-1) as LiquidityRecord;
   const zoomed = Boolean(options.zoomWindow && (options.zoomWindow.start > 0 || options.zoomWindow.end < 1));
@@ -86,7 +76,7 @@ export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
         <div>
           <div class="chart-title-row">
             <h2>NUMMUS DEX Liquidity</h2>
-            ${infoTip("NUMMUS DEX Liquidity shows the total USD liquidity and the evolution of every valid Solana pool containing NUMMUS. The logarithmic scale uses multiplicative steps, making both large and small pools visible in one chart. Higher liquidity means more capital is deposited in pools, while Market Depth separately measures executable trade size.")}
+            ${infoTip("NUMMUS DEX Liquidity shows the combined USD liquidity reported across all tracked Solana pools containing NUMMUS. The chart uses a linear adaptive scale and displays Total Liquidity only; the pools tracked control lists the current value of every individual pool. Higher liquidity means more capital is deposited in pools, while Market Depth separately measures executable trade size.")}
             <a class="chart-action" href="https://dexscreener.com/solana/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray" target="_blank" rel="noreferrer">DexScreener</a>
             ${chartZoomControls("dex-liquidity", options.zoomWindow)}
           </div>
@@ -99,14 +89,14 @@ export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
       </div>
       <div class="liquidity-toolbar">
         <span class="liquidity-toolbar-labels">
-          <span class="liquidity-log-label">Logarithmic scale</span>
+          <span class="liquidity-log-label">Linear scale</span>
           <span class="liquidity-total-key"><i></i>Total</span>
         </span>
         ${poolSummary(poolMeta)}
       </div>
       <div class="chart-canvas">
         <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="NUMMUS DEX Liquidity by pool">
-          <text class="axis-title y-axis-title" x="${PAD.left}" y="${PAD.top - 8}">Pool Liquidity (USD) · Log</text>
+          <text class="axis-title y-axis-title" x="${PAD.left}" y="${PAD.top - 8}">Total DEX Liquidity (USD)</text>
           <text class="axis-title x-axis-title" x="${plotRight}" y="${HEIGHT - 7}" text-anchor="end">Date</text>
           ${scale.ticks.map((tick) => {
             const y = scale.y(tick);
@@ -118,8 +108,8 @@ export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
           }).join("")}
           <line class="axis-line" x1="${PAD.left}" y1="${HEIGHT - PAD.bottom}" x2="${plotRight}" y2="${HEIGHT - PAD.bottom}" />
           <line class="axis-line" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
+          <path class="area-path liquidity-total-area" d="${totalAreaPath}" />
           <path class="liquidity-total-path" d="${totalPath}" />
-          ${poolPaths.join("")}
           <line class="crosshair" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
           <circle class="hover-dot liquidity-hover-dot" cx="${totalPoints[0].x}" cy="${totalPoints[0].y}" r="5" />
           <rect class="hover-capture" x="${PAD.left}" y="${PAD.top}" width="${chartWidth}" height="${chartHeight}" />
@@ -181,27 +171,21 @@ function buildPoolMeta(records: LiquidityRecord[]): PoolMeta[] {
     }));
 }
 
-function makeLogScale(values: number[], chartHeight: number): { y: (value: number) => number; ticks: number[] } {
-  const positive = values.filter((value) => value > 0);
-  const max = Math.max(...positive, 1);
-  const minPower = Math.floor(Math.log10(Math.min(...positive, 1)));
-  const upperBound = niceLogUpperBound(max);
-  const maxPower = Math.floor(Math.log10(upperBound));
-  const decadeTicks = Array.from({ length: maxPower - minPower + 1 }, (_, index) => 10 ** (minPower + index));
-  const allTicks = decadeTicks.at(-1) === upperBound ? decadeTicks : [...decadeTicks, upperBound];
-  const ticks = sampleTicks(allTicks, 6);
-  const minLog = Math.log10(10 ** minPower);
-  const maxLog = Math.log10(upperBound);
+function makeLinearScale(values: number[], chartHeight: number): { y: (value: number) => number; ticks: number[] } {
+  const observedMax = Math.max(...values, 1);
+  const max = niceLinearMax(observedMax * 1.25);
+  const ticks = Array.from({ length: 5 }, (_, index) => max * index / 4);
   return {
-    y: (value) => PAD.top + (1 - (Math.log10(Math.max(value, 10 ** minPower)) - minLog) / (maxLog - minLog || 1)) * chartHeight,
+    y: (value) => PAD.top + (1 - Math.max(0, value) / max) * chartHeight,
     ticks
   };
 }
 
-function niceLogUpperBound(max: number): number {
-  const target = max * 1.5;
-  const magnitude = 10 ** Math.floor(Math.log10(Math.max(1, target)));
-  return Math.ceil((target / magnitude) * 2) / 2 * magnitude;
+function niceLinearMax(value: number): number {
+  const magnitude = 10 ** Math.floor(Math.log10(Math.max(1, value)));
+  const normalized = value / magnitude;
+  const multiplier = normalized <= 1 ? 1 : normalized <= 1.5 ? 1.5 : normalized <= 2 ? 2 : normalized <= 2.5 ? 2.5 : normalized <= 5 ? 5 : 10;
+  return multiplier * magnitude;
 }
 
 function pathFor(points: Array<{ x: number; y: number | null; value: number }>, plotRight: number): string {
@@ -218,10 +202,6 @@ function pathFor(points: Array<{ x: number; y: number | null; value: number }>, 
     connected = true;
     return `${command} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`;
   }).join(" ");
-}
-
-function poolValue(record: LiquidityRecord, pairAddress: string): number {
-  return record.pools.find((pool) => pool.pairAddress === pairAddress)?.liquidityUsd ?? 0;
 }
 
 function filterByRange(records: LiquidityRecord[], range: RangeKey): LiquidityRecord[] {
@@ -269,11 +249,6 @@ function poolSummary(pools: PoolMeta[]): string {
 
 function infoTip(text: string): string {
   return `<span class="info-tip" tabindex="0" aria-label="${escapeHtml(text)}">i<span class="info-popover" role="tooltip">${escapeHtml(text)}</span></span>`;
-}
-
-function sampleTicks(ticks: number[], maxCount: number): number[] {
-  if (ticks.length <= maxCount) return ticks;
-  return Array.from({ length: maxCount }, (_, index) => ticks[Math.round((index * (ticks.length - 1)) / (maxCount - 1))]);
 }
 
 function responsiveTickCount(): number {

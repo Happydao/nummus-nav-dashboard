@@ -102,6 +102,8 @@ Vault Drawdown % = ((Vault Value / Historical Peak) - 1) x 100
 
 A value of `0%` means the vault is at a new historical high. A value of `-20%` means the current Vault Value is 20% below its previous peak. When the vault partially recovers, drawdown moves back toward zero; when it exceeds the earlier peak, drawdown returns to zero and a new peak is established.
 
+The line remains green while drawdown is above `-40%`. It turns red below `-40%` to highlight a critical contraction from the historical peak. The muted grey-green area provides visual context without treating every ordinary drawdown as an alarm.
+
 Unlike the percentage shown above Vault Value History, which compares the beginning and end of the currently selected range, drawdown always compares each observation with the highest value recorded before or on that date. It therefore measures the depth and duration of treasury contractions rather than ordinary period performance.
 
 ### Supply Reduction
@@ -139,11 +141,9 @@ This chart tracks the combined USD liquidity reported across the Solana liquidit
 
 For every daily snapshot, the collector requests the list of NUMMUS pairs from DexScreener, verifies that NUMMUS is one side of each pair, removes duplicate pair addresses and stores the valid `liquidity.usd` value of every pool. It also stores their sum as Total DEX Liquidity. These values represent capital deposited in pools, not trading volume, market capitalization or treasury value.
 
-The total and every individual pool are displayed as separate lines. The `pools tracked` control opens the chart legend and reports the latest available USD liquidity for each pool, identified by DEX, token pair and an abbreviated pool address where required.
+The historical chart displays only Total DEX Liquidity on a linear USD scale with an adaptive upper margin. This keeps the trend directly comparable with the dashboard's other financial charts and prevents very small pools from distorting the axis. The tooltip reports the exact total for each observation.
 
-The chart uses only a **logarithmic USD scale** because NUMMUS pools differ substantially in size. Each vertical step represents a multiplication rather than an equal dollar increment, allowing pools with only a few dollars and pools with tens of thousands of dollars to remain visible in the same chart. The visual distance between lines must therefore be interpreted as a ratio, not as an equal dollar difference. Exact latest pool values remain available in the interactive legend.
-
-The daily chart tooltip reports only Total DEX Liquidity. Individual lines are intended to show the continuity and direction of each pool's liquidity over time without turning every historical tooltip into a large table.
+The `pools tracked` control reports the latest available USD liquidity for every detected pool, including residual pools with very small balances. Each pool is identified by DEX, token pair and an abbreviated address where required. Individual pool values remain available for transparency but are not drawn as historical lines.
 
 Higher DEX Liquidity generally means that more capital is available to support trading. It does not, however, reveal how that liquidity is distributed across prices. Concentrated-liquidity pools can report substantial total liquidity while offering less executable liquidity near the current price. For this reason, DEX Liquidity should be evaluated together with NUMMUS Market Depth.
 
@@ -174,7 +174,7 @@ These four areas always sum to 100%. Above the chart, Unique Holder Wallets, Lar
 
 Broader distribution generally appears as a declining Largest Holder, Top 10 and Top 50 share together with a growing Outside Top 50 share. The opposite movement indicates increasing concentration. This is descriptive rather than a guarantee of decentralization because several wallets can belong to one beneficial owner and custodial wallets can represent many users.
 
-Concentration is calculated against the adjusted holder set. Verified NUMMUS owners used by tracked DEX pools are excluded because pooled liquidity represents protocol custody supplied by multiple participants and should not be interpreted as an individual whale. Treasury, burn and all other owners remain subject to the same balance-ranking rules. Holder count includes every owner with a positive balance and therefore follows an unadjusted inclusion rule.
+Concentration is calculated against the adjusted holder set. Verified NUMMUS owners used by tracked DEX pools are excluded because pooled liquidity represents protocol custody supplied by multiple participants and should not be interpreted as an individual whale. Known project operational wallets are also excluded when their NUMMUS balance is reserved for protocol operations, such as supplying swaps used to acquire tBTC for the DAO Vault, rather than representing an independent investor position. Treasury, burn and all other owners remain subject to the same balance-ranking rules. Holder count includes every owner with a positive balance and therefore follows an unadjusted inclusion rule.
 
 The reliable historical series begins with the first successfully collected Holder Distribution snapshot. Earlier values are not estimated or copied from current data.
 
