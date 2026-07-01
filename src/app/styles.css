@@ -1731,7 +1731,29 @@ svg {
 
   .multi-series-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: 16px;
+    margin-top: 10px;
+    row-gap: 10px;
+  }
+
+  .multi-series-metric {
+    gap: 2px;
+    padding: 0 9px;
+  }
+
+  .multi-series-metric > span {
+    font-size: 9px;
+  }
+
+  .multi-series-metric > strong {
+    font-size: 15px;
+  }
+
+  .multi-series-metric .chart-change {
+    font-size: 9px;
+  }
+
+  .concentration-legend {
+    display: none;
   }
 
   .multi-series-metric:nth-child(2) {

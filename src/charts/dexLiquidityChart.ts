@@ -185,15 +185,23 @@ function makeLogScale(values: number[], chartHeight: number): { y: (value: numbe
   const positive = values.filter((value) => value > 0);
   const max = Math.max(...positive, 1);
   const minPower = Math.floor(Math.log10(Math.min(...positive, 1)));
-  const maxPower = Math.ceil(Math.log10(max));
-  const allTicks = Array.from({ length: maxPower - minPower + 1 }, (_, index) => 10 ** (minPower + index));
+  const upperBound = niceLogUpperBound(max);
+  const maxPower = Math.floor(Math.log10(upperBound));
+  const decadeTicks = Array.from({ length: maxPower - minPower + 1 }, (_, index) => 10 ** (minPower + index));
+  const allTicks = decadeTicks.at(-1) === upperBound ? decadeTicks : [...decadeTicks, upperBound];
   const ticks = sampleTicks(allTicks, 6);
   const minLog = Math.log10(10 ** minPower);
-  const maxLog = Math.log10(10 ** maxPower);
+  const maxLog = Math.log10(upperBound);
   return {
     y: (value) => PAD.top + (1 - (Math.log10(Math.max(value, 10 ** minPower)) - minLog) / (maxLog - minLog || 1)) * chartHeight,
     ticks
   };
+}
+
+function niceLogUpperBound(max: number): number {
+  const target = max * 1.5;
+  const magnitude = 10 ** Math.floor(Math.log10(Math.max(1, target)));
+  return Math.ceil((target / magnitude) * 2) / 2 * magnitude;
 }
 
 function pathFor(points: Array<{ x: number; y: number | null; value: number }>, plotRight: number): string {

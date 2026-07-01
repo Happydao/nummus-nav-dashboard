@@ -247,6 +247,7 @@ async function render(): Promise<void> {
             axisFormatter: usdCompact,
             yLabel: "Executable Value (USD)",
             yMin: 0,
+            yHeadroom: 1.25,
             secondary: {
               key: "sellDepthUsd",
               label: "Sell Depth",

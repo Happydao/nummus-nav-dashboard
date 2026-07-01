@@ -1,5 +1,5 @@
 import type { HolderCursor, HolderSnapshot } from "../types.js";
-import { BURN_WALLET, NUMMUS_MINT, VAULT_WALLET } from "../utils/constants.js";
+import { NUMMUS_MINT } from "../utils/constants.js";
 import { HeliusClient } from "./helius.js";
 
 const PAGE_LIMIT = 1_000;
@@ -74,9 +74,8 @@ export async function collectHolderGrowth(
     if (!account) throw new Error(`NUMMUS pool vault ${vaultAddress} is absent from holder accounts`);
     poolOwners.add(account.owner);
   }
-  const excludedOwners = new Set([VAULT_WALLET, BURN_WALLET, ...poolOwners]);
   const adjustedBalances = [...balances.entries()]
-    .filter(([owner]) => !excludedOwners.has(owner))
+    .filter(([owner]) => !poolOwners.has(owner))
     .map(([, amount]) => amount)
     .sort((a, b) => a === b ? 0 : a > b ? -1 : 1);
 

@@ -12,7 +12,7 @@
 | Treasury Backing | Derived | `(NAV / marketPrice) * 100` |
 | Premium | Derived | `marketPrice / NAV` |
 | Holder Growth | Helius DAS `getTokenAccounts` filtered by NUMMUS mint | Unique owners with a positive aggregated balance, regardless of quantity held |
-| Holder Concentration | Helius holder balances + verified pool-vault mapping | Top 10 and Top 50 shares after excluding treasury, burn and tracked DEX pool owners |
+| Holder Concentration | Holder balances + verified pool-vault mapping | Top 10 and Top 50 shares after excluding tracked DEX pool owners |
 
 The daily collector validates the complete dataset before publishing `data/snapshots/YYYY-MM-DD.json` and the corresponding date in `data/history.json`. Holder pagination or validation failure rejects the entire update together with any other incomplete metric.
 

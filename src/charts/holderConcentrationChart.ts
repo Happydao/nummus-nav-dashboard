@@ -55,7 +55,7 @@ export function holderConcentrationChart(options: Options): string {
         <div>
           <div class="chart-title-row">
             <h2>Holder Distribution</h2>
-            ${infoTip("Tracks holder count and ownership concentration over time. The green line uses the adaptive left axis and counts unique wallets with a positive NUMMUS balance. The four colored areas use the right 0–100% axis and show mutually exclusive ownership groups. Broader distribution generally appears as falling Largest, Top 10 and Top 50 shares together with a growing Outside Top 50 share. Treasury, burn and verified DEX pool owners are excluded only from concentration.")}
+            ${infoTip("Tracks holder count and ownership concentration over time. The green line uses the adaptive left axis and counts unique wallets with a positive NUMMUS balance. The four colored areas use the right 0–100% axis and show mutually exclusive ownership groups. Broader distribution generally appears as falling Largest, Top 10 and Top 50 shares together with a growing Outside Top 50 share. Verified DEX pool owners are excluded only from concentration.")}
             ${chartZoomControls("holder-concentration", options.zoomWindow)}
           </div>
           <span>${dateLabel(records[0].date)} -> ${dateLabel(latest.date)}</span>

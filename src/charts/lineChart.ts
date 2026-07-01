@@ -60,6 +60,7 @@ export interface ChartOptions {
   yLabel: string;
   yMin?: number;
   yMax?: number;
+  yHeadroom?: number;
   showMarkers?: boolean;
   showArea?: boolean;
   includePreviousPoint?: boolean;
@@ -140,7 +141,7 @@ export function lineChart(options: ChartOptions): string {
     ? points.map((point) => point.value)
     : [...points.map((point) => point.value), ...secondaryValues, ...additionalValues];
   const rawMin = options.yMin ?? Math.min(...values);
-  const rawMax = options.yMax ?? Math.max(...values);
+  const rawMax = options.yMax ?? Math.max(...values) * (options.yHeadroom ?? 1);
   const yMin = options.yMin ?? niceFloor(rawMin);
   const yMax = options.yMax ?? niceCeil(rawMax === rawMin ? rawMax + 1 : rawMax);
   const secondaryRawMin = secondaryValues.length > 0 ? Math.min(...secondaryValues) : yMin;

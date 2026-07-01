@@ -174,11 +174,9 @@ These four areas always sum to 100%. Above the chart, Unique Holder Wallets, Lar
 
 Broader distribution generally appears as a declining Largest Holder, Top 10 and Top 50 share together with a growing Outside Top 50 share. The opposite movement indicates increasing concentration. This is descriptive rather than a guarantee of decentralization because several wallets can belong to one beneficial owner and custodial wallets can represent many users.
 
-Concentration is calculated against the adjusted holder set. The DAO treasury, burn wallet and verified NUMMUS vault owners used by tracked DEX pools are excluded because treasury custody, destroyed supply and pooled liquidity should not be interpreted as individual whales. Holder count remains unadjusted and therefore follows a different inclusion rule.
+Concentration is calculated against the adjusted holder set. Verified NUMMUS owners used by tracked DEX pools are excluded because pooled liquidity represents protocol custody supplied by multiple participants and should not be interpreted as an individual whale. Treasury, burn and all other owners remain subject to the same balance-ranking rules. Holder count includes every owner with a positive balance and therefore follows an unadjusted inclusion rule.
 
-Pool identification follows the current DexScreener pool list. Orca vaults are verified through Orca pool data; Raydium and Meteora vaults are identified from recurring NUMMUS token-account activity in pool transactions. A new pool must be identified unambiguously before the complete daily snapshot can be published, and verified mappings are retained for subsequent collections.
-
-Holder data is retrieved through paginated Helius DAS `getTokenAccounts` requests. Each page contains up to 1,000 token accounts and costs 10 Helius credits. The same collected balances supply both holder count and concentration, so concentration adds no recurring holder-pagination calls. The reliable historical series begins with the first successfully collected snapshot; earlier values are not estimated or copied from current data.
+The reliable historical series begins with the first successfully collected Holder Distribution snapshot. Earlier values are not estimated or copied from current data.
 
 ## Chart Interaction
 
