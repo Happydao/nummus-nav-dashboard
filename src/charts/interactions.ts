@@ -66,8 +66,18 @@ export function attachChartInteractions(
             .join("")
         : `<span>${escapeHtml(nearest.label)}</span>`;
       tooltip.innerHTML = `<strong>${escapeHtml(nearest.dateLabel ?? nearest.date)}</strong>${series}`;
-      tooltip.style.left = `${Math.min(Math.max(nearest.x, 90), 650)}px`;
-      tooltip.style.top = `${Math.max(nearest.y - 52, 12)}px`;
+      const screenPoint = svg.createSVGPoint();
+      screenPoint.x = nearest.x;
+      screenPoint.y = nearest.y;
+      const screenPosition = screenPoint.matrixTransform(matrix);
+      const chartBounds = chart.getBoundingClientRect();
+      const halfTooltipWidth = Math.min(tooltip.offsetWidth / 2, Math.max(0, chartBounds.width / 2 - 12));
+      const left = Math.max(
+        halfTooltipWidth + 12,
+        Math.min(chartBounds.width - halfTooltipWidth - 12, screenPosition.x - chartBounds.left)
+      );
+      tooltip.style.left = `${left}px`;
+      tooltip.style.top = `${Math.max(screenPosition.y - chartBounds.top - 52, 12)}px`;
     };
 
     capture.addEventListener("pointermove", (event) => {

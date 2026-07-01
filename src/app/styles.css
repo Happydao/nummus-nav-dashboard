@@ -207,11 +207,12 @@ body {
 }
 
 .direction-info-tip .info-popover {
-  left: 0;
+  left: auto;
   min-width: 0;
+  right: 0;
   transform: none;
   white-space: normal;
-  width: min(340px, calc(100vw - 40px));
+  width: min(300px, calc(100vw - 100px));
 }
 .change-favorable { color: #57c990; }
 .change-adverse { color: #d87575; }
@@ -2179,6 +2180,16 @@ svg {
     transform: none;
     width: auto;
     z-index: 30;
+  }
+
+  .direction-info-tip .info-popover {
+    left: 16px;
+    max-width: none;
+    position: fixed;
+    right: 16px;
+    transform: none;
+    white-space: normal;
+    width: auto;
   }
 
   .chart-tooltip {
