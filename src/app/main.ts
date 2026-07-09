@@ -310,12 +310,18 @@ async function render(): Promise<void> {
       </section>
       <div class="content footer-content">
         <footer class="site-footer">
-          <a class="footer-button" href="https://jup.ag/tokens/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray" target="_blank" rel="noreferrer">Buy on Jupiter</a>
+          <nav class="footer-links" aria-label="Nummus links">
+            <a class="footer-button" href="https://coinmarketcap.com/currencies/nummus-aeternitas/" target="_blank" rel="noreferrer">CMC</a>
+            <a class="footer-button" href="https://phantom.com/tokens/solana/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray" target="_blank" rel="noreferrer">Buy on Phantom</a>
+            <a class="footer-button" href="https://x.com/NummusMemeCoin" target="_blank" rel="noreferrer">Official X Profile</a>
+            <a class="footer-button" href="https://birdeye.so/solana/token/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray" target="_blank" rel="noreferrer">BirdEye</a>
+            <a class="footer-button" href="https://jup.ag/tokens/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray" target="_blank" rel="noreferrer">Buy on Jupiter</a>
+            <a class="footer-button" href="https://nummus.meme" target="_blank" rel="noreferrer">nummus.meme</a>
+          </nav>
           <p>
             © 2023 <a href="https://torrino.space" target="_blank" rel="noreferrer">Torrino DAO</a> —
             Crafted with passion by <a href="https://happydev.fi" target="_blank" rel="noreferrer">HAPPY</a>
           </p>
-          <a class="footer-button" href="https://nummus.meme" target="_blank" rel="noreferrer">nummus.meme</a>
         </footer>
       </div>
     </div>

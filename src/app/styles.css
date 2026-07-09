@@ -1453,11 +1453,18 @@ svg {
 .site-footer {
   align-items: center;
   color: #8fa498;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
-  grid-template-columns: minmax(150px, 1fr) auto minmax(150px, 1fr);
   margin-top: 30px;
   padding: 18px 0 8px;
+}
+
+.footer-links {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  width: 100%;
 }
 
 .site-footer p {
@@ -1485,15 +1492,8 @@ svg {
   font-weight: 800;
   justify-content: center;
   padding: 9px 13px;
+  text-align: center;
   text-transform: uppercase;
-}
-
-.footer-button:first-child {
-  justify-self: start;
-}
-
-.footer-button:last-child {
-  justify-self: end;
 }
 
 .footer-button:hover {
@@ -2141,12 +2141,14 @@ svg {
   }
 
   .site-footer {
+    gap: 12px;
+  }
+
+  .footer-links {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .site-footer p {
-    grid-column: 1 / -1;
-    grid-row: 2;
     line-height: 1.5;
   }
 
@@ -2156,18 +2158,6 @@ svg {
     padding-inline: 7px;
     white-space: nowrap;
     width: 100%;
-  }
-
-  .footer-button:first-child {
-    grid-column: 1;
-    grid-row: 1;
-    justify-self: stretch;
-  }
-
-  .footer-button:last-child {
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: stretch;
   }
 
   .info-popover {
