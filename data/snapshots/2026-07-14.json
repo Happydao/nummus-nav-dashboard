@@ -1,20 +1,20 @@
 {
   "date": "2026-07-14",
-  "vaultUsd": 80754.5407266,
+  "vaultUsd": 80642.69255241,
   "supply": 98032554.305444,
   "marketPrice": 0.009796788012917676,
-  "nav": 0.00082375,
-  "backing": 8.40836812,
-  "premium": 11.89291413,
+  "nav": 0.00082261,
+  "backing": 8.39673165,
+  "premium": 11.90939572,
   "tbtcAmount": 0.78621041,
   "marketDepth": {
-    "buyDepthUsd": 440.31,
-    "sellDepthUsd": 229.69,
+    "buyDepthUsd": 431.88,
+    "sellDepthUsd": 233.59,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 101409.06,
+    "totalLiquidityUsd": 100403.68,
     "poolCount": 6,
     "provider": "dexscreener",
     "pools": [
@@ -22,14 +22,14 @@
         "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/SOL",
-        "liquidityUsd": 88217.2,
+        "liquidityUsd": 87220.44,
         "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
       },
       {
         "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/USDC",
-        "liquidityUsd": 7776.72,
+        "liquidityUsd": 7768.1,
         "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
       },
       {
@@ -69,8 +69,8 @@
         "symbol": "SOL",
         "mint": "So11111111111111111111111111111111111111112",
         "amount": 0.104571323,
-        "priceUsd": 75.2458069771776,
-        "valueUsd": 7.86855359,
+        "priceUsd": 75.09048264086715,
+        "valueUsd": 7.85231111,
         "provider": "jupiter"
       },
       {
@@ -101,8 +101,8 @@
         "symbol": "tBTC",
         "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
         "amount": 0.78621041,
-        "priceUsd": 62374.53450563487,
-        "valueUsd": 49039.50834723,
+        "priceUsd": 62232.292772010216,
+        "valueUsd": 48927.67641552,
         "provider": "jupiter"
       }
     ],
