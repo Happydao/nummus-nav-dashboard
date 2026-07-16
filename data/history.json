@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-16T21:58:31.452Z",
+  "generatedAt": "2026-07-16T22:55:59.369Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -18593,21 +18593,21 @@
     },
     {
       "date": "2026-07-16",
-      "vaultUsd": 85240.7807685,
+      "vaultUsd": 85240.72921714,
       "supply": 98032554.305444,
       "marketPrice": 0.00876208675044844,
-      "nav": 0.00086952,
-      "backing": 9.92366345,
-      "premium": 10.07692376,
+      "nav": 0.00086951,
+      "backing": 9.92354932,
+      "premium": 10.07703966,
       "tbtcAmount": 0.79008807,
       "marketDepth": {
-        "buyDepthUsd": 389.06,
-        "sellDepthUsd": 224.53,
+        "buyDepthUsd": 450.63,
+        "sellDepthUsd": 188.75,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
       "dexLiquidity": {
-        "totalLiquidityUsd": 95943.57,
+        "totalLiquidityUsd": 95503.93,
         "poolCount": 6,
         "provider": "dexscreener",
         "pools": [
@@ -18615,14 +18615,14 @@
             "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/SOL",
-            "liquidityUsd": 83454.24,
+            "liquidityUsd": 83018.34,
             "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
           },
           {
             "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/USDC",
-            "liquidityUsd": 7353.78,
+            "liquidityUsd": 7350.04,
             "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
           },
           {
@@ -18662,8 +18662,8 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104571323,
-            "priceUsd": 75.88741351342543,
-            "valueUsd": 7.93564723,
+            "priceUsd": 75.39443554189751,
+            "valueUsd": 7.88409587,
             "provider": "jupiter"
           },
           {
