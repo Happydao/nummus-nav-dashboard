@@ -1,6 +1,6 @@
 {
   "date": "2026-07-19",
-  "vaultUsd": 89141.76571483,
+  "vaultUsd": 89141.77926807,
   "supply": 97951453.063953,
   "marketPrice": 0.008227546856841596,
   "nav": 0.00091006,
@@ -8,13 +8,13 @@
   "premium": 9.04066419,
   "tbtcAmount": 0.79471971,
   "marketDepth": {
-    "buyDepthUsd": 401.56,
-    "sellDepthUsd": 212.19,
+    "buyDepthUsd": 330,
+    "sellDepthUsd": 289.38,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 92862.35,
+    "totalLiquidityUsd": 92856.63,
     "poolCount": 5,
     "provider": "dexscreener",
     "pools": [
@@ -43,14 +43,14 @@
         "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
         "dexId": "meteora",
         "pairLabel": "NUMMUS/USDT",
-        "liquidityUsd": 2172.97,
+        "liquidityUsd": 2167.15,
         "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
       },
       {
         "pairAddress": "htJHMSsSry2c8E77hQgU39Zq8B2TszhHytSh6KznD1Y",
         "dexId": "meteora",
         "pairLabel": "IMT/NUMMUS",
-        "liquidityUsd": 2.13,
+        "liquidityUsd": 2.23,
         "url": "https://dexscreener.com/solana/htjhmsssry2c8e77hqgu39zq8b2tszhhytsh6kznd1y"
       }
     ]
@@ -62,8 +62,8 @@
         "symbol": "SOL",
         "mint": "So11111111111111111111111111111111111111112",
         "amount": 0.104571323,
-        "priceUsd": 76.08884835790198,
-        "valueUsd": 7.95671154,
+        "priceUsd": 76.21845600514692,
+        "valueUsd": 7.97026478,
         "provider": "jupiter"
       },
       {
@@ -125,7 +125,7 @@
       "topHolderAmount": 2000000,
       "top10Amount": 12000677.711869,
       "top50Amount": 30755075.901109,
-      "othersAmount": 59235526.398226,
+      "othersAmount": 59235526.398379,
       "excludedPoolCount": 4
     }
   }
