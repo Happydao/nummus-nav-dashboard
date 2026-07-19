@@ -1,20 +1,20 @@
 {
   "date": "2026-07-19",
-  "vaultUsd": 88692.37247054,
+  "vaultUsd": 89141.76571483,
   "supply": 97951453.063953,
-  "marketPrice": 0.00816656667981551,
-  "nav": 0.00090547,
-  "backing": 11.0875235,
-  "premium": 9.01914661,
+  "marketPrice": 0.008227546856841596,
+  "nav": 0.00091006,
+  "backing": 11.06113421,
+  "premium": 9.04066419,
   "tbtcAmount": 0.79471971,
   "marketDepth": {
-    "buyDepthUsd": 231.72,
-    "sellDepthUsd": 378.44,
+    "buyDepthUsd": 401.56,
+    "sellDepthUsd": 212.19,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 93130.32,
+    "totalLiquidityUsd": 92862.35,
     "poolCount": 5,
     "provider": "dexscreener",
     "pools": [
@@ -22,14 +22,14 @@
         "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/SOL",
-        "liquidityUsd": 81066.92,
+        "liquidityUsd": 80794.97,
         "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
       },
       {
         "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/USDC",
-        "liquidityUsd": 7105.08,
+        "liquidityUsd": 7109.06,
         "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
       },
       {
@@ -62,8 +62,8 @@
         "symbol": "SOL",
         "mint": "So11111111111111111111111111111111111111112",
         "amount": 0.104571323,
-        "priceUsd": 75.98754931847367,
-        "valueUsd": 7.94611856,
+        "priceUsd": 76.08884835790198,
+        "valueUsd": 7.95671154,
         "provider": "jupiter"
       },
       {
@@ -78,16 +78,16 @@
         "symbol": "NUMMUS",
         "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
         "amount": 25,
-        "priceUsd": 0.00816656667981551,
-        "valueUsd": 0.20416417,
+        "priceUsd": 0.008227546856841596,
+        "valueUsd": 0.20568867,
         "provider": "jupiter"
       },
       {
         "symbol": "PISTA",
         "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
         "amount": 25000000,
-        "priceUsd": 0.001405479401648037,
-        "valueUsd": 35136.9850412,
+        "priceUsd": 0.0014234546467205935,
+        "valueUsd": 35586.36616801,
         "provider": "jupiter"
       },
       {
@@ -118,14 +118,14 @@
     "newHolders": 0,
     "exitedHolders": 1,
     "concentration": {
-      "topHolderPct": 2.2225,
-      "top10Pct": 13.3362,
-      "top50Pct": 34.1777,
-      "othersPct": 65.8222,
+      "topHolderPct": 2.2224,
+      "top10Pct": 13.3354,
+      "top50Pct": 34.1758,
+      "othersPct": 65.8241,
       "topHolderAmount": 2000000,
       "top10Amount": 12000677.711869,
       "top50Amount": 30755075.901109,
-      "othersAmount": 59230548.907722,
+      "othersAmount": 59235526.398226,
       "excludedPoolCount": 4
     }
   }
