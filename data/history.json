@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-26T20:12:56.681Z",
+  "generatedAt": "2026-07-26T21:53:01.427Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -19871,7 +19871,7 @@
     },
     {
       "date": "2026-07-26",
-      "vaultUsd": 88281.05923353,
+      "vaultUsd": 88281.09012185,
       "supply": 97951453.063953,
       "marketPrice": 0.008475711467777265,
       "nav": 0.00090127,
@@ -19879,8 +19879,8 @@
       "premium": 9.40418683,
       "tbtcAmount": 0.81030031,
       "marketDepth": {
-        "buyDepthUsd": 176.88,
-        "sellDepthUsd": 442.19,
+        "buyDepthUsd": 19.47,
+        "sellDepthUsd": 601.88,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
@@ -19926,8 +19926,8 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104778326,
-            "priceUsd": 75.34301175191356,
-            "valueUsd": 7.89431465,
+            "priceUsd": 75.63780861050599,
+            "valueUsd": 7.92520297,
             "provider": "jupiter"
           },
           {
