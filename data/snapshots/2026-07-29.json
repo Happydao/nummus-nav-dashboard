@@ -1,20 +1,20 @@
 {
   "date": "2026-07-29",
-  "vaultUsd": 89481.5209745,
+  "vaultUsd": 89878.36429296,
   "supply": 97951453.063953,
-  "marketPrice": 0.008438421749943012,
-  "nav": 0.00091353,
-  "backing": 10.82583956,
-  "premium": 9.23715888,
+  "marketPrice": 0.008553380622430001,
+  "nav": 0.00091758,
+  "backing": 10.72768816,
+  "premium": 9.3216729,
   "tbtcAmount": 0.81030031,
   "marketDepth": {
-    "buyDepthUsd": 210.47,
-    "sellDepthUsd": 399.06,
+    "buyDepthUsd": 197.97,
+    "sellDepthUsd": 421.56,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 92904.24,
+    "totalLiquidityUsd": 94099.68,
     "poolCount": 4,
     "provider": "dexscreener",
     "pools": [
@@ -22,28 +22,28 @@
         "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/SOL",
-        "liquidityUsd": 80629.01,
+        "liquidityUsd": 81767.91,
         "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
       },
       {
         "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/USDC",
-        "liquidityUsd": 7226.6,
+        "liquidityUsd": 7264.86,
         "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
       },
       {
         "pairAddress": "BqXJoDkmKvbeSKJn9RwqvoKkgu3KyDv9hPHf2NoMjs1d",
         "dexId": "orca",
         "pairLabel": "NUMMUS/USDT",
-        "liquidityUsd": 2841.38,
+        "liquidityUsd": 2844.66,
         "url": "https://dexscreener.com/solana/bqxjodkmkvbeskjn9rwqvokkgu3kydv9hphf2nomjs1d"
       },
       {
         "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
         "dexId": "meteora",
         "pairLabel": "NUMMUS/USDT",
-        "liquidityUsd": 2207.25,
+        "liquidityUsd": 2222.25,
         "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
       }
     ]
@@ -55,8 +55,8 @@
         "symbol": "SOL",
         "mint": "So11111111111111111111111111111111111111112",
         "amount": 0.104778326,
-        "priceUsd": 73.18855871654452,
-        "valueUsd": 7.66857466,
+        "priceUsd": 74.16264308160923,
+        "valueUsd": 7.77063759,
         "provider": "jupiter"
       },
       {
@@ -71,24 +71,24 @@
         "symbol": "NUMMUS",
         "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
         "amount": 25,
-        "priceUsd": 0.008438421749943012,
-        "valueUsd": 0.21096054,
+        "priceUsd": 0.008553380622430001,
+        "valueUsd": 0.21383452,
         "provider": "jupiter"
       },
       {
         "symbol": "PISTA",
         "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
         "amount": 25000000,
-        "priceUsd": 0.0014124357578268066,
-        "valueUsd": 35310.89394567,
+        "priceUsd": 0.001429952910660915,
+        "valueUsd": 35748.82276652,
         "provider": "jupiter"
       },
       {
         "symbol": "tBTC",
         "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
         "amount": 0.81030031,
-        "priceUsd": 64435.92565927113,
-        "valueUsd": 52212.45053684,
+        "priceUsd": 64385.092111757964,
+        "valueUsd": 52171.26009754,
         "provider": "jupiter"
       }
     ],
@@ -107,18 +107,18 @@
     "unpricedAssets": []
   },
   "holderGrowth": {
-    "holderCount": 7343,
-    "newHolders": 0,
+    "holderCount": 7344,
+    "newHolders": 1,
     "exitedHolders": 2,
     "concentration": {
-      "topHolderPct": 2.2157,
-      "top10Pct": 13.5094,
-      "top50Pct": 34.0708,
-      "othersPct": 65.9291,
+      "topHolderPct": 2.2156,
+      "top10Pct": 13.5088,
+      "top50Pct": 34.0637,
+      "othersPct": 65.9362,
       "topHolderAmount": 2000000,
       "top10Amount": 12194148.153765,
-      "top50Amount": 30753595.889551,
-      "othersAmount": 59509990.415039,
+      "top50Amount": 30748595.889551,
+      "othersAmount": 59519122.656045,
       "excludedPoolCount": 4
     }
   }
