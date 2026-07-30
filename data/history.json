@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T10:16:20.144Z",
+  "generatedAt": "2026-07-30T12:25:31.126Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -20371,21 +20371,21 @@
     },
     {
       "date": "2026-07-30",
-      "vaultUsd": 89668.46325596,
-      "supply": 97951453.063953,
-      "marketPrice": 0.008506363122433282,
-      "nav": 0.00091544,
-      "backing": 10.76182602,
-      "premium": 9.29210338,
-      "tbtcAmount": 0.81030031,
+      "vaultUsd": 90018.15987169,
+      "supply": 97853418.026439,
+      "marketPrice": 0.008501876660923028,
+      "nav": 0.00091993,
+      "backing": 10.82031693,
+      "premium": 9.24187347,
+      "tbtcAmount": 0.814894,
       "marketDepth": {
-        "buyDepthUsd": 191.41,
-        "sellDepthUsd": 427.81,
+        "buyDepthUsd": 168.28,
+        "sellDepthUsd": 449.38,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
       "dexLiquidity": {
-        "totalLiquidityUsd": 93712.33,
+        "totalLiquidityUsd": 93539.53,
         "poolCount": 4,
         "provider": "dexscreener",
         "pools": [
@@ -20393,7 +20393,7 @@
             "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/SOL",
-            "liquidityUsd": 81439.32,
+            "liquidityUsd": 81266.52,
             "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
           },
           {
@@ -20425,9 +20425,9 @@
           {
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
-            "amount": 0.104778326,
-            "priceUsd": 73.98346609552561,
-            "valueUsd": 7.75186373,
+            "amount": 0.104793073,
+            "priceUsd": 74.14233901983557,
+            "valueUsd": 7.76960355,
             "provider": "jupiter"
           },
           {
@@ -20442,8 +20442,8 @@
             "symbol": "NUMMUS",
             "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
             "amount": 25,
-            "priceUsd": 0.008506363122433282,
-            "valueUsd": 0.21265908,
+            "priceUsd": 0.008501876660923028,
+            "valueUsd": 0.21254692,
             "provider": "jupiter"
           },
           {
@@ -20457,9 +20457,9 @@
           {
             "symbol": "tBTC",
             "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
-            "amount": 0.81030031,
-            "priceUsd": 64414.73811108994,
-            "valueUsd": 52195.28225998,
+            "amount": 0.814894,
+            "priceUsd": 64480.73154060055,
+            "valueUsd": 52544.96124805,
             "provider": "jupiter"
           }
         ],
@@ -20478,18 +20478,18 @@
         "unpricedAssets": []
       },
       "holderGrowth": {
-        "holderCount": 7343,
+        "holderCount": 7342,
         "newHolders": 1,
-        "exitedHolders": 1,
+        "exitedHolders": 2,
         "concentration": {
-          "topHolderPct": 2.2158,
-          "top10Pct": 13.5101,
-          "top50Pct": 34.0614,
-          "othersPct": 65.9385,
+          "topHolderPct": 2.2183,
+          "top10Pct": 13.5255,
+          "top50Pct": 34.0947,
+          "othersPct": 65.9052,
           "topHolderAmount": 2000000,
           "top10Amount": 12194148.153765,
-          "top50Amount": 30743595.889551,
-          "othersAmount": 59515702.465277,
+          "top50Amount": 30738595.889551,
+          "othersAmount": 59417677.427763,
           "excludedPoolCount": 4
         }
       }
@@ -21046,7 +21046,7 @@
     },
     {
       "date": "2026-07-30",
-      "amount": 0.81030031
+      "amount": 0.814894
     }
   ],
   "tbtcCursor": {
@@ -21396,169 +21396,177 @@
       "U2TUacrS5A52dbK39h9DA8mME5DSQYvgZmdknrRnqFXNTbZgGNd5W9fgqAJbL4FdDxHMuBQeasSFUYWYRvEmmei",
       "3vzhqN9r3wxKopUgLYQamJ4NemmAzLghJz89Gxb5CuEzAG5TJGdxTxhJFUwiH147gKT5x8dwrLLVqi7k9vFEBT9s",
       "5b7nz4Prowr4v8pMUvDHwG2z4NoEqGGs4PfaJbRNYMenH1Tkc8pELRdBeeRNScoVbpLzcB1VpC9S84e1YDsK6pSY",
-      "2BS3YLnZXQQE8z38kupkttEvTfmntG3q27ZZDPuzCTxAU6ipuPkqWp5v4DEQaP8WSrUUcThV7LqubZiaVdy2yxx3"
+      "2BS3YLnZXQQE8z38kupkttEvTfmntG3q27ZZDPuzCTxAU6ipuPkqWp5v4DEQaP8WSrUUcThV7LqubZiaVdy2yxx3",
+      "2wQ6BNttoVfE9eaGmhEeu55Za6bT9NMMyMfRpjV66UQb9icHWMZFK77uc43ezbG4pR5LVtLQ7DkP7tJsMrEyvivS",
+      "25EiwWhdY5uFcRwa8QfW3fxAj6cKgEmWUtXogPybSRL768UMx9kgGrJsvnoAQyG9HBmRoX9ZhBHsQqjQk8qx4UYA"
     ],
-    "lastAmount": 0.81030031
+    "lastAmount": 0.814894
   },
   "supplyHistory": [
     {
       "date": "2025-10-17",
-      "supply": 99906887.637596,
+      "supply": 99906787.637596,
       "burnedCumulative": 58703.809655
     },
     {
       "date": "2025-11-03",
-      "supply": 99850019.49997897,
+      "supply": 99849919.49997897,
       "burnedCumulative": 115571.947272
     },
     {
       "date": "2025-11-08",
-      "supply": 99824631.313864,
+      "supply": 99824531.313864,
       "burnedCumulative": 140960.133387
     },
     {
       "date": "2025-11-13",
-      "supply": 99695773.093745,
+      "supply": 99695673.093745,
       "burnedCumulative": 269818.353506
     },
     {
       "date": "2025-11-19",
-      "supply": 99440337.588285,
+      "supply": 99440237.588285,
       "burnedCumulative": 525253.858966
     },
     {
       "date": "2025-11-26",
-      "supply": 99387405.715343,
+      "supply": 99387305.715343,
       "burnedCumulative": 578185.731908
     },
     {
       "date": "2025-11-28",
-      "supply": 99377395.715343,
+      "supply": 99377295.715343,
       "burnedCumulative": 588195.731908
     },
     {
       "date": "2025-12-01",
-      "supply": 99244879.917645,
+      "supply": 99244779.917645,
       "burnedCumulative": 720711.529606
     },
     {
       "date": "2025-12-04",
-      "supply": 99192999.43717,
+      "supply": 99192899.43717,
       "burnedCumulative": 772592.010081
     },
     {
       "date": "2025-12-06",
-      "supply": 99143454.003642,
+      "supply": 99143354.003642,
       "burnedCumulative": 822137.443609
     },
     {
       "date": "2025-12-15",
-      "supply": 99119107.150447,
+      "supply": 99119007.150447,
       "burnedCumulative": 846484.296804
     },
     {
       "date": "2025-12-23",
-      "supply": 99097152.086516,
+      "supply": 99097052.086516,
       "burnedCumulative": 868439.360735
     },
     {
       "date": "2026-01-16",
-      "supply": 99090072.086516,
+      "supply": 99089972.086516,
       "burnedCumulative": 875519.360735
     },
     {
       "date": "2026-01-26",
-      "supply": 99061113.119774,
+      "supply": 99061013.119774,
       "burnedCumulative": 904478.327477
     },
     {
       "date": "2026-01-29",
-      "supply": 99029073.399372,
+      "supply": 99028973.399372,
       "burnedCumulative": 936518.047879
     },
     {
       "date": "2026-01-31",
-      "supply": 98970934.93940897,
+      "supply": 98970834.93940897,
       "burnedCumulative": 994656.507842
     },
     {
       "date": "2026-02-02",
-      "supply": 98937735.10025299,
+      "supply": 98937635.10025299,
       "burnedCumulative": 1027856.346998
     },
     {
       "date": "2026-02-24",
-      "supply": 98885009.13029797,
+      "supply": 98884909.13029797,
       "burnedCumulative": 1080582.316953
     },
     {
       "date": "2026-04-14",
-      "supply": 98813435.58584797,
+      "supply": 98813335.58584797,
       "burnedCumulative": 1152155.861403
     },
     {
       "date": "2026-04-17",
-      "supply": 98754435.58584797,
+      "supply": 98754335.58584797,
       "burnedCumulative": 1211155.861403
     },
     {
       "date": "2026-04-21",
-      "supply": 98675454.171621,
+      "supply": 98675354.171621,
       "burnedCumulative": 1290137.27563
     },
     {
       "date": "2026-04-27",
-      "supply": 98618184.918875,
+      "supply": 98618084.918875,
       "burnedCumulative": 1347406.528376
     },
     {
       "date": "2026-05-02",
-      "supply": 98587112.09623697,
+      "supply": 98587012.09623697,
       "burnedCumulative": 1378479.351014
     },
     {
       "date": "2026-05-08",
-      "supply": 98531809.984747,
+      "supply": 98531709.984747,
       "burnedCumulative": 1433781.462504
     },
     {
       "date": "2026-05-15",
-      "supply": 98462340.344963,
+      "supply": 98462240.344963,
       "burnedCumulative": 1503251.102288
     },
     {
       "date": "2026-05-22",
-      "supply": 98383138.07468797,
+      "supply": 98383038.07468797,
       "burnedCumulative": 1582453.372563
     },
     {
       "date": "2026-06-03",
-      "supply": 98273280.642137,
+      "supply": 98273180.642137,
       "burnedCumulative": 1692310.805114
     },
     {
       "date": "2026-06-12",
-      "supply": 98203351.388893,
+      "supply": 98203251.388893,
       "burnedCumulative": 1762240.058358
     },
     {
       "date": "2026-06-19",
-      "supply": 98142000.01047999,
+      "supply": 98141900.01047999,
       "burnedCumulative": 1823591.436771
     },
     {
       "date": "2026-07-03",
-      "supply": 98032554.30544399,
+      "supply": 98032454.30544399,
       "burnedCumulative": 1933037.141807
     },
     {
       "date": "2026-07-17",
-      "supply": 97951553.063953,
+      "supply": 97951453.063953,
       "burnedCumulative": 2014038.383298
+    },
+    {
+      "date": "2026-07-30",
+      "supply": 97853418.026439,
+      "burnedCumulative": 2112073.420812
     }
   ],
   "supplyCursor": {
     "processedSignatures": [
+      "4hhkXe7ourFaVPb6nc8Bn6aHA34kt71UrReJ4qDrwS3ivgCbskbM5tGipPBEyHt8saQ21MMr6tdSB5tjYMLfHFbY",
       "3kWhUzEdEbix43sLtkHYu5ttPoBZys9BxBKVTq67WVffPNSKjMxK9AvkLtEbZrtSyWKMjvNH6AHHUvMKH8sbBiRb",
       "EaA7FjDE5EYE2t8eYpvKfdxdSVnw6tMdyJmDjrm2UeHcYnfiNfctS54awoexP47W5W23tqH94MQKrksyF3cuy5o",
       "25WczXwsay6Ammq2LukSLePtk6HbpVcRKNNq4JesZvA2wnSZs4opAX7SHnBTQwV5e4FR5Kk27cg96chnnQs7VbJa",
@@ -21592,6 +21600,6 @@
       "29qPVUJVEBrikbKA6Lj2dY6PefVLRe4csS2b9tDr8hYqfAyazshY4xwhEqUFvTY1V14RLU2YUcxjqdSnqU6orc8Q",
       "7fFfyJae2xPxb2cwp5sKevTL1sUMCM6ANQBjEr57TonXqa9KxhEpnTGt9c1sAAU8bnBnawmMiHpRTg1wDBkYegs"
     ],
-    "totalBurned": 2014038.383298
+    "totalBurned": 2112073.420812
   }
 }
