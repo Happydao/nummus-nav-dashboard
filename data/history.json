@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-02T08:42:24.735Z",
+  "generatedAt": "2026-08-02T10:28:00.558Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -20739,21 +20739,21 @@
     },
     {
       "date": "2026-08-02",
-      "vaultUsd": 87917.85034432,
+      "vaultUsd": 88083.49730721,
       "supply": 97853418.026439,
       "marketPrice": 0.008304858647262844,
-      "nav": 0.00089846,
-      "backing": 10.81848636,
-      "premium": 9.24343727,
-      "tbtcAmount": 0.814894,
+      "nav": 0.00090016,
+      "backing": 10.83895631,
+      "premium": 9.22598054,
+      "tbtcAmount": 0.82012087,
       "marketDepth": {
-        "buyDepthUsd": 433.13,
-        "sellDepthUsd": 172.34,
+        "buyDepthUsd": 474.69,
+        "sellDepthUsd": 131.56,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
       "dexLiquidity": {
-        "totalLiquidityUsd": 92016.88,
+        "totalLiquidityUsd": 91560.25,
         "poolCount": 4,
         "provider": "dexscreener",
         "pools": [
@@ -20761,14 +20761,14 @@
             "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/SOL",
-            "liquidityUsd": 79877.47,
+            "liquidityUsd": 79423.86,
             "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
           },
           {
             "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/USDC",
-            "liquidityUsd": 7156.42,
+            "liquidityUsd": 7153.4,
             "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
           },
           {
@@ -20794,8 +20794,8 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104793073,
-            "priceUsd": 73.19417986984122,
-            "valueUsd": 7.67024303,
+            "priceUsd": 73.1083169553741,
+            "valueUsd": 7.6612452,
             "provider": "jupiter"
           },
           {
@@ -20825,9 +20825,9 @@
           {
             "symbol": "tBTC",
             "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
-            "amount": 0.814894,
-            "priceUsd": 63390.176828697506,
-            "valueUsd": 51656.27475664,
+            "amount": 0.82012087,
+            "priceUsd": 63188.16239532523,
+            "valueUsd": 51821.93071736,
             "provider": "jupiter"
           }
         ],
@@ -20851,13 +20851,13 @@
         "exitedHolders": 0,
         "concentration": {
           "topHolderPct": 2.2196,
-          "top10Pct": 13.4777,
-          "top50Pct": 33.9921,
-          "othersPct": 66.0078,
+          "top10Pct": 13.5331,
+          "top50Pct": 34.0476,
+          "othersPct": 65.9523,
           "topHolderAmount": 2000000,
-          "top10Amount": 12144148.153765,
-          "top50Amount": 30628766.969579,
-          "othersAmount": 59476725.985753,
+          "top10Amount": 12194148.153765,
+          "top50Amount": 30678766.969579,
+          "othersAmount": 59426725.985753,
           "excludedPoolCount": 4
         }
       }
@@ -21426,7 +21426,7 @@
     },
     {
       "date": "2026-08-02",
-      "amount": 0.814894
+      "amount": 0.82012087
     }
   ],
   "tbtcCursor": {
@@ -21778,9 +21778,10 @@
       "5b7nz4Prowr4v8pMUvDHwG2z4NoEqGGs4PfaJbRNYMenH1Tkc8pELRdBeeRNScoVbpLzcB1VpC9S84e1YDsK6pSY",
       "2BS3YLnZXQQE8z38kupkttEvTfmntG3q27ZZDPuzCTxAU6ipuPkqWp5v4DEQaP8WSrUUcThV7LqubZiaVdy2yxx3",
       "2wQ6BNttoVfE9eaGmhEeu55Za6bT9NMMyMfRpjV66UQb9icHWMZFK77uc43ezbG4pR5LVtLQ7DkP7tJsMrEyvivS",
-      "25EiwWhdY5uFcRwa8QfW3fxAj6cKgEmWUtXogPybSRL768UMx9kgGrJsvnoAQyG9HBmRoX9ZhBHsQqjQk8qx4UYA"
+      "25EiwWhdY5uFcRwa8QfW3fxAj6cKgEmWUtXogPybSRL768UMx9kgGrJsvnoAQyG9HBmRoX9ZhBHsQqjQk8qx4UYA",
+      "5LUEoi22hgmRJCBpeUKrhF14tc46rcAMijjK62HSrSN2AFgkcfpr4uGejXSjecFgkUDb6ZdtyScYiYBe2VRePg2C"
     ],
-    "lastAmount": 0.814894
+    "lastAmount": 0.82012087
   },
   "supplyHistory": [
     {
