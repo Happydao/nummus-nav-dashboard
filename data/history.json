@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-02T22:48:15.947Z",
+  "generatedAt": "2026-08-02T23:52:34.614Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -20739,16 +20739,16 @@
     },
     {
       "date": "2026-08-02",
-      "vaultUsd": 87862.85964894,
+      "vaultUsd": 87912.28337465,
       "supply": 97853318.026439,
       "marketPrice": 0.008317475744289761,
-      "nav": 0.0008979,
-      "backing": 10.79534257,
-      "premium": 9.26325398,
+      "nav": 0.00089841,
+      "backing": 10.80147424,
+      "premium": 9.25799551,
       "tbtcAmount": 0.82012087,
       "marketDepth": {
-        "buyDepthUsd": 252.19,
-        "sellDepthUsd": 356.25,
+        "buyDepthUsd": 368.75,
+        "sellDepthUsd": 240.47,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
@@ -20794,8 +20794,8 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104793073,
-            "priceUsd": 73.67327929028193,
-            "valueUsd": 7.72044933,
+            "priceUsd": 73.46001636905932,
+            "valueUsd": 7.69810086,
             "provider": "jupiter"
           },
           {
@@ -20826,8 +20826,8 @@
             "symbol": "tBTC",
             "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
             "amount": 0.82012087,
-            "priceUsd": 63362.70959189159,
-            "valueUsd": 51965.08051606,
+            "priceUsd": 63423.00079528169,
+            "valueUsd": 52014.52659024,
             "provider": "jupiter"
           }
         ],
@@ -20851,13 +20851,13 @@
         "exitedHolders": 4,
         "concentration": {
           "topHolderPct": 2.2195,
-          "top10Pct": 13.422,
-          "top50Pct": 33.925,
-          "othersPct": 66.0749,
+          "top10Pct": 13.2,
+          "top50Pct": 33.703,
+          "othersPct": 66.2969,
           "topHolderAmount": 2000000,
-          "top10Amount": 12094148.153765,
-          "top50Amount": 30568766.969579,
-          "othersAmount": 59538121.502844,
+          "top10Amount": 11894148.153765,
+          "top50Amount": 30368766.969579,
+          "othersAmount": 59738121.502844,
           "excludedPoolCount": 4
         }
       }
