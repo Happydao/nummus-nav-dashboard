@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-05T15:56:21.054Z",
+  "generatedAt": "2026-08-05T17:23:15.472Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -21128,7 +21128,7 @@
     },
     {
       "date": "2026-08-05",
-      "vaultUsd": 86264.78398742,
+      "vaultUsd": 86264.80144841,
       "supply": 97853318.026439,
       "marketPrice": 0.008428632213993955,
       "nav": 0.00088157,
@@ -21136,13 +21136,13 @@
       "premium": 9.56093358,
       "tbtcAmount": 0.82399686,
       "marketDepth": {
-        "buyDepthUsd": 269.38,
-        "sellDepthUsd": 351.25,
+        "buyDepthUsd": 189.84,
+        "sellDepthUsd": 428.13,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
       "dexLiquidity": {
-        "totalLiquidityUsd": 93306.04,
+        "totalLiquidityUsd": 93524.52,
         "poolCount": 4,
         "provider": "dexscreener",
         "pools": [
@@ -21150,14 +21150,14 @@
             "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/SOL",
-            "liquidityUsd": 81054.82,
+            "liquidityUsd": 81266.46,
             "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
           },
           {
             "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/USDC",
-            "liquidityUsd": 7213.43,
+            "liquidityUsd": 7216.98,
             "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
           },
           {
@@ -21171,7 +21171,7 @@
             "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
             "dexId": "meteora",
             "pairLabel": "NUMMUS/USDT",
-            "liquidityUsd": 2203.7,
+            "liquidityUsd": 2206.99,
             "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
           }
         ]
@@ -21183,8 +21183,8 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104793073,
-            "priceUsd": 73.95819669089444,
-            "valueUsd": 7.7503067,
+            "priceUsd": 74.12482017895638,
+            "valueUsd": 7.76776769,
             "provider": "jupiter"
           },
           {
