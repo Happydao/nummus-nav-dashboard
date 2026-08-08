@@ -1,15 +1,15 @@
 {
   "date": "2026-08-08",
-  "vaultUsd": 91199.67505924,
+  "vaultUsd": 91096.687668,
   "supply": 97789469.198155,
   "marketPrice": 0.00873275420679616,
-  "nav": 0.00093261,
-  "backing": 10.67944864,
-  "premium": 9.36377929,
+  "nav": 0.00093156,
+  "backing": 10.66742494,
+  "premium": 9.3743336,
   "tbtcAmount": 0.8318023,
   "marketDepth": {
-    "buyDepthUsd": 207.34,
-    "sellDepthUsd": 426.56,
+    "buyDepthUsd": 248.13,
+    "sellDepthUsd": 387.19,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
@@ -62,8 +62,8 @@
         "symbol": "SOL",
         "mint": "So11111111111111111111111111111111111111112",
         "amount": 0.104823073,
-        "priceUsd": 76.23988638873634,
-        "valueUsd": 7.99169918,
+        "priceUsd": 76.16795270092602,
+        "valueUsd": 7.98415887,
         "provider": "jupiter"
       },
       {
@@ -86,16 +86,16 @@
         "symbol": "PISTA",
         "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
         "amount": 25000000,
-        "priceUsd": 0.0014072645133134645,
-        "valueUsd": 35181.61283284,
+        "priceUsd": 0.0014029130237667696,
+        "valueUsd": 35072.82559417,
         "provider": "jupiter"
       },
       {
         "symbol": "tBTC",
         "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
         "amount": 0.8318023,
-        "priceUsd": 64984.666487959854,
-        "valueUsd": 54054.39504942,
+        "priceUsd": 64991.64818029995,
+        "valueUsd": 54060.20243716,
         "provider": "jupiter"
       }
     ],
