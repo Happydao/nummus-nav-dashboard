@@ -1,21 +1,21 @@
 {
   "date": "2026-08-08",
-  "vaultUsd": 89996.52053557,
+  "vaultUsd": 91220.88169618,
   "supply": 97789469.198155,
   "marketPrice": 0.008714563893084238,
-  "nav": 0.00092031,
-  "backing": 10.56059731,
-  "premium": 9.46916136,
+  "nav": 0.00093283,
+  "backing": 10.70426485,
+  "premium": 9.34207079,
   "tbtcAmount": 0.8318023,
   "marketDepth": {
-    "buyDepthUsd": 12.15,
-    "sellDepthUsd": 619.38,
+    "buyDepthUsd": 107.19,
+    "sellDepthUsd": 524.38,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 96612.92,
-    "poolCount": 6,
+    "totalLiquidityUsd": 96612.6,
+    "poolCount": 5,
     "provider": "dexscreener",
     "pools": [
       {
@@ -52,13 +52,6 @@
         "pairLabel": "IMT/NUMMUS",
         "liquidityUsd": 0.56,
         "url": "https://dexscreener.com/solana/htjhmsssry2c8e77hqgu39zq8b2tszhhytsh6kznd1y"
-      },
-      {
-        "pairAddress": "o6XaXnGjZVXvdJC6UugBRvRi5AoxKk9SyHfi6zwnk9V",
-        "dexId": "orca",
-        "pairLabel": "VICI6/NUMMUS",
-        "liquidityUsd": 0.32,
-        "url": "https://dexscreener.com/solana/o6xaxngjzvxvdjc6uugbrvri5aoxkk9syhfi6zwnk9v"
       }
     ]
   },
@@ -69,8 +62,8 @@
         "symbol": "SOL",
         "mint": "So11111111111111111111111111111111111111112",
         "amount": 0.104823073,
-        "priceUsd": 76.26955960225659,
-        "valueUsd": 7.99480961,
+        "priceUsd": 76.09598768856968,
+        "valueUsd": 7.97661527,
         "provider": "jupiter"
       },
       {
@@ -93,16 +86,16 @@
         "symbol": "PISTA",
         "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
         "amount": 25000000,
-        "priceUsd": 0.0013626885392397663,
-        "valueUsd": 34067.21348099,
+        "priceUsd": 0.0014063675349090762,
+        "valueUsd": 35159.18837273,
         "provider": "jupiter"
       },
       {
         "symbol": "tBTC",
         "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
         "amount": 0.8318023,
-        "priceUsd": 64877.96105147306,
-        "valueUsd": 53965.63722193,
+        "priceUsd": 65037.138855162106,
+        "valueUsd": 54098.04168514,
         "provider": "jupiter"
       }
     ],
