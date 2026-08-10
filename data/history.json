@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T11:00:56.920Z",
+  "generatedAt": "2026-08-10T11:52:17.996Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -21760,16 +21760,16 @@
     },
     {
       "date": "2026-08-10",
-      "vaultUsd": 94633.73584918,
+      "vaultUsd": 95043.45275283,
       "supply": 97789369.198155,
       "marketPrice": 0.008700423136591948,
-      "nav": 0.00096773,
-      "backing": 11.12279236,
-      "premium": 8.99054812,
-      "tbtcAmount": 0.8318023,
+      "nav": 0.00097192,
+      "backing": 11.17095094,
+      "premium": 8.95178938,
+      "tbtcAmount": 0.83580837,
       "marketDepth": {
-        "buyDepthUsd": 359.38,
-        "sellDepthUsd": 275,
+        "buyDepthUsd": 299.69,
+        "sellDepthUsd": 335.31,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
@@ -21808,8 +21808,8 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104823073,
-            "priceUsd": 76.73826277018182,
-            "valueUsd": 8.04394052,
+            "priceUsd": 76.82771559681237,
+            "valueUsd": 8.05331724,
             "provider": "jupiter"
           },
           {
@@ -21832,16 +21832,16 @@
             "symbol": "PISTA",
             "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
             "amount": 25000000,
-            "priceUsd": 0.001548013553532307,
-            "valueUsd": 38700.33883831,
+            "priceUsd": 0.001550477233015386,
+            "valueUsd": 38761.93082538,
             "provider": "jupiter"
           },
           {
             "symbol": "tBTC",
             "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
-            "amount": 0.8318023,
-            "priceUsd": 64899.608483889446,
-            "valueUsd": 53983.643606,
+            "amount": 0.83580837,
+            "priceUsd": 65005.043136697524,
+            "valueUsd": 54331.75914586,
             "provider": "jupiter"
           }
         ],
@@ -22472,7 +22472,7 @@
     },
     {
       "date": "2026-08-10",
-      "amount": 0.8318023
+      "amount": 0.83580837
     }
   ],
   "tbtcCursor": {
@@ -22831,9 +22831,10 @@
       "2ZyPAoqvKYMvuU2XknnKnW4jcmqSWUg8wHSQN1atBvEcWs1DDvEop4mQ5NPoNV4kQ7pNXhyzW6j8FHuuGFqd2Gsh",
       "3jCo4Wgss2A6yr2aQvVUwXQR7z458hF8DJjsUiKWjzZTMZNruF11bqvfVfSySpoPcdXrKfdunsHa87ug9rx99oYo",
       "w7o6qmAYwrDZjrFfZQEdER1Y72cWfZ6W6An9zWYJ34ijEjudHGRghQpLR6vmMdzXkGhaL1sm3uUkPgvZ9XPAgP3",
-      "4ZStJ5donRZrg3gPfyUH9BruSvkMEJ6NW5DoPUMWaPdJL5VC97dpiXDEeakjuWPPh4UfKesX9uG8KYBM4zmLUNny"
+      "4ZStJ5donRZrg3gPfyUH9BruSvkMEJ6NW5DoPUMWaPdJL5VC97dpiXDEeakjuWPPh4UfKesX9uG8KYBM4zmLUNny",
+      "55B7qmwjmKwyF8Pv8KbaxmpkmBCaCArPhjanpNvnGjr9jbPNvcu75N4buwJLq3Xyn6jrjf6EwyRxPQVxi14VCU78"
     ],
-    "lastAmount": 0.8318023
+    "lastAmount": 0.83580837
   },
   "supplyHistory": [
     {
