@@ -1,20 +1,20 @@
 {
   "date": "2026-08-16",
-  "vaultUsd": 93029.38099296,
+  "vaultUsd": 93029.41371443,
   "supply": 97789369.198155,
-  "marketPrice": 0.007733703467607601,
+  "marketPrice": 0.007732201186037984,
   "nav": 0.00095132,
-  "backing": 12.30096297,
-  "premium": 8.12944484,
+  "backing": 12.30335291,
+  "premium": 8.12786569,
   "tbtcAmount": 0.84040424,
   "marketDepth": {
-    "buyDepthUsd": 442.81,
-    "sellDepthUsd": 149.22,
+    "buyDepthUsd": 275.31,
+    "sellDepthUsd": 317.81,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 89745.4,
+    "totalLiquidityUsd": 89745.35,
     "poolCount": 4,
     "provider": "dexscreener",
     "pools": [
@@ -22,7 +22,7 @@
         "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/SOL",
-        "liquidityUsd": 78000.62,
+        "liquidityUsd": 78000.97,
         "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
       },
       {
@@ -36,7 +36,7 @@
         "pairAddress": "BqXJoDkmKvbeSKJn9RwqvoKkgu3KyDv9hPHf2NoMjs1d",
         "dexId": "orca",
         "pairLabel": "NUMMUS/USDT",
-        "liquidityUsd": 2713.9,
+        "liquidityUsd": 2713.5,
         "url": "https://dexscreener.com/solana/bqxjodkmkvbeskjn9rwqvokkgu3kydv9hphf2nomjs1d"
       },
       {
@@ -55,8 +55,8 @@
         "symbol": "SOL",
         "mint": "So11111111111111111111111111111111111111112",
         "amount": 0.104823073,
-        "priceUsd": 75.19292361463567,
-        "valueUsd": 7.88195332,
+        "priceUsd": 75.50544099513034,
+        "valueUsd": 7.91471235,
         "provider": "jupiter"
       },
       {
@@ -71,8 +71,8 @@
         "symbol": "NUMMUS",
         "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
         "amount": 25,
-        "priceUsd": 0.007733703467607601,
-        "valueUsd": 0.19334259,
+        "priceUsd": 0.007732201186037984,
+        "valueUsd": 0.19330503,
         "provider": "jupiter"
       },
       {
