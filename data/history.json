@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-18T07:31:15.932Z",
+  "generatedAt": "2026-08-18T08:26:43.830Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -22774,16 +22774,16 @@
     },
     {
       "date": "2026-08-18",
-      "vaultUsd": 94163.69520584,
+      "vaultUsd": 93883.84310191,
       "supply": 97789368.97975,
       "marketPrice": 0.0077098379928593,
-      "nav": 0.00096292,
-      "backing": 12.4894972,
-      "premium": 8.00672745,
+      "nav": 0.00096006,
+      "backing": 12.45240174,
+      "premium": 8.03057933,
       "tbtcAmount": 0.84717311,
       "marketDepth": {
-        "buyDepthUsd": 297.5,
-        "sellDepthUsd": 298.75,
+        "buyDepthUsd": 334.38,
+        "sellDepthUsd": 261.25,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
@@ -22822,16 +22822,16 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104823073,
-            "priceUsd": 75.96189224597393,
-            "valueUsd": 7.96255898,
+            "priceUsd": 75.88138441105326,
+            "valueUsd": 7.9541199,
             "provider": "jupiter"
           },
           {
             "symbol": "PUNCHY",
             "mint": "GnYufMbTAMz1DzkSN2DmwkBzjMTLkM22WvQuN1VCbonk",
             "amount": 25000000,
-            "priceUsd": 0.00007424134891037094,
-            "valueUsd": 1856.03372276,
+            "priceUsd": 0.00007397528859097994,
+            "valueUsd": 1849.38221477,
             "provider": "jupiter"
           },
           {
@@ -22846,8 +22846,8 @@
             "symbol": "PISTA",
             "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
             "amount": 25000000,
-            "priceUsd": 0.0015203031510699796,
-            "valueUsd": 38007.57877675,
+            "priceUsd": 0.001509375464795559,
+            "valueUsd": 37734.38661989,
             "provider": "jupiter"
           },
           {
