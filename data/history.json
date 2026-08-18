@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-18T17:20:05.767Z",
+  "generatedAt": "2026-08-18T18:40:50.907Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -22774,16 +22774,16 @@
     },
     {
       "date": "2026-08-18",
-      "vaultUsd": 93810.30600516,
+      "vaultUsd": 94082.03183833,
       "supply": 97789368.97975,
       "marketPrice": 0.007785226102041053,
-      "nav": 0.00095931,
-      "backing": 12.32218548,
-      "premium": 8.1154435,
-      "tbtcAmount": 0.84717311,
+      "nav": 0.00096209,
+      "backing": 12.35789414,
+      "premium": 8.09199358,
+      "tbtcAmount": 0.85137624,
       "marketDepth": {
-        "buyDepthUsd": 440.63,
-        "sellDepthUsd": 164.06,
+        "buyDepthUsd": 290.16,
+        "sellDepthUsd": 311.88,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
@@ -22829,8 +22829,8 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104823073,
-            "priceUsd": 76.87915709102421,
-            "valueUsd": 8.0587095,
+            "priceUsd": 77.15157035135674,
+            "valueUsd": 8.08726469,
             "provider": "jupiter"
           },
           {
@@ -22860,9 +22860,9 @@
           {
             "symbol": "tBTC",
             "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
-            "amount": 0.84717311,
+            "amount": 0.85137624,
             "priceUsd": 64641.65466761678,
-            "valueUsd": 54762.67162031,
+            "valueUsd": 55034.36889829,
             "provider": "jupiter"
           }
         ],
@@ -23525,7 +23525,7 @@
     },
     {
       "date": "2026-08-18",
-      "amount": 0.84717311
+      "amount": 0.85137624
     }
   ],
   "tbtcCursor": {
@@ -23887,9 +23887,10 @@
       "4ZStJ5donRZrg3gPfyUH9BruSvkMEJ6NW5DoPUMWaPdJL5VC97dpiXDEeakjuWPPh4UfKesX9uG8KYBM4zmLUNny",
       "55B7qmwjmKwyF8Pv8KbaxmpkmBCaCArPhjanpNvnGjr9jbPNvcu75N4buwJLq3Xyn6jrjf6EwyRxPQVxi14VCU78",
       "55uyvb8G2fTVE3jKJuJNGQxZVAjPipkSb9pgKdNzRwgBY8b2QHKo1WdbRABwDmKiDeV16Ump6GJQsYpLoXmLVzeB",
-      "5JCfyBQRiVBsfTSKnRg8uNPNHYnYHnjFzbE5JKSb1ssK37STkUFHd8qKXm5KcjyzeMqKEJoBxrztFEByLqrtXefs"
+      "5JCfyBQRiVBsfTSKnRg8uNPNHYnYHnjFzbE5JKSb1ssK37STkUFHd8qKXm5KcjyzeMqKEJoBxrztFEByLqrtXefs",
+      "31nsHg3yqisdEQ1P41GXntDkXtFhkxguvQt6Qmd6DUFsXh6BtXEaXism5mXBquKnK3LpmPVKwPD9rs49v6RMrh8n"
     ],
-    "lastAmount": 0.84717311
+    "lastAmount": 0.85137624
   },
   "supplyHistory": [
     {
