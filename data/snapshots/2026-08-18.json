@@ -1,20 +1,20 @@
 {
   "date": "2026-08-18",
-  "vaultUsd": 93712.26144202,
+  "vaultUsd": 93712.25009775,
   "supply": 97789368.97975,
-  "marketPrice": 0.007693600716672238,
+  "marketPrice": 0.007675100340837209,
   "nav": 0.00095831,
-  "backing": 12.45593624,
-  "premium": 8.02830057,
+  "backing": 12.48596054,
+  "premium": 8.00899536,
   "tbtcAmount": 0.84717311,
   "marketDepth": {
-    "buyDepthUsd": 380.63,
-    "sellDepthUsd": 212.19,
+    "buyDepthUsd": 325.31,
+    "sellDepthUsd": 268.59,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 87306.51,
+    "totalLiquidityUsd": 86635.88,
     "poolCount": 3,
     "provider": "dexscreener",
     "pools": [
@@ -22,14 +22,14 @@
         "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/SOL",
-        "liquidityUsd": 78297.45,
+        "liquidityUsd": 77635.09,
         "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
       },
       {
         "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/USDC",
-        "liquidityUsd": 6901.61,
+        "liquidityUsd": 6893.34,
         "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
       },
       {
@@ -48,8 +48,8 @@
         "symbol": "SOL",
         "mint": "So11111111111111111111111111111111111111112",
         "amount": 0.104823073,
-        "priceUsd": 75.49733778359723,
-        "valueUsd": 7.91386295,
+        "priceUsd": 75.39352708890591,
+        "valueUsd": 7.90298119,
         "provider": "jupiter"
       },
       {
@@ -64,8 +64,8 @@
         "symbol": "NUMMUS",
         "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
         "amount": 25,
-        "priceUsd": 0.007693600716672238,
-        "valueUsd": 0.19234002,
+        "priceUsd": 0.007675100340837209,
+        "valueUsd": 0.19187751,
         "provider": "jupiter"
       },
       {
