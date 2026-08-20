@@ -1,20 +1,20 @@
 {
   "date": "2026-08-20",
-  "vaultUsd": 104289.75828812,
+  "vaultUsd": 104289.75215023,
   "supply": 97789367.493899,
-  "marketPrice": 0.007738138517735177,
+  "marketPrice": 0.007737990451446094,
   "nav": 0.00106647,
-  "backing": 13.78199676,
-  "premium": 7.25584266,
+  "backing": 13.78226048,
+  "premium": 7.25570382,
   "tbtcAmount": 0.85439484,
   "marketDepth": {
-    "buyDepthUsd": 196.25,
-    "sellDepthUsd": 444.69,
+    "buyDepthUsd": 223.13,
+    "sellDepthUsd": 412.19,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 96119.27,
+    "totalLiquidityUsd": 96166.96,
     "poolCount": 7,
     "provider": "dexscreener",
     "pools": [
@@ -22,7 +22,7 @@
         "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/SOL",
-        "liquidityUsd": 84263.93,
+        "liquidityUsd": 84310.71,
         "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
       },
       {
@@ -43,7 +43,7 @@
         "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
         "dexId": "meteora",
         "pairLabel": "NUMMUS/USDT",
-        "liquidityUsd": 2111.48,
+        "liquidityUsd": 2112.39,
         "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
       },
       {
@@ -76,8 +76,8 @@
         "symbol": "SOL",
         "mint": "So11111111111111111111111111111111111111112",
         "amount": 0.104823073,
-        "priceUsd": 87.41080665493247,
-        "valueUsd": 9.16266937,
+        "priceUsd": 87.35228718379466,
+        "valueUsd": 9.15653518,
         "provider": "jupiter"
       },
       {
@@ -92,8 +92,8 @@
         "symbol": "NUMMUS",
         "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
         "amount": 25,
-        "priceUsd": 0.007738138517735177,
-        "valueUsd": 0.19345346,
+        "priceUsd": 0.007737990451446094,
+        "valueUsd": 0.19344976,
         "provider": "jupiter"
       },
       {
