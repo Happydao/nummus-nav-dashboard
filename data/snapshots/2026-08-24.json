@@ -1,6 +1,6 @@
 {
   "date": "2026-08-24",
-  "vaultUsd": 110955.44871837,
+  "vaultUsd": 110955.45073071,
   "supply": 97789367.493899,
   "marketPrice": 0.008029308244977508,
   "nav": 0.00113464,
@@ -8,13 +8,13 @@
   "premium": 7.07652493,
   "tbtcAmount": 0.85757246,
   "marketDepth": {
-    "buyDepthUsd": 382.19,
-    "sellDepthUsd": 289.38,
+    "buyDepthUsd": 375,
+    "sellDepthUsd": 319.84,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 101057.93,
+    "totalLiquidityUsd": 100935.18,
     "poolCount": 7,
     "provider": "dexscreener",
     "pools": [
@@ -22,14 +22,14 @@
         "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/SOL",
-        "liquidityUsd": 88943.03,
+        "liquidityUsd": 88823.16,
         "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
       },
       {
         "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/USDC",
-        "liquidityUsd": 7062.17,
+        "liquidityUsd": 7059.29,
         "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
       },
       {
@@ -76,8 +76,8 @@
         "symbol": "SOL",
         "mint": "So11111111111111111111111111111111111111112",
         "amount": 0.104823073,
-        "priceUsd": 94.2029875950754,
-        "valueUsd": 9.87464665,
+        "priceUsd": 94.22218516399364,
+        "valueUsd": 9.87665899,
         "provider": "jupiter"
       },
       {
