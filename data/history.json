@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T11:19:55.852Z",
+  "generatedAt": "2026-08-24T12:33:26.846Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -23566,16 +23566,16 @@
     },
     {
       "date": "2026-08-24",
-      "vaultUsd": 111375.73107602,
+      "vaultUsd": 112769.22788985,
       "supply": 97694573.575772,
-      "marketPrice": 0.00802769532881922,
-      "nav": 0.00114004,
-      "backing": 14.20133617,
-      "premium": 7.04159093,
+      "marketPrice": 0.00812432825023304,
+      "nav": 0.0011543,
+      "backing": 14.2079439,
+      "premium": 7.03831608,
       "tbtcAmount": 0.85757246,
       "marketDepth": {
-        "buyDepthUsd": 407.19,
-        "sellDepthUsd": 266.72,
+        "buyDepthUsd": 550.63,
+        "sellDepthUsd": 139.92,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
@@ -23628,8 +23628,8 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104823073,
-            "priceUsd": 94.68300743449275,
-            "valueUsd": 9.9249638,
+            "priceUsd": 95.3514781118671,
+            "valueUsd": 9.99503495,
             "provider": "jupiter"
           },
           {
@@ -23644,24 +23644,24 @@
             "symbol": "NUMMUS",
             "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
             "amount": 25,
-            "priceUsd": 0.00802769532881922,
-            "valueUsd": 0.20069238,
+            "priceUsd": 0.00812432825023304,
+            "valueUsd": 0.20310821,
             "provider": "jupiter"
           },
           {
             "symbol": "PISTA",
             "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
             "amount": 25000000,
-            "priceUsd": 0.0017239530747944639,
-            "valueUsd": 43098.82686986,
+            "priceUsd": 0.0017333811159268298,
+            "valueUsd": 43334.52789817,
             "provider": "jupiter"
           },
           {
             "symbol": "tBTC",
             "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
             "amount": 0.85757246,
-            "priceUsd": 76927.50032082887,
-            "valueUsd": 65970.90569178,
+            "priceUsd": 78277.5008776693,
+            "valueUsd": 67128.62899032,
             "provider": "jupiter"
           }
         ],
@@ -23680,18 +23680,18 @@
         "unpricedAssets": []
       },
       "holderGrowth": {
-        "holderCount": 7304,
+        "holderCount": 7305,
         "newHolders": 1,
-        "exitedHolders": 2,
+        "exitedHolders": 1,
         "concentration": {
-          "topHolderPct": 2.2378,
-          "top10Pct": 13.4053,
-          "top50Pct": 34.0249,
-          "othersPct": 65.975,
+          "topHolderPct": 2.2377,
+          "top10Pct": 13.4046,
+          "top50Pct": 34.0232,
+          "othersPct": 65.9767,
           "topHolderAmount": 2000000,
           "top10Amount": 11980622.211219,
           "top50Amount": 30408759.337583,
-          "othersAmount": 58963256.188848,
+          "othersAmount": 58967523.489134,
           "excludedPoolCount": 5
         }
       }
