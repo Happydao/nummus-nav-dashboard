@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T15:31:38.346Z",
+  "generatedAt": "2026-08-24T16:31:53.324Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -23566,7 +23566,7 @@
     },
     {
       "date": "2026-08-24",
-      "vaultUsd": 114007.86937483,
+      "vaultUsd": 114007.8661653,
       "supply": 97694573.575772,
       "marketPrice": 0.00814954923822385,
       "nav": 0.00116698,
@@ -23574,13 +23574,13 @@
       "premium": 6.98345236,
       "tbtcAmount": 0.85757246,
       "marketDepth": {
-        "buyDepthUsd": 3.14,
-        "sellDepthUsd": 756.88,
+        "buyDepthUsd": 1.61,
+        "sellDepthUsd": 716.88,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
       "dexLiquidity": {
-        "totalLiquidityUsd": 103805.58,
+        "totalLiquidityUsd": 103796.34,
         "poolCount": 4,
         "provider": "dexscreener",
         "pools": [
@@ -23588,14 +23588,14 @@
             "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/SOL",
-            "liquidityUsd": 91701.75,
+            "liquidityUsd": 91692.19,
             "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
           },
           {
             "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/USDC",
-            "liquidityUsd": 7127.73,
+            "liquidityUsd": 7129.42,
             "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
           },
           {
@@ -23609,7 +23609,7 @@
             "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
             "dexId": "meteora",
             "pairLabel": "NUMMUS/USDT",
-            "liquidityUsd": 2178.06,
+            "liquidityUsd": 2176.69,
             "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
           }
         ]
@@ -23621,8 +23621,8 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104823073,
-            "priceUsd": 97.16252064619361,
-            "valueUsd": 10.18487399,
+            "priceUsd": 97.13190204869687,
+            "valueUsd": 10.18166446,
             "provider": "jupiter"
           },
           {
@@ -23684,7 +23684,7 @@
           "topHolderAmount": 2000000,
           "top10Amount": 11980622.211219,
           "top50Amount": 30408759.337583,
-          "othersAmount": 58967848.952227,
+          "othersAmount": 58967849.057852,
           "excludedPoolCount": 5
         }
       }
