@@ -1,6 +1,6 @@
 {
   "date": "2026-09-01",
-  "vaultUsd": 109752.89977118,
+  "vaultUsd": 109752.90875528,
   "supply": 97694548.575772,
   "marketPrice": 0.009482621591642839,
   "nav": 0.00112343,
@@ -8,13 +8,13 @@
   "premium": 8.44077654,
   "tbtcAmount": 0.87281808,
   "marketDepth": {
-    "buyDepthUsd": 432.5,
-    "sellDepthUsd": 335.31,
+    "buyDepthUsd": 400.63,
+    "sellDepthUsd": 364.06,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 114135.64,
+    "totalLiquidityUsd": 114134.83,
     "poolCount": 5,
     "provider": "dexscreener",
     "pools": [
@@ -36,7 +36,7 @@
         "pairAddress": "BqXJoDkmKvbeSKJn9RwqvoKkgu3KyDv9hPHf2NoMjs1d",
         "dexId": "orca",
         "pairLabel": "NUMMUS/USDT",
-        "liquidityUsd": 2997.26,
+        "liquidityUsd": 2996.45,
         "url": "https://dexscreener.com/solana/bqxjodkmkvbeskjn9rwqvokkgu3kydv9hphf2nomjs1d"
       },
       {
@@ -62,8 +62,8 @@
         "symbol": "SOL",
         "mint": "So11111111111111111111111111111111111111112",
         "amount": 0.104823073,
-        "priceUsd": 102.32216555605156,
-        "valueUsd": 10.72572383,
+        "priceUsd": 102.40787284944321,
+        "valueUsd": 10.73470793,
         "provider": "jupiter"
       },
       {
@@ -114,9 +114,9 @@
     "unpricedAssets": []
   },
   "holderGrowth": {
-    "holderCount": 12380,
+    "holderCount": 12379,
     "newHolders": 94,
-    "exitedHolders": 9,
+    "exitedHolders": 10,
     "concentration": {
       "topHolderPct": 2.2279,
       "top10Pct": 13.3453,
@@ -125,7 +125,7 @@
       "topHolderAmount": 2000000,
       "top10Amount": 11979717.699188,
       "top50Amount": 30493066.828697,
-      "othersAmount": 59273837.708155,
+      "othersAmount": 59273812.708155,
       "excludedPoolCount": 5
     }
   }
