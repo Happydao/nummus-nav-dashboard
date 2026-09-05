@@ -53,10 +53,26 @@ jobs:
           HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
 
       - name: Commit snapshot
+        id: commit-snapshot
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Update daily NUMMUS snapshot"
           file_pattern: data/history.json data/holder-state.json data/snapshots/*.json
+
+      - name: Trigger NUMMUS Aeternitas data update
+        if: steps.commit-snapshot.outputs.changes_detected == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.AETERNITAS_DISPATCH_TOKEN }}
+        run: |
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo "::warning::AETERNITAS_DISPATCH_TOKEN is not configured; skipping downstream update"
+            exit 0
+          fi
+
+          gh api \
+            --method POST \
+            repos/Happydao/Nummus.Aeternitas/dispatches \
+            -f event_type=nummus_data_updated
 
   deploy:
     needs: collect
