@@ -256,6 +256,35 @@ body {
   font-weight: 700;
 }
 
+.back-to-site {
+  align-items: center;
+  background: rgba(232, 238, 233, 0.06);
+  border: 1px solid rgba(232, 238, 233, 0.12);
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: #b7c7bd;
+  display: flex;
+  font-size: 12px;
+  font-weight: 600;
+  gap: 7px;
+  height: 38px;
+  padding: 0 14px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.back-to-site svg {
+  height: 15px;
+  width: 15px;
+}
+
+@media (hover: hover) {
+  .back-to-site:hover {
+    background: rgba(232, 238, 233, 0.12);
+    color: #dcece2;
+  }
+}
+
 .content {
   margin: 0 auto;
   max-width: 1220px;
@@ -1568,6 +1597,7 @@ svg {
 
 [data-theme="light"] .theme-toggle-track,
 [data-theme="light"] .range-selector,
+[data-theme="light"] .back-to-site,
 [data-theme="light"] .projection-options {
   background: rgba(16, 35, 26, 0.06);
   border-color: rgba(16, 35, 26, 0.16);
@@ -1580,6 +1610,17 @@ svg {
 
 [data-theme="light"] .range-selector button {
   color: #52665b;
+}
+
+[data-theme="light"] .back-to-site {
+  color: #52665b;
+}
+
+@media (hover: hover) {
+  [data-theme="light"] .back-to-site:hover {
+    background: rgba(16, 35, 26, 0.12);
+    color: #173c2b;
+  }
 }
 
 [data-theme="light"] .range-selector button.active {
@@ -2138,6 +2179,14 @@ svg {
   .range-selector {
     grid-template-columns: repeat(5, minmax(0, 1fr));
     width: 100%;
+  }
+
+  .back-to-site {
+    padding: 0 10px;
+  }
+
+  .back-to-site svg + * {
+    display: none;
   }
 
   .site-footer {

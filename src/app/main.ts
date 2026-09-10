@@ -22,6 +22,7 @@ import { numberCompact, percent, ratio, tbtcAxis, usd, usdCompact } from "../uti
 
 const app = document.querySelector<HTMLDivElement>("#app");
 const NUMMUS_MINT_URL = "https://solscan.io/token/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray";
+const NUMMUS_SITE_URL = "https://nummus.meme";
 const REALMS_DAO_URL = "https://app.realms.today/dao/2Czvw7p29thfqNJznuicygBKxh33xoCMuGMH7zbPQ2gp";
 const VAULT_SOLSCAN_URL = "https://solscan.io/account/HtT3yMsAavLQYmd6VSbXSdbAefyZUrrFeEPoTPivde3s";
 const NUMMUS_COINGECKO_URL = "https://www.coingecko.com/en/coins/nummus-aeternitas";
@@ -84,6 +85,10 @@ async function render(): Promise<void> {
         </div>
         <div class="topbar-tools">
           <div class="topbar-controls">
+            <a class="back-to-site" href="${NUMMUS_SITE_URL}" aria-label="Back to nummus.meme" title="Back to nummus.meme">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg>
+              <span>nummus.meme</span>
+            </a>
             ${themeToggle(selectedTheme)}
             ${rangeButtons(selectedRange)}
           </div>
