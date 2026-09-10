@@ -1,20 +1,20 @@
 {
   "date": "2026-09-10",
-  "vaultUsd": 103135.15245237,
+  "vaultUsd": 102948.91869698,
   "supply": 97693923.575772,
-  "marketPrice": 0.011617045131502078,
-  "nav": 0.0010557,
-  "backing": 9.08750881,
-  "premium": 11.00411588,
+  "marketPrice": 0.011638120871613856,
+  "nav": 0.00105379,
+  "backing": 9.05464045,
+  "premium": 11.04406084,
   "tbtcAmount": 0.88720799,
   "marketDepth": {
-    "buyDepthUsd": 333.75,
-    "sellDepthUsd": 505.31,
+    "buyDepthUsd": 664.38,
+    "sellDepthUsd": 180.47,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 125150.92,
+    "totalLiquidityUsd": 125328.91,
     "poolCount": 6,
     "provider": "dexscreener",
     "pools": [
@@ -22,14 +22,14 @@
         "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/SOL",
-        "liquidityUsd": 110524.75,
+        "liquidityUsd": 110705.63,
         "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
       },
       {
         "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/USDC",
-        "liquidityUsd": 8519.47,
+        "liquidityUsd": 8515.78,
         "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
       },
       {
@@ -43,14 +43,14 @@
         "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
         "dexId": "meteora",
         "pairLabel": "NUMMUS/USDT",
-        "liquidityUsd": 2592.65,
+        "liquidityUsd": 2593.46,
         "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
       },
       {
         "pairAddress": "2hc1AWBjRYTxrrdW7DPAYYcqHNx9AzAqofAjEUa4MT74",
         "dexId": "meteora",
         "pairLabel": "IMT/NUMMUS",
-        "liquidityUsd": 0.99,
+        "liquidityUsd": 0.98,
         "url": "https://dexscreener.com/solana/2hc1awbjrytxrrdw7dpayycqhnx9azaqofajeua4mt74"
       },
       {
@@ -69,8 +69,8 @@
         "symbol": "SOL",
         "mint": "So11111111111111111111111111111111111111112",
         "amount": 0.104823073,
-        "priceUsd": 101.05462831103374,
-        "valueUsd": 10.59285668,
+        "priceUsd": 100.96715798151055,
+        "valueUsd": 10.58368777,
         "provider": "jupiter"
       },
       {
@@ -85,8 +85,8 @@
         "symbol": "NUMMUS",
         "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
         "amount": 25,
-        "priceUsd": 0.011617045131502078,
-        "valueUsd": 0.29042613,
+        "priceUsd": 0.011638120871613856,
+        "valueUsd": 0.29095302,
         "provider": "jupiter"
       },
       {
@@ -101,8 +101,8 @@
         "symbol": "tBTC",
         "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
         "amount": 0.88720799,
-        "priceUsd": 78355.11898108732,
-        "valueUsd": 69517.28761742,
+        "priceUsd": 78145.21880494693,
+        "valueUsd": 69331.06250405,
         "provider": "jupiter"
       }
     ],
@@ -121,18 +121,18 @@
     "unpricedAssets": []
   },
   "holderGrowth": {
-    "holderCount": 13221,
+    "holderCount": 13215,
     "newHolders": 0,
-    "exitedHolders": 0,
+    "exitedHolders": 6,
     "concentration": {
-      "topHolderPct": 2.2131,
-      "top10Pct": 13.2295,
-      "top50Pct": 33.9466,
-      "othersPct": 66.0533,
+      "topHolderPct": 2.2133,
+      "top10Pct": 13.2307,
+      "top50Pct": 33.9496,
+      "othersPct": 66.0503,
       "topHolderAmount": 2000000,
       "top10Amount": 11955598.944356,
       "top50Amount": 30677666.742753,
-      "othersAmount": 59692456.863367,
+      "othersAmount": 59684475.015161,
       "excludedPoolCount": 5
     }
   }
