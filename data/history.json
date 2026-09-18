@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-18T11:34:04.613Z",
+  "generatedAt": "2026-09-18T12:34:19.092Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -27006,21 +27006,21 @@
     },
     {
       "date": "2026-09-18",
-      "vaultUsd": 102906.97513895,
+      "vaultUsd": 102906.99059731,
       "supply": 97638741.27425,
-      "marketPrice": 0.016251551998501357,
+      "marketPrice": 0.01655080523827854,
       "nav": 0.00105396,
-      "backing": 6.4852883,
-      "premium": 15.41951497,
+      "backing": 6.36802853,
+      "premium": 15.70344723,
       "tbtcAmount": 0.91081723,
       "marketDepth": {
-        "buyDepthUsd": 550,
-        "sellDepthUsd": 468.13,
+        "buyDepthUsd": 531.56,
+        "sellDepthUsd": 493.75,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
       "dexLiquidity": {
-        "totalLiquidityUsd": 151578.16,
+        "totalLiquidityUsd": 153098.63,
         "poolCount": 5,
         "provider": "dexscreener",
         "pools": [
@@ -27028,28 +27028,28 @@
             "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/SOL",
-            "liquidityUsd": 134118.9,
+            "liquidityUsd": 135490.09,
             "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
           },
           {
             "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/USDC",
-            "liquidityUsd": 10228.32,
+            "liquidityUsd": 10312.46,
             "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
           },
           {
             "pairAddress": "BqXJoDkmKvbeSKJn9RwqvoKkgu3KyDv9hPHf2NoMjs1d",
             "dexId": "orca",
             "pairLabel": "NUMMUS/USDT",
-            "liquidityUsd": 4161.19,
+            "liquidityUsd": 4200.72,
             "url": "https://dexscreener.com/solana/bqxjodkmkvbeskjn9rwqvokkgu3kydv9hphf2nomjs1d"
           },
           {
             "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
             "dexId": "meteora",
             "pairLabel": "NUMMUS/USDT",
-            "liquidityUsd": 3068.84,
+            "liquidityUsd": 3094.45,
             "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
           },
           {
@@ -27068,8 +27068,8 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104823073,
-            "priceUsd": 105.61808280331887,
-            "valueUsd": 11.071212,
+            "priceUsd": 105.69418271655705,
+            "valueUsd": 11.07918903,
             "provider": "jupiter"
           },
           {
@@ -27084,8 +27084,8 @@
             "symbol": "NUMMUS",
             "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
             "amount": 25,
-            "priceUsd": 0.016251551998501357,
-            "valueUsd": 0.4062888,
+            "priceUsd": 0.01655080523827854,
+            "valueUsd": 0.41377013,
             "provider": "jupiter"
           },
           {
@@ -27120,18 +27120,18 @@
         "unpricedAssets": []
       },
       "holderGrowth": {
-        "holderCount": 14807,
-        "newHolders": 237,
-        "exitedHolders": 13,
+        "holderCount": 14808,
+        "newHolders": 239,
+        "exitedHolders": 14,
         "concentration": {
-          "topHolderPct": 2.1944,
-          "top10Pct": 13.2014,
-          "top50Pct": 33.4101,
-          "othersPct": 66.5898,
+          "topHolderPct": 2.1934,
+          "top10Pct": 13.1957,
+          "top50Pct": 33.3955,
+          "othersPct": 66.6044,
           "topHolderAmount": 2000000,
-          "top10Amount": 12031879.592829,
-          "top50Amount": 30450152.682498,
-          "othersAmount": 60690359.253882,
+          "top10Amount": 12031873.190672,
+          "top50Amount": 30450146.280341,
+          "othersAmount": 60730082.772478,
           "excludedPoolCount": 5
         }
       }
