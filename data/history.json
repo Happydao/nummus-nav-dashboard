@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T08:12:04.390Z",
+  "generatedAt": "2026-09-26T11:37:08.296Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -28083,21 +28083,21 @@
     },
     {
       "date": "2026-09-26",
-      "vaultUsd": 105946.23350853,
+      "vaultUsd": 105991.5717249,
       "supply": 97638666.243469,
-      "marketPrice": 0.015092244810840755,
-      "nav": 0.00108508,
-      "backing": 7.18965279,
-      "premium": 13.90887751,
+      "marketPrice": 0.015065944510372473,
+      "nav": 0.00108555,
+      "backing": 7.20532323,
+      "premium": 13.87862789,
       "tbtcAmount": 0.93534525,
       "marketDepth": {
-        "buyDepthUsd": 399.06,
-        "sellDepthUsd": 649.38,
+        "buyDepthUsd": 82.34,
+        "sellDepthUsd": 968.13,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
       "dexLiquidity": {
-        "totalLiquidityUsd": 155372.68,
+        "totalLiquidityUsd": 155024.78,
         "poolCount": 7,
         "provider": "dexscreener",
         "pools": [
@@ -28105,14 +28105,14 @@
             "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/SOL",
-            "liquidityUsd": 138628.19,
+            "liquidityUsd": 138284.48,
             "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
           },
           {
             "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/USDC",
-            "liquidityUsd": 9762.71,
+            "liquidityUsd": 9754.01,
             "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
           },
           {
@@ -28126,7 +28126,7 @@
             "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
             "dexId": "meteora",
             "pairLabel": "NUMMUS/USDT",
-            "liquidityUsd": 2958.49,
+            "liquidityUsd": 2963,
             "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
           },
           {
@@ -28159,8 +28159,8 @@
             "symbol": "SOL",
             "mint": "So11111111111111111111111111111111111111112",
             "amount": 0.104823073,
-            "priceUsd": 120.55285145475916,
-            "valueUsd": 12.63672035,
+            "priceUsd": 121.1393719877948,
+            "valueUsd": 12.69820123,
             "provider": "jupiter"
           },
           {
@@ -28175,8 +28175,8 @@
             "symbol": "NUMMUS",
             "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
             "amount": 25,
-            "priceUsd": 0.015092244810840755,
-            "valueUsd": 0.37730612,
+            "priceUsd": 0.015065944510372473,
+            "valueUsd": 0.37664861,
             "provider": "jupiter"
           },
           {
@@ -28191,8 +28191,8 @@
             "symbol": "tBTC",
             "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
             "amount": 0.93534525,
-            "priceUsd": 84102.38291626108,
-            "valueUsd": 78664.76437441,
+            "priceUsd": 84150.79006110918,
+            "valueUsd": 78710.04176741,
             "provider": "jupiter"
           }
         ],
@@ -28211,18 +28211,18 @@
         "unpricedAssets": []
       },
       "holderGrowth": {
-        "holderCount": 15928,
-        "newHolders": 2,
-        "exitedHolders": 5,
+        "holderCount": 16018,
+        "newHolders": 95,
+        "exitedHolders": 8,
         "concentration": {
-          "topHolderPct": 2.2057,
-          "top10Pct": 12.9937,
-          "top50Pct": 33.492,
-          "othersPct": 66.5079,
+          "topHolderPct": 2.2058,
+          "top10Pct": 12.9944,
+          "top50Pct": 33.4938,
+          "othersPct": 66.5061,
           "topHolderAmount": 2000000,
           "top10Amount": 11781709.04741,
           "top50Amount": 30368014.340812,
-          "othersAmount": 60304418.467049,
+          "othersAmount": 60299378.467049,
           "excludedPoolCount": 6
         }
       }
