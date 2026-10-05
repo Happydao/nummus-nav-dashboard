@@ -1,6 +1,6 @@
 {
   "date": "2026-06-29",
-  "vaultUsd": 84421.56068962,
+  "vaultUsd": 45372.39225445158,
   "supply": 98142100.867519,
   "marketPrice": 0.008793423845776695,
   "nav": 0.0008602,
@@ -66,58 +66,15 @@
     "source": "Helius DAS current vault assets + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
     "pricedAssets": [
       {
-        "symbol": "SOL",
-        "mint": "So11111111111111111111111111111111111111112",
-        "amount": 0.104571323,
-        "priceUsd": 74.93112404399491,
-        "valueUsd": 7.83564678,
-        "provider": "jupiter"
-      },
-      {
-        "symbol": "PUNCHY",
-        "mint": "GnYufMbTAMz1DzkSN2DmwkBzjMTLkM22WvQuN1VCbonk",
-        "amount": 25000000,
-        "priceUsd": 0.00006513678607790886,
-        "valueUsd": 1628.41965195,
-        "provider": "jupiter"
-      },
-      {
-        "symbol": "NUMMUS",
-        "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
-        "amount": 25,
-        "priceUsd": 0.008793423845776695,
-        "valueUsd": 0.2198356,
-        "provider": "jupiter"
-      },
-      {
-        "symbol": "PISTA",
-        "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
-        "amount": 25000000,
-        "priceUsd": 0.0014965077320337945,
-        "valueUsd": 37412.69330084,
-        "provider": "jupiter"
-      },
-      {
         "symbol": "tBTC",
         "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
         "amount": 0.7527866,
         "priceUsd": 60272.58223572468,
-        "valueUsd": 45372.39225445,
+        "valueUsd": 45372.39225445158,
         "provider": "jupiter"
       }
     ],
-    "ignoredAssets": [
-      {
-        "symbol": "MyNF",
-        "mint": "GGVXuvQD13vxsNi9Dx86AwwpcTHrfNFcJSgsKesbyzn7",
-        "reason": "ignored V1_NFT received by treasury"
-      },
-      {
-        "symbol": "MyNF",
-        "mint": "EUGVqX5GWe6P4b8bYyaWLFhzMwAES8tq79KpYs5UagMY",
-        "reason": "ignored V1_NFT received by treasury"
-      }
-    ],
+    "ignoredAssets": [],
     "unpricedAssets": []
   }
 }

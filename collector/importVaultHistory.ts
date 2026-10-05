@@ -4,29 +4,17 @@ import { resolve } from "node:path";
 import { readHistory, writeHistory } from "./utils/historyStore.js";
 import { divideOrNull, round } from "./utils/math.js";
 import type { DailySnapshot, HistoryFile, PricedAsset, SupplySnapshot } from "./types.js";
-import { NUMMUS_MINT, TBTC_MINT } from "./utils/constants.js";
+import { TBTC_MINT } from "./utils/constants.js";
 
 const DEFAULT_VAULTDAO_PATH = "../Nummus.VaultDAO";
 const IMPORT_START = "2025-12-05T23:13:55Z";
 const PRICES_PATH = "data/prices.json";
-const PISTA_MINT = "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE";
-const PUNCHY_MINT = "GnYufMbTAMz1DzkSN2DmwkBzjMTLkM22WvQuN1VCbonk";
 
 interface VaultDaoPrices {
   timestamp?: string;
   total_usd_value?: number;
   nummus_price_usd?: number;
   tbtc_price_usd?: number;
-  bumper?: {
-    quantity?: number;
-    price_usd?: number;
-    total_value_usd?: number;
-  };
-  punchy?: {
-    quantity?: number;
-    price_usd?: number;
-    total_value_usd?: number;
-  };
   wallet_2?: {
     tbtc_balance?: number;
     tbtc_usd_value?: number;
@@ -82,7 +70,9 @@ function collectVaultDaoSnapshots(repoPath: string): ImportedVaultSnapshot[] {
 }
 
 function buildRecord(snapshot: ImportedVaultSnapshot, supplyHistory: SupplySnapshot[]): DailySnapshot {
-  const vaultUsd = round(snapshot.prices.total_usd_value ?? null);
+  const tbtcAmount = numberOrZero(snapshot.prices.wallet_2?.tbtc_balance);
+  const tbtcPrice = numberOrZero(snapshot.prices.tbtc_price_usd);
+  const vaultUsd = round(tbtcAmount * tbtcPrice);
   const supply = findSupplyForDate(snapshot.date, supplyHistory);
   const marketPrice = round(snapshot.prices.nummus_price_usd ?? null);
   const nav = round(divideOrNull(vaultUsd, supply));
@@ -101,7 +91,7 @@ function buildRecord(snapshot: ImportedVaultSnapshot, supplyHistory: SupplySnaps
     nav,
     backing,
     premium,
-    tbtcAmount: round(snapshot.prices.wallet_2?.tbtc_balance ?? null),
+    tbtcAmount: round(tbtcAmount),
     valuationReport: {
       source: `Imported from Nummus.VaultDAO ${PRICES_PATH} commit ${snapshot.commit} at ${snapshot.timestamp}`,
       pricedAssets: pricedAssets(snapshot.prices),
@@ -127,23 +117,7 @@ function pricedAssets(prices: VaultDaoPrices): PricedAsset[] {
       mint: TBTC_MINT,
       amount: numberOrZero(prices.wallet_2?.tbtc_balance),
       priceUsd: numberOrZero(prices.tbtc_price_usd),
-      valueUsd: numberOrZero(prices.wallet_2?.tbtc_usd_value),
-      provider: "Nummus.VaultDAO prices.json"
-    },
-    {
-      symbol: "PISTA",
-      mint: PISTA_MINT,
-      amount: numberOrZero(prices.bumper?.quantity),
-      priceUsd: numberOrZero(prices.bumper?.price_usd),
-      valueUsd: numberOrZero(prices.bumper?.total_value_usd),
-      provider: "Nummus.VaultDAO prices.json"
-    },
-    {
-      symbol: "PUNCHY",
-      mint: PUNCHY_MINT,
-      amount: numberOrZero(prices.punchy?.quantity),
-      priceUsd: numberOrZero(prices.punchy?.price_usd),
-      valueUsd: numberOrZero(prices.punchy?.total_value_usd),
+      valueUsd: numberOrZero(prices.wallet_2?.tbtc_balance) * numberOrZero(prices.tbtc_price_usd),
       provider: "Nummus.VaultDAO prices.json"
     }
   ];

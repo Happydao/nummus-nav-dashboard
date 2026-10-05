@@ -1,6 +1,6 @@
 {
   "date": "2026-07-26",
-  "vaultUsd": 88731.43203242,
+  "vaultUsd": 52645.21763517731,
   "supply": 97951453.063953,
   "marketPrice": 0.008552063982492242,
   "nav": 0.00090587,
@@ -52,58 +52,15 @@
     "source": "Helius DAS current vault assets + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
     "pricedAssets": [
       {
-        "symbol": "SOL",
-        "mint": "So11111111111111111111111111111111111111112",
-        "amount": 0.104778326,
-        "priceUsd": 76.60640263377977,
-        "valueUsd": 8.02669063,
-        "provider": "jupiter"
-      },
-      {
-        "symbol": "PUNCHY",
-        "mint": "GnYufMbTAMz1DzkSN2DmwkBzjMTLkM22WvQuN1VCbonk",
-        "amount": 25000000,
-        "priceUsd": 0.00007626194441926264,
-        "valueUsd": 1906.54861048,
-        "provider": "jupiter"
-      },
-      {
-        "symbol": "NUMMUS",
-        "mint": "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
-        "amount": 25,
-        "priceUsd": 0.008552063982492242,
-        "valueUsd": 0.2138016,
-        "provider": "jupiter"
-      },
-      {
-        "symbol": "PISTA",
-        "mint": "9CaQUthsVMugZzMvskrrvcHXyjFqHGdNtGkPT8QSRACE",
-        "amount": 25000000,
-        "priceUsd": 0.0013668570117812493,
-        "valueUsd": 34171.42529453,
-        "provider": "jupiter"
-      },
-      {
         "symbol": "tBTC",
         "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
         "amount": 0.81030031,
         "priceUsd": 64970.008014901665,
-        "valueUsd": 52645.21763518,
+        "valueUsd": 52645.21763517731,
         "provider": "jupiter"
       }
     ],
-    "ignoredAssets": [
-      {
-        "symbol": "MyNF",
-        "mint": "GGVXuvQD13vxsNi9Dx86AwwpcTHrfNFcJSgsKesbyzn7",
-        "reason": "ignored V1_NFT received by treasury"
-      },
-      {
-        "symbol": "MyNF",
-        "mint": "EUGVqX5GWe6P4b8bYyaWLFhzMwAES8tq79KpYs5UagMY",
-        "reason": "ignored V1_NFT received by treasury"
-      }
-    ],
+    "ignoredAssets": [],
     "unpricedAssets": []
   },
   "holderGrowth": {

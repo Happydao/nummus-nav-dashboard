@@ -2,6 +2,7 @@ import type { PricedAsset, UnpricedAsset, ValuationReport } from "../types.js";
 import { round } from "../utils/math.js";
 import { getTokenPrice } from "./priceProviders.js";
 import type { FungibleVaultAsset, IgnoredVaultAsset } from "../sources/vaultAssets.js";
+import { TBTC_MINT } from "../utils/constants.js";
 
 export async function valueVault(
   fungibleAssets: FungibleVaultAsset[],
@@ -12,6 +13,7 @@ export async function valueVault(
   let vaultUsd = 0;
 
   for (const asset of fungibleAssets) {
+    if (asset.mint !== TBTC_MINT) continue;
     const quote = await getTokenPrice(asset.mint, asset.heliusPriceInfo);
     if (!quote) {
       unpricedAssets.push({

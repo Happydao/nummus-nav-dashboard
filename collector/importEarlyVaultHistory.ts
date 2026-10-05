@@ -4,61 +4,23 @@ import type { DailySnapshot, HistoryFile, PricedAsset, UnpricedAsset } from "./t
 import { HeliusClient } from "./sources/helius.js";
 import { HISTORY_PATH } from "./utils/historyStore.js";
 import { divideOrNull, round } from "./utils/math.js";
-import { VAULT_WALLET, WRAPPED_SOL_MINT } from "./utils/constants.js";
+import { TBTC_MINT, VAULT_WALLET } from "./utils/constants.js";
 
 const START_DATE = "2025-06-16";
 const END_DATE = "2025-12-04";
 const CACHE_DIR = resolve("data/cache/early-vault");
 const DEFILLAMA_URL = "https://coins.llama.fi";
-const GECKOTERMINAL_URL = "https://api.geckoterminal.com/api/v2";
 const FINANCIAL_HISTORY_START = "2025-09-01";
 const INITIAL_NUMMUS_SUPPLY = 100_000_000;
 
 const MINTS = {
   NUMMUS: "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray",
-  TBTC: "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
-  BUMPER: "5bp5PwTyu4i1hGyQsRwRYqiR2CmxyHt2cPJGEbXEbonk",
-  PUNCHY: "GnYufMbTAMz1DzkSN2DmwkBzjMTLkM22WvQuN1VCbonk",
-  MOONPUMP: "HfbgFAG3jjJXGYm8vxskaEXveVpyaAYFur3miLvzpump",
-  JUP: "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN"
+  TBTC: "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU"
 } as const;
 
 const ASSETS: Record<string, { symbol: string; provider: string }> = {
-  [WRAPPED_SOL_MINT]: { symbol: "SOL", provider: "DefiLlama daily close / last observed" },
-  [MINTS.NUMMUS]: { symbol: "NUMMUS", provider: "DefiLlama daily close / last observed" },
   [MINTS.TBTC]: { symbol: "tBTC", provider: "DefiLlama daily close / last observed" },
-  [MINTS.BUMPER]: {
-    symbol: "PISTA (legacy BUMPER)",
-    provider: "DefiLlama daily close / last observed"
-  },
-  [MINTS.PUNCHY]: {
-    symbol: "PUNCHY",
-    provider: "Helius last on-chain pool trade x DefiLlama SOL/USD"
-  },
-  [MINTS.MOONPUMP]: {
-    symbol: "MOONPUMP",
-    provider: "GeckoTerminal daily OHLCV close / last observed"
-  },
-  [MINTS.JUP]: { symbol: "JUP", provider: "DefiLlama daily close / last observed" }
 };
-
-const PUNCHY_POOL = "3e5hfyfEMVjwx3LA1L6ZGnViBWR5Cj7GcWojKWjo6Etn";
-const MOONPUMP_POOL = "2n8U1zCXX5uFqsq2RDKfit424QypuCSbFJuazC4Wg2tk";
-
-const PUNCHY_DAILY_CLOSE_SIGNATURES = [
-  "5stLdDfK9neKs2rHkGNuTRaG9aS5RiGnRot1SZ3ySrDfGtee74WcS5pgYsVWTvVpnyVd5Dbs2mct3JQuRa9HoiDU",
-  "4UFi8JzY2otnhL371jf4xyzzHbFCgdr8N5eqWybBuuJkB1G5QjAyoU2rFzjUaySuFvqWktb94VNWCXxfs4mP4vin",
-  "2NShCuYHVJpeEnWCHfBb6ASkHGvB688kSaLsF7wB2pdh2MR99VndLxU9vR2TzQ54ToyAutBqhoq7QMQzT771iwNA",
-  "2xUB2F5cwVDWaJ7CbnbRwQrujrb2wg5QdWKtyk3PLk7JG99sThDKYriEtKgxN8L634zC1hvPDZ49ynyEqczNornK",
-  "YNJ4VwY18T68HqKoy9eGbxzZkVCc3U9qQLZZvL8vg8TBWYWoNSmAGKfdttmMMa56xkoLU4MYriFmMt3u1cP4KHm",
-  "2CSe7ivP9qu7Q5F3FLMkkaYL8yECv1g7uYS2n27CRab9XkWp8W1BqvCZAfe9hC1Mm9GWg3Q42MeRqjLuBpbfzKKh",
-  "59KTrq7bexnKFW4C7fysPwgKUz3V9ybg41PAq51J3X4XhWJ7acvv5BKtEGWGbhE65DMvMffC3JGib1ZEfme1viNS",
-  "3EnUDCyrWmhMRimMNeP92tg8wdG9ctdHf7zYBscY9Qbm4mXyV2xSBf5m9q2aFHJL1o5gLLiCj94K63PQRN74h3nZ",
-  "4M3URZh39CfSCwQiRUcWtGNeLgBBUw8v37VsW96TAY8eyLUPGyA1kRUeBMamqihL4Dsg1TrxH9yeH8apzhjY3Sj4",
-  "5tR7UCABV4YC7vUBUuGs2YAjqAXnk2qDaLA4b62NXfDohJHyf1fBjypCJvkmoCzfz5cjBTPxcZRW9QsyXBn8jiS2",
-  "wQWhx7pCsEB7YPJf9UwJ9RVZ72nChiKPxi8a9UAx2gmr3SBmSww8hiC1c5Mdbe3KE2eW1iqt3ivWv5z3PLAFRxH",
-  "2iRKBc2qrtHEXNGCD17jUbMr5GkSEuyCfdoekdQSH9X3ofi4pSUJFVT7zrzTKfSz3xV4aP3ZATk8cYPG35PFvEFe"
-];
 
 interface EnhancedTransaction {
   signature: string;
@@ -73,19 +35,10 @@ interface EnhancedTransaction {
       rawTokenAmount: { tokenAmount: string; decimals: number };
     }>;
   }>;
-  tokenTransfers?: Array<{ mint: string; tokenAmount: number }>;
 }
 
 interface DefiLlamaChart {
   coins?: Record<string, { prices?: Array<{ timestamp: number; price: number }> }>;
-}
-
-interface DefiLlamaHistorical {
-  coins?: Record<string, { timestamp?: number; price?: number }>;
-}
-
-interface GeckoOhlcv {
-  data?: { attributes?: { ohlcv_list?: number[][] } };
 }
 
 interface BalanceEvent {
@@ -97,25 +50,15 @@ interface BalanceEvent {
 await mkdir(CACHE_DIR, { recursive: true });
 const helius = new HeliusClient();
 const history = JSON.parse(await readFile(HISTORY_PATH, "utf8")) as HistoryFile;
-const [vaultTransactions, punchyTransactions, defiLlamaPrices, moonpumpPrices] = await Promise.all([
+const [vaultTransactions, defiLlamaPrices] = await Promise.all([
   loadVaultTransactions(helius),
-  cached("punchy-daily-close-transactions.json", () =>
-    helius.getEnhancedTransactions<EnhancedTransaction>(PUNCHY_DAILY_CLOSE_SIGNATURES)
-  ),
-  loadDefiLlamaPrices(),
-  loadMoonpumpPrices()
+  loadDefiLlamaPrices()
 ]);
 
 const priceByMint = new Map<string, Map<string, number>>();
 for (const [mint, prices] of Object.entries(defiLlamaPrices)) {
   priceByMint.set(mint, expandDailyPrices(new Map(prices)));
 }
-priceByMint.set(MINTS.MOONPUMP, expandDailyPrices(new Map(moonpumpPrices)));
-priceByMint.set(
-  MINTS.PUNCHY,
-  expandDailyPrices(derivePunchyPrices(punchyTransactions, priceByMint.get(WRAPPED_SOL_MINT)))
-);
-
 const balanceEvents = collectBalanceEvents(vaultTransactions);
 const records = buildRecords(history, balanceEvents, priceByMint);
 const byDate = new Map(history.records.map((record) => [record.date, record]));
@@ -154,7 +97,7 @@ async function loadVaultTransactions(client: HeliusClient): Promise<EnhancedTran
 }
 
 async function loadDefiLlamaPrices(): Promise<Record<string, Array<[string, number]>>> {
-  const mints = [WRAPPED_SOL_MINT, MINTS.NUMMUS, MINTS.TBTC, MINTS.BUMPER, MINTS.JUP];
+  const mints = [MINTS.TBTC, MINTS.NUMMUS];
   const result: Record<string, Array<[string, number]>> = {};
   for (const mint of mints) {
     result[mint] = await cached(`defillama-${mint}.json`, async () => {
@@ -170,55 +113,7 @@ async function loadDefiLlamaPrices(): Promise<Record<string, Array<[string, numb
         .map((point) => [toDate(point.timestamp), point.price] as [string, number]);
     });
   }
-  const bumperBootstrap = await cached("defillama-bumper-bootstrap.json", async () => {
-    const requested = startOfDay("2025-08-02");
-    const response = await fetch(
-      `${DEFILLAMA_URL}/prices/historical/${requested}/solana:${MINTS.BUMPER}?searchWidth=24h`
-    );
-    if (!response.ok) throw new Error(`DefiLlama BUMPER bootstrap failed with HTTP ${response.status}`);
-    const payload = (await response.json()) as DefiLlamaHistorical;
-    const point = payload.coins?.[`solana:${MINTS.BUMPER}`];
-    return point?.timestamp && point.price ? ([toDate(point.timestamp), point.price] as [string, number]) : null;
-  });
-  if (bumperBootstrap) result[MINTS.BUMPER].push(bumperBootstrap);
   return result;
-}
-
-async function loadMoonpumpPrices(): Promise<Array<[string, number]>> {
-  return cached("geckoterminal-moonpump.json", async () => {
-    const response = await fetch(
-      `${GECKOTERMINAL_URL}/networks/solana/pools/${MOONPUMP_POOL}/ohlcv/day?aggregate=1&limit=1000&currency=usd&token=base`
-    );
-    if (!response.ok) throw new Error(`GeckoTerminal MOONPUMP failed with HTTP ${response.status}`);
-    const payload = (await response.json()) as GeckoOhlcv;
-    return (payload.data?.attributes?.ohlcv_list ?? [])
-      .filter((row) => Number.isFinite(row[4]) && row[4] > 0)
-      .map((row) => [toDate(row[0]), row[4]] as [string, number]);
-  });
-}
-
-function derivePunchyPrices(
-  transactions: EnhancedTransaction[],
-  solPrices?: Map<string, number>
-): Map<string, number> {
-  const prices = new Map<string, number>();
-  for (const tx of transactions) {
-    if (tx.transactionError !== null) continue;
-    const date = toDate(tx.timestamp);
-    const punchy = largestTransfer(tx, MINTS.PUNCHY);
-    const sol = largestTransfer(tx, WRAPPED_SOL_MINT);
-    const solUsd = solPrices?.get(date);
-    if (!punchy || !sol || !solUsd) continue;
-    prices.set(date, (sol / punchy) * solUsd);
-  }
-  return prices;
-}
-
-function largestTransfer(tx: EnhancedTransaction, mint: string): number | null {
-  const amount = (tx.tokenTransfers ?? [])
-    .filter((transfer) => transfer.mint === mint && transfer.tokenAmount > 0)
-    .sort((a, b) => b.tokenAmount - a.tokenAmount)[0]?.tokenAmount;
-  return amount && Number.isFinite(amount) ? amount : null;
 }
 
 function collectBalanceEvents(transactions: EnhancedTransaction[]): BalanceEvent[] {
@@ -226,13 +121,6 @@ function collectBalanceEvents(transactions: EnhancedTransaction[]): BalanceEvent
   for (const tx of transactions) {
     if (tx.transactionError !== null) continue;
     for (const account of tx.accountData ?? []) {
-      if (account.account === VAULT_WALLET && account.nativeBalanceChange) {
-        events.push({
-          timestamp: tx.timestamp,
-          mint: WRAPPED_SOL_MINT,
-          amount: account.nativeBalanceChange / 1_000_000_000
-        });
-      }
       for (const change of account.tokenBalanceChanges ?? []) {
         if (change.userAccount !== VAULT_WALLET || !ASSETS[change.mint]) continue;
         events.push({
@@ -264,7 +152,7 @@ function buildRecords(
     }
 
     const tbtcAmount = latestTbtcAmount(history, date);
-    if (tbtcAmount !== null) balances.set(MINTS.TBTC, tbtcAmount);
+    if (tbtcAmount !== null) balances.set(TBTC_MINT, tbtcAmount);
     const pricedAssets: PricedAsset[] = [];
     const unpricedAssets: UnpricedAsset[] = [];
     let vaultUsd = 0;

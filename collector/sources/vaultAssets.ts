@@ -1,4 +1,4 @@
-import { VAULT_WALLET, WRAPPED_SOL_MINT } from "../utils/constants.js";
+import { TBTC_MINT, VAULT_WALLET } from "../utils/constants.js";
 import { HeliusClient } from "./helius.js";
 
 export interface HeliusPriceInfo {
@@ -57,21 +57,9 @@ export async function getCurrentVaultAssets(
 
   const fungibleAssets: FungibleVaultAsset[] = [];
   const ignoredAssets: IgnoredVaultAsset[] = [];
-  const nativeSol = (response.nativeBalance?.lamports ?? 0) / 1_000_000_000;
-
-  if (nativeSol > 0) {
-    fungibleAssets.push({
-      symbol: "SOL",
-      mint: WRAPPED_SOL_MINT,
-      amount: nativeSol,
-      heliusPriceInfo:
-        response.nativeBalance?.price_per_sol && response.nativeBalance.price_per_sol > 0
-          ? { price_per_token: response.nativeBalance.price_per_sol }
-          : undefined
-    });
-  }
-
   for (const item of response.items ?? []) {
+    if (item.id !== TBTC_MINT) continue;
+
     const symbol = item.token_info?.symbol ?? item.content?.metadata?.symbol ?? null;
 
     if (item.interface !== "FungibleToken") {
