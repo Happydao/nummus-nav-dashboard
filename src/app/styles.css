@@ -342,9 +342,9 @@ body {
 .kpi {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-height: 96px;
-  padding: 16px;
+  gap: 6px;
+  min-height: 82px;
+  padding: 14px;
 }
 
 .kpi > span {
@@ -474,19 +474,17 @@ body {
 
 .vault-composition {
   display: flex;
-  flex: 1;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 190px;
+  min-height: 125px;
 }
 
 .vault-composition ul {
-  flex: 1;
-  justify-content: center;
+  justify-content: flex-start;
+  margin-top: 24px;
 }
 
 .vault-composition li {
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 8px;
 }
 
@@ -510,6 +508,8 @@ body {
 }
 
 .vault-composition li strong {
+  align-self: center;
+  margin-left: auto;
   font-size: 18px;
 }
 
