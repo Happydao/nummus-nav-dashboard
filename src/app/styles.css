@@ -1820,6 +1820,11 @@ svg {
   color: #183126;
 }
 
+[data-theme="light"] .kpi .vault-composition li span:first-child,
+[data-theme="light"] .kpi .vault-composition li span small {
+  color: #142c21;
+}
+
 [data-theme="light"] .market-structure-details dt {
   color: #52665b;
 }
