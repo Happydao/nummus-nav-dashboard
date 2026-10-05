@@ -472,6 +472,47 @@ body {
   padding-top: 10px;
 }
 
+.vault-composition {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 190px;
+}
+
+.vault-composition ul {
+  flex: 1;
+  justify-content: center;
+}
+
+.vault-composition li {
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.vault-composition li span {
+  gap: 4px;
+}
+
+.vault-composition li span:first-child {
+  color: #dcece2;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.kpi .vault-composition li span small {
+  color: #f4f8f5;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.vault-composition li strong {
+  font-size: 18px;
+}
+
 .kpi-links {
   display: flex;
   flex-wrap: wrap;

@@ -491,7 +491,7 @@ function vaultCompositionDetails(record: DailySnapshot): string {
   if (!rows) return "";
 
   return `
-    <div class="kpi-breakdown" aria-label="Vault asset composition">
+    <div class="kpi-breakdown vault-composition" aria-label="Vault asset composition">
       <small>Latest composition</small>
       <ul>${rows}</ul>
     </div>
