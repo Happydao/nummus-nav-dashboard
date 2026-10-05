@@ -507,7 +507,7 @@ body {
   line-height: 1;
 }
 
-.vault-composition li strong {
+.vault-composition li > .kpi-change {
   align-self: center;
   margin-left: auto;
   font-size: 18px;

@@ -63,7 +63,10 @@ async function render(): Promise<void> {
   const holderConcentrationRecords = buildHolderConcentrationRecords(records);
   const latest = latestRecord(records);
   const unpricedCount = latest?.valuationReport?.unpricedAssets.length ?? 0;
-  const vaultComposition = latest ? vaultCompositionDetails(latest) : "";
+  const tbtcChange = latest
+    ? rangeChange(latest.tbtcAmount, rangeStartValue(tbtcHistory, selectedRange, (point) => point.amount))
+    : "";
+  const vaultComposition = latest ? vaultCompositionDetails(latest, tbtcChange) : "";
   const isStale =
     history.generatedAt !== null && Date.now() - new Date(history.generatedAt).getTime() > STALE_AFTER_MS;
 
@@ -464,7 +467,7 @@ function attachProjectionHandlers(): void {
   }
 }
 
-function vaultCompositionDetails(record: DailySnapshot): string {
+function vaultCompositionDetails(record: DailySnapshot, tbtcChange: string): string {
   const minDisplayValueUsd = 20;
   const assets = (record.valuationReport?.pricedAssets ?? []) as Array<{
     symbol?: string | null;
@@ -482,7 +485,7 @@ function vaultCompositionDetails(record: DailySnapshot): string {
             ${escapeHtml(asset.symbol ?? shortMint(asset.mint ?? ""))}
             <small>${formatAssetAmount(asset.amount)}</small>
           </span>
-          <strong>${usd(asset.valueUsd ?? null)}</strong>
+            ${asset.symbol === "tBTC" ? tbtcChange : `<strong>${usd(asset.valueUsd ?? null)}</strong>`}
         </li>
       `
     )
@@ -523,10 +526,10 @@ function marketStructureDetails(record: DailySnapshot | null, records: DailySnap
   </div>`;
 }
 
-function rangeStartValue(
-  records: DailySnapshot[],
+function rangeStartValue<T extends { date: string }>(
+  records: T[],
   range: RangeKey,
-  getValue: (record: DailySnapshot) => number | null | undefined
+  getValue: (record: T) => number | null | undefined
 ): number | null {
   const valid = records.flatMap((record) => {
     const value = getValue(record);
