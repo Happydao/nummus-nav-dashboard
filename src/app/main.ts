@@ -64,7 +64,10 @@ async function render(): Promise<void> {
   const latest = latestRecord(records);
   const unpricedCount = latest?.valuationReport?.unpricedAssets.length ?? 0;
   const tbtcChange = latest
-    ? rangeChange(latest.tbtcAmount, rangeStartValue(tbtcHistory, selectedRange, (point) => point.amount))
+    ? rangeChange(
+        latest.tbtcAmount,
+        rangeStartValue(tbtcHistory, selectedRange, (point) => point.amount, true)
+      )
     : "";
   const vaultComposition = latest ? vaultCompositionDetails(latest, tbtcChange) : "";
   const isStale =
@@ -529,18 +532,22 @@ function marketStructureDetails(record: DailySnapshot | null, records: DailySnap
 function rangeStartValue<T extends { date: string }>(
   records: T[],
   range: RangeKey,
-  getValue: (record: T) => number | null | undefined
+  getValue: (record: T) => number | null | undefined,
+  includePreviousPoint = false
 ): number | null {
   const valid = records.flatMap((record) => {
     const value = getValue(record);
     return typeof value === "number" && Number.isFinite(value) ? [{ date: record.date, value }] : [];
-  });
+  }).sort((a, b) => a.date.localeCompare(b.date));
   const latest = valid.at(-1);
   if (!latest) return null;
   if (range === "ALL") return valid[0]?.value ?? null;
   const days = range === "1D" ? 1 : range === "7D" ? 7 : range === "30D" ? 30 : 365;
   const cutoff = new Date(`${latest.date}T00:00:00Z`).getTime() - days * 86_400_000;
-  return valid.find((point) => new Date(`${point.date}T00:00:00Z`).getTime() >= cutoff)?.value ?? latest.value;
+  const filtered = valid.filter((point) => new Date(`${point.date}T00:00:00Z`).getTime() >= cutoff);
+  if (!includePreviousPoint) return filtered[0]?.value ?? latest.value;
+  const firstFilteredDate = filtered[0]?.date ?? latest.date;
+  return [...valid].reverse().find((point) => point.date < firstFilteredDate)?.value ?? filtered[0]?.value ?? latest.value;
 }
 
 function rangeChange(

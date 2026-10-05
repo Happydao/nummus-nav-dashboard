@@ -513,6 +513,18 @@ body {
   font-size: 18px;
 }
 
+.kpi .vault-composition li > .kpi-change.kpi-change-favorable {
+  color: #57c990;
+}
+
+.kpi .vault-composition li > .kpi-change.kpi-change-adverse {
+  color: #d87575;
+}
+
+.kpi .vault-composition li > .kpi-change.kpi-change-neutral {
+  color: #91a49a;
+}
+
 .kpi-links {
   display: flex;
   flex-wrap: wrap;
