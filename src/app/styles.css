@@ -501,7 +501,7 @@ body {
 
 .kpi .vault-composition li span small {
   color: #f4f8f5;
-  font-size: 32px;
+  font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -510,7 +510,7 @@ body {
 .vault-composition li > .kpi-change {
   align-self: center;
   margin-left: auto;
-  font-size: 18px;
+  font-size: 10px;
 }
 
 .kpi .vault-composition li > .kpi-change.kpi-change-favorable {
