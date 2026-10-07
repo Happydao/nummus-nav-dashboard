@@ -1,0 +1,82 @@
+{
+  "date": "2026-10-07",
+  "vaultUsd": 82132.58433258,
+  "supply": 97638486.015153,
+  "marketPrice": 0.014273646590235046,
+  "nav": 0.00084119,
+  "backing": 5.89330831,
+  "premium": 16.96839785,
+  "tbtcAmount": 0.96151429,
+  "marketDepth": {
+    "buyDepthUsd": 864.38,
+    "sellDepthUsd": 150.31,
+    "priceImpactPct": 1,
+    "provider": "jupiter"
+  },
+  "dexLiquidity": {
+    "totalLiquidityUsd": 150078.91,
+    "poolCount": 4,
+    "provider": "dexscreener",
+    "pools": [
+      {
+        "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
+        "dexId": "raydium",
+        "pairLabel": "NUMMUS/SOL",
+        "liquidityUsd": 133936.82,
+        "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
+      },
+      {
+        "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
+        "dexId": "raydium",
+        "pairLabel": "NUMMUS/USDC",
+        "liquidityUsd": 9505.02,
+        "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
+      },
+      {
+        "pairAddress": "BqXJoDkmKvbeSKJn9RwqvoKkgu3KyDv9hPHf2NoMjs1d",
+        "dexId": "orca",
+        "pairLabel": "NUMMUS/USDT",
+        "liquidityUsd": 3757.19,
+        "url": "https://dexscreener.com/solana/bqxjodkmkvbeskjn9rwqvokkgu3kydv9hphf2nomjs1d"
+      },
+      {
+        "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
+        "dexId": "meteora",
+        "pairLabel": "NUMMUS/USDT",
+        "liquidityUsd": 2879.88,
+        "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
+      }
+    ]
+  },
+  "valuationReport": {
+    "source": "Helius DAS current vault assets + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
+    "pricedAssets": [
+      {
+        "symbol": "tBTC",
+        "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
+        "amount": 0.96151429,
+        "priceUsd": 85420.03502889231,
+        "valueUsd": 82132.58433258,
+        "provider": "jupiter"
+      }
+    ],
+    "ignoredAssets": [],
+    "unpricedAssets": []
+  },
+  "holderGrowth": {
+    "holderCount": 16495,
+    "newHolders": 0,
+    "exitedHolders": 3,
+    "concentration": {
+      "topHolderPct": 2.2069,
+      "top10Pct": 12.9844,
+      "top50Pct": 33.514,
+      "othersPct": 66.4859,
+      "topHolderAmount": 2000000,
+      "top10Amount": 11766891.432757,
+      "top50Amount": 30371395.702182,
+      "othersAmount": 60251391.229736,
+      "excludedPoolCount": 6
+    }
+  }
+}
