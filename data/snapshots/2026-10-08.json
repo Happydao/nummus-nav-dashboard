@@ -8,13 +8,13 @@
   "premium": 15.15243644,
   "tbtcAmount": 0.96555712,
   "marketDepth": {
-    "buyDepthUsd": 893.13,
-    "sellDepthUsd": 22.48,
+    "buyDepthUsd": 550.94,
+    "sellDepthUsd": 351.25,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 134746.35,
+    "totalLiquidityUsd": 135378.71,
     "poolCount": 7,
     "provider": "dexscreener",
     "pools": [
@@ -22,14 +22,14 @@
         "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/SOL",
-        "liquidityUsd": 119685.76,
+        "liquidityUsd": 120309.65,
         "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
       },
       {
         "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/USDC",
-        "liquidityUsd": 8789.07,
+        "liquidityUsd": 8797.54,
         "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
       },
       {
