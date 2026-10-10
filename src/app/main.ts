@@ -32,7 +32,6 @@ const SUPPLY_HISTORY_START = "2025-06-27";
 const DAY_BEFORE_FIRST_RECORDED_BURN = "2025-10-16";
 const FINANCIAL_HISTORY_START = "2025-09-01";
 const STALE_AFTER_MS = 48 * 60 * 60 * 1000;
-const THEME_STORAGE_KEY = "nummus-dashboard-theme";
 type Theme = "dark" | "light";
 
 if (!app) {
@@ -40,7 +39,7 @@ if (!app) {
 }
 
 const root = app;
-let selectedTheme: Theme = localStorage.getItem(THEME_STORAGE_KEY) === "light" ? "light" : "dark";
+let selectedTheme: Theme = "light";
 document.documentElement.dataset.theme = selectedTheme;
 let selectedRange: RangeKey = "ALL";
 let selectedProjectionScenario: ProjectionScenario = "accelerated";
@@ -381,7 +380,6 @@ function attachThemeHandler(): void {
   root.querySelector<HTMLButtonElement>("[data-theme-toggle]")?.addEventListener("click", () => {
     selectedTheme = selectedTheme === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = selectedTheme;
-    localStorage.setItem(THEME_STORAGE_KEY, selectedTheme);
     const button = root.querySelector<HTMLButtonElement>("[data-theme-toggle]");
     if (!button) return;
     const isLight = selectedTheme === "light";
