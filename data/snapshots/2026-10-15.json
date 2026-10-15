@@ -2,19 +2,19 @@
   "date": "2026-10-15",
   "vaultUsd": 80265.93841065,
   "supply": 97583360.998738,
-  "marketPrice": 0.0124459920196766,
+  "marketPrice": 0.01233377284817287,
   "nav": 0.00082254,
-  "backing": 6.60887456,
-  "premium": 15.13116933,
+  "backing": 6.66900558,
+  "premium": 14.99473928,
   "tbtcAmount": 0.99332532,
   "marketDepth": {
-    "buyDepthUsd": 791.25,
-    "sellDepthUsd": 86.17,
+    "buyDepthUsd": 350.31,
+    "sellDepthUsd": 513.44,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 130247.64,
+    "totalLiquidityUsd": 130247.03,
     "poolCount": 5,
     "provider": "dexscreener",
     "pools": [
@@ -29,7 +29,7 @@
         "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/USDC",
-        "liquidityUsd": 8860.95,
+        "liquidityUsd": 8860.34,
         "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
       },
       {
@@ -71,9 +71,9 @@
     "unpricedAssets": []
   },
   "holderGrowth": {
-    "holderCount": 16485,
+    "holderCount": 16484,
     "newHolders": 2,
-    "exitedHolders": 5,
+    "exitedHolders": 6,
     "concentration": {
       "topHolderPct": 3.3152,
       "top10Pct": 14.9797,
@@ -82,7 +82,7 @@
       "topHolderAmount": 3005700,
       "top10Amount": 13581093.622413,
       "top50Amount": 32023501.662177,
-      "othersAmount": 58639775.671129,
+      "othersAmount": 58639750.671129,
       "excludedPoolCount": 7
     }
   }
