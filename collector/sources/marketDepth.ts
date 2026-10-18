@@ -114,22 +114,64 @@ async function quoteAtNotional(
     restrictIntermediateTokens: "true"
   });
 
-  try {
-    const response = await fetch(`${JUPITER_QUOTE_URL}?${query}`);
-    if (!response.ok) return null;
-    const quote = (await response.json()) as JupiterQuoteResponse;
-    const priceImpact = Number(quote.priceImpactPct);
-    const outputAmount = Number(quote.outAmount);
-    if (!Number.isFinite(priceImpact) || !Number.isFinite(outputAmount) || outputAmount <= 0) {
-      return null;
+  const context = `Jupiter Market Depth ${direction} at $${notionalUsd.toFixed(4)}`;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    // Spread quotes across the keyless 30-request/minute window.
+    await delay(2100);
+    let response: Response;
+    try {
+      response = await fetch(`${JUPITER_QUOTE_URL}?${query}`, {
+        signal: AbortSignal.timeout(20_000)
+      });
+    } catch {
+      if (attempt === 3) throw new Error(`${context}: network error or timeout after 3 attempts`);
+      console.warn(`${context}: network error or timeout; retrying`);
+      await delay(5000 * attempt);
+      continue;
+    }
+    if (!response.ok) {
+      const retryable = response.status === 429 || response.status >= 500;
+      if (!retryable || attempt === 3) {
+        throw new Error(`${context}: HTTP ${response.status} (attempt ${attempt}/3)`);
+      }
+      const retryAfter = response.headers.get("retry-after");
+      const reset = response.headers.get("x-ratelimit-reset");
+      const retryMs = retryAfter === null ? NaN : /^\d+(\.\d+)?$/.test(retryAfter)
+        ? Number(retryAfter) * 1000 : Date.parse(retryAfter) - Date.now();
+      const resetMs = reset === null ? NaN : Number(reset) * 1000 - Date.now();
+      const waitMs = Math.max(
+        response.status === 429 ? 60_000 : 5000 * attempt,
+        Number.isFinite(retryMs) ? retryMs : 0,
+        Number.isFinite(resetMs) ? resetMs : 0
+      );
+      console.warn(`${context}: HTTP ${response.status}; retrying in ${Math.ceil(waitMs / 1000)}s`);
+      await delay(waitMs);
+      continue;
+    }
+    let quote: JupiterQuoteResponse;
+    try {
+      quote = (await response.json()) as JupiterQuoteResponse;
+    } catch {
+      throw new Error(`${context}: invalid JSON response`);
+    }
+    const priceImpact = Number(quote?.priceImpactPct);
+    const outputAmount = Number(quote?.outAmount);
+    if (
+      typeof quote?.priceImpactPct !== "string" || quote.priceImpactPct.trim() === "" ||
+      !Number.isFinite(priceImpact) || !Number.isFinite(outputAmount) || outputAmount <= 0
+    ) {
+      throw new Error(`${context}: invalid priceImpactPct or outAmount`);
     }
     return priceImpact * 100;
-  } catch {
-    return null;
   }
+  throw new Error(`${context}: quote attempts exhausted`);
 }
 
 function roundCurrency(value: number | null): number | null {
   if (value === null) return null;
   return round(value, 2);
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
