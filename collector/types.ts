@@ -9,6 +9,7 @@ export interface HistoryFile {
 }
 
 export interface DailySnapshot {
+  collectionIssues?: string[];
   date: string;
   vaultUsd: number | null;
   supply: number | null;

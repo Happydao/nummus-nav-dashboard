@@ -17,7 +17,7 @@ import {
   type ProjectionYears
 } from "../charts/projectionChart.js";
 import { kpi } from "../components/kpi.js";
-import { latestRecord, loadHistory, type DailySnapshot, type SupplySnapshot } from "../utils/history.js";
+import { chartFreshness, latestRecord, loadHistory, type DailySnapshot, type SupplySnapshot } from "../utils/history.js";
 import { numberCompact, percent, ratio, tbtcAxis, usd, usdCompact } from "../utils/format.js";
 
 const app = document.querySelector<HTMLDivElement>("#app");
@@ -109,9 +109,10 @@ async function render(): Promise<void> {
       <div class="content">
         ${
           isStale
-            ? `<div class="notice stale-notice" role="alert">Data update delayed: the last complete snapshot is more than 48 hours old. The dashboard is showing the most recent verified data.</div>`
+            ? `<div class="notice stale-notice" role="alert">Data update delayed: the last published update is more than 48 hours old. The dashboard is showing the most recent verified data.</div>`
             : ""
         }
+        ${latest?.collectionIssues?.length ? `<div class="notice stale-notice" role="status">Some metrics could not be refreshed. Available metrics have been updated; affected charts show their last observation date. Missing current values are shown as n/a.</div>` : ""}
         <header class="section-intro snapshot-intro">
           <span>Latest verified metrics</span>
           <h2>Current Snapshot</h2>
@@ -336,6 +337,14 @@ async function render(): Promise<void> {
       </div>
     </div>
   `;
+  for (const status of chartFreshness(records)) {
+    const chart = root.querySelector(`[data-chart-id="${status.id}"]`);
+    if (!chart) continue;
+    const note = document.createElement("p");
+    note.className = `chart-freshness${status.delayed || isStale ? " updated-stale" : ""}`;
+    note.textContent = `${status.delayed ? "Update incomplete · " : ""}${status.date ? `Last valid observation: ${status.date} UTC` : "No valid observation available"}`;
+    chart.prepend(note);
+  }
   attachRangeHandlers();
   attachThemeHandler();
   attachProjectionHandlers();

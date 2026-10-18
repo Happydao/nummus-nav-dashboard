@@ -43,7 +43,7 @@ jobs:
               exit 0
             fi
             if [ "$attempt" -lt 3 ]; then
-              echo "Incomplete collection; retrying in 5 minutes"
+              echo "No publishable snapshot; retrying in 5 minutes"
               sleep 300
             fi
           done
@@ -60,6 +60,7 @@ jobs:
           file_pattern: data/history.json data/holder-state.json data/snapshots/*.json
 
       - name: Trigger NUMMUS Aeternitas data update
+        continue-on-error: true
         if: steps.commit-snapshot.outputs.changes_detected == 'true'
         env:
           GH_TOKEN: ${{ secrets.AETERNITAS_DISPATCH_TOKEN }}

@@ -129,7 +129,7 @@ export function lineChart(options: ChartOptions): string {
   const hasIndependentAxis = Boolean(options.secondary?.independentAxis);
 
   if (points.length === 0) {
-    return `<section class="chart"><h2>${options.title}</h2><div class="empty">No snapshots in selected range</div></section>`;
+    return `<section class="chart" data-chart-id="${options.id}"><h2>${options.title}</h2><div class="empty">No snapshots in selected range</div></section>`;
   }
 
   const secondaryValues = points

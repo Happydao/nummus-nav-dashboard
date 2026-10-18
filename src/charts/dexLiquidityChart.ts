@@ -44,7 +44,7 @@ export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
   const rangedRecords = filterByRange(allRecords, options.range);
   const records = applyZoomWindow(rangedRecords, options.zoomWindow);
   if (records.length === 0) {
-    return `<section class="chart"><h2>NUMMUS DEX Liquidity</h2><div class="empty">No detailed liquidity snapshots in selected range</div></section>`;
+    return `<section class="chart" data-chart-id="dex-liquidity"><h2>NUMMUS DEX Liquidity</h2><div class="empty">No detailed liquidity snapshots in selected range</div></section>`;
   }
 
   const poolMeta = buildPoolMeta(records);

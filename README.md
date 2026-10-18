@@ -15,7 +15,7 @@ It is not primarily a treasury-composition dashboard. Current asset holdings are
 
 The historical dashboard is complemented by a separate projection simulator. The simulator combines the latest verified Vault Value and supply with explicit treasury-growth, burn-rate and premium assumptions. Its results are hypothetical scenarios, not historical observations or price forecasts.
 
-Current data is recorded through recurring complete snapshots and retained to build a verifiable historical series. A snapshot is accepted only when every required metric is available and valid, keeping all charts aligned to the same observation date.
+Current data is recorded through recurring snapshots and retained to build a verifiable historical series. Each metric is validated independently, so an unavailable source does not block unrelated charts.
 
 ## Core Metrics
 
@@ -209,11 +209,11 @@ The simulator is an analytical tool, not a price forecast, financial advice or a
 
 ## Snapshot Integrity and Update Status
 
-Every daily update is treated as one complete dataset. The collector retrieves and validates Vault Value, supply, NUMMUS price, NAV, backing, premium, tBTC, Market Depth, total DEX liquidity, every tracked pool and Holder Growth before publishing any new observation.
+Each update publishes the valid metrics collected during that run. Unavailable metrics are left absent, with a partial-update notice and each chart's last valid observation date. Previous days remain unchanged; values are never copied from an earlier date to create a new observation. A retry on the same date retains already recorded valid values when that group cannot be refreshed, and marks the affected group as incomplete.
 
-If any required source or metric is unavailable, the attempted update is rejected and neither the daily history nor the latest valid snapshot is replaced. The workflow retries the complete collection three times. If all attempts fail, the GitHub Actions run reports an error while the dashboard continues to display the most recent verified dataset. Failed attempts are never represented as new dates by copying values from the previous day.
+Vault Value, supply, market price, Market Depth, DEX liquidity and holder distribution are validated independently. NAV requires valid current Vault Value and supply; backing and premium also require current market price. Holder concentration requires the current pool inventory to exclude pool custody correctly. Historical tBTC and supply scans retain their previous cursors if a scan fails. If no current metric is valid, the update fails and the previous published dataset remains unchanged. The workflow retries failed collections three times.
 
-The dashboard displays a red warning when the last complete update is more than **48 hours old**. This indicates that the visible values remain the latest verified observations but should no longer be considered current.
+The dashboard warns when publication is more than 48 hours old, and identifies partial updates even when other metrics are fresh. A downstream notification failure does not prevent deployment of collected data.
 
 ## Data Sources
 

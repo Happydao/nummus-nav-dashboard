@@ -1,4 +1,5 @@
 export interface DailySnapshot {
+  collectionIssues?: string[];
   date: string;
   vaultUsd: number | null;
   supply: number | null;
@@ -78,4 +79,26 @@ export async function loadHistory(): Promise<HistoryFile> {
 
 export function latestRecord(records: DailySnapshot[]): DailySnapshot | null {
   return records.at(-1) ?? null;
+}
+
+export function chartFreshness(records: DailySnapshot[]) {
+  const positive = (value: unknown) => typeof value === "number" && Number.isFinite(value) && value > 0;
+  const latest = records.at(-1);
+  const definitions: Array<[string, string[], (record: DailySnapshot) => boolean]> = [
+    ["nav", ["vaultUsd", "supply", "marketPrice"], (r) => positive(r.nav) && positive(r.marketPrice)],
+    ["backing", ["vaultUsd", "supply", "marketPrice"], (r) => positive(r.backing)],
+    ["premium", ["vaultUsd", "supply", "marketPrice"], (r) => positive(r.premium)],
+    ["vault", ["vaultUsd"], (r) => positive(r.vaultUsd)],
+    ["vault-drawdown", ["vaultUsd"], (r) => positive(r.vaultUsd)],
+    ["supply", ["supply", "supplyHistory"], (r) => positive(r.supply)],
+    ["tbtc", ["tbtcAmount", "tbtcHistory"], (r) => typeof r.tbtcAmount === "number" && r.tbtcAmount >= 0],
+    ["market-depth", ["marketDepth"], (r) => positive(r.marketDepth?.buyDepthUsd) && positive(r.marketDepth?.sellDepthUsd)],
+    ["dex-liquidity", ["dexLiquidity"], (r) => positive(r.dexLiquidity?.totalLiquidityUsd)],
+    ["holder-concentration", ["holderGrowth"], (r) => positive(r.holderGrowth?.holderCount)]
+  ];
+  return definitions.map(([id, dependencies, valid]) => {
+    const last = records.filter(valid).at(-1);
+    return { id, date: last?.date ?? null,
+      delayed: !last || last.date !== latest?.date || dependencies.some((key) => latest?.collectionIssues?.includes(key)) };
+  });
 }

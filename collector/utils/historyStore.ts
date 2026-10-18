@@ -25,7 +25,7 @@ export async function readHolderState(): Promise<HolderCursor | null> {
 export async function commitSnapshot(
   snapshot: DailySnapshot,
   history: HistoryFile,
-  holderState: HolderCursor
+  holderState: HolderCursor | null
 ): Promise<void> {
   await mkdir(dirname(HISTORY_PATH), { recursive: true });
   await mkdir(SNAPSHOTS_DIR, { recursive: true });
@@ -37,11 +37,11 @@ export async function commitSnapshot(
 
   await writeFile(snapshotTempPath, `${JSON.stringify(snapshot, null, 2)}\n`);
   await writeFile(historyTempPath, `${JSON.stringify(history, null, 2)}\n`);
-  await writeFile(holderStateTempPath, `${JSON.stringify(holderState)}\n`);
+  if (holderState) await writeFile(holderStateTempPath, `${JSON.stringify(holderState)}\n`);
 
   // history.json is the dashboard's commit marker, so publish it last.
   await rename(snapshotTempPath, snapshotPath);
-  await rename(holderStateTempPath, HOLDER_STATE_PATH);
+  if (holderState) await rename(holderStateTempPath, HOLDER_STATE_PATH);
   await rename(historyTempPath, HISTORY_PATH);
 }
 

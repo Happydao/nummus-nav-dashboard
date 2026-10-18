@@ -2497,3 +2497,5 @@ h2 {
   .projection-selector button { font-size: 10px; }
   .footer-content { padding-top: 0; }
 }
+
+.chart-freshness { margin: 0 0 0.65rem; font-size: 0.75rem; opacity: 0.85; }

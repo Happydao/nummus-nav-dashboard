@@ -22,7 +22,7 @@ export function holderConcentrationChart(options: Options): string {
   const ranged = filterRange(options.records, options.range);
   const records = applyZoom(ranged, options.zoomWindow);
   if (records.length === 0) {
-    return `<section class="chart chart-full"><h2>Holder Concentration</h2><div class="empty">No concentration snapshots in selected range</div></section>`;
+    return `<section class="chart chart-full" data-chart-id="holder-concentration"><h2>Holder Concentration</h2><div class="empty">No concentration snapshots in selected range</div></section>`;
   }
 
   const plotWidth = WIDTH - PAD.left - PAD.right;
