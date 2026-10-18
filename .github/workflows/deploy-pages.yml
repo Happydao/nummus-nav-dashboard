@@ -36,6 +36,7 @@ jobs:
         run: npm ci
 
       - name: Collect daily snapshot
+        id: collect-snapshot
         run: |
           for attempt in 1 2 3; do
             echo "Collection attempt $attempt of 3"
@@ -74,6 +75,17 @@ jobs:
             --method POST \
             repos/Happydao/Nummus.Aeternitas/dispatches \
             -f event_type=nummus_data_updated
+
+      - name: Notify Telegram about unavailable metrics
+        if: ${{ always() && !cancelled() }}
+        continue-on-error: true
+        timeout-minutes: 1
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          COLLECTION_OUTCOME: ${{ steps.collect-snapshot.outcome }}
+          COMMIT_OUTCOME: ${{ steps.commit-snapshot.outcome }}
+        run: node scripts/notify-telegram.mjs
 
   deploy:
     needs: collect

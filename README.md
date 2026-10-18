@@ -245,3 +245,16 @@ Current fungible-asset pricing follows this order: **Jupiter, Helius price infor
 - [Nummus Burn Dashboard](https://happydao.github.io/Nummus.burn/) provides the public burn-history view associated with supply reduction.
 
 Historical values are not interpolated or invented. When a metric cannot be verified from public blockchain data or a real market observation, it remains unavailable rather than being replaced with an estimate.
+
+## Telegram alerts
+
+The collection workflow can send one Telegram message per incomplete run, listing each unavailable metric and its dependent metrics, with a link to the run. Healthy runs are silent. Collection failures and snapshot commit failures are reported separately. This notification runs before deployment; it does not confirm deployment success. A Telegram delivery failure is visible in Actions but does not block deployment.
+
+Configure these repository secrets under Settings → Secrets and variables → Actions:
+
+- `TELEGRAM_BOT_TOKEN`: the bot token issued by Telegram's official `@BotFather`.
+- `TELEGRAM_CHAT_ID`: the intended recipient's chat ID. Start the bot from that Telegram account first.
+
+Never commit the token. Until both secrets are configured, Actions emits a warning and skips notification. Tests use mocked Telegram responses and send no real messages: `node --test tests/telegram.test.mjs`.
+
+After configuring both secrets and publishing the workflow, run `gh workflow run test-telegram.yml --ref main` to send a clearly labelled test message. This manual workflow neither collects data nor deploys the dashboard; it fails if secrets are missing or Telegram rejects delivery.
