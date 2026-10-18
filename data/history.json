@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-18T09:01:27.981Z",
+  "generatedAt": "2026-10-18T09:10:36.807Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -19034,19 +19034,19 @@
       "date": "2026-10-18",
       "vaultUsd": 82189.71319108,
       "supply": 97583360.937514,
-      "marketPrice": 0.012922397361318819,
+      "marketPrice": 0.012901226768884175,
       "nav": 0.00084225,
-      "backing": 6.51775345,
-      "premium": 15.34270984,
+      "backing": 6.52844892,
+      "premium": 15.31757408,
       "tbtcAmount": 1.00722833,
       "marketDepth": {
-        "buyDepthUsd": 480,
-        "sellDepthUsd": 479.69,
+        "buyDepthUsd": 40,
+        "sellDepthUsd": 797.5,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
       "dexLiquidity": {
-        "totalLiquidityUsd": 134022.22,
+        "totalLiquidityUsd": 134260.1,
         "poolCount": 7,
         "provider": "dexscreener",
         "pools": [
@@ -19054,7 +19054,7 @@
             "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/SOL",
-            "liquidityUsd": 118425.33,
+            "liquidityUsd": 118643.45,
             "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
           },
           {
@@ -19068,14 +19068,14 @@
             "pairAddress": "BqXJoDkmKvbeSKJn9RwqvoKkgu3KyDv9hPHf2NoMjs1d",
             "dexId": "orca",
             "pairLabel": "NUMMUS/USDT",
-            "liquidityUsd": 3686.52,
+            "liquidityUsd": 3696.92,
             "url": "https://dexscreener.com/solana/bqxjodkmkvbeskjn9rwqvokkgu3kydv9hphf2nomjs1d"
           },
           {
             "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
             "dexId": "meteora",
             "pairLabel": "NUMMUS/USDT",
-            "liquidityUsd": 2734.51,
+            "liquidityUsd": 2743.87,
             "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
           },
           {
@@ -19116,6 +19116,7 @@
         "ignoredAssets": [],
         "unpricedAssets": []
       },
+      "collectionIssues": [],
       "holderGrowth": {
         "holderCount": 16573,
         "newHolders": 73,
