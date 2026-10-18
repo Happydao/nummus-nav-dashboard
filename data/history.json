@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-18T16:19:06.802Z",
+  "generatedAt": "2026-10-18T19:11:02.072Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -19040,8 +19040,8 @@
       "premium": 15.51733807,
       "tbtcAmount": 1.00722833,
       "marketDepth": {
-        "buyDepthUsd": 419.69,
-        "sellDepthUsd": 460,
+        "buyDepthUsd": 240.63,
+        "sellDepthUsd": 660,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
@@ -19111,9 +19111,9 @@
       },
       "collectionIssues": [],
       "holderGrowth": {
-        "holderCount": 16574,
+        "holderCount": 16573,
         "newHolders": 75,
-        "exitedHolders": 29,
+        "exitedHolders": 30,
         "concentration": {
           "topHolderPct": 3.3102,
           "top10Pct": 15.0526,
