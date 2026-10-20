@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-20T11:57:00.550Z",
+  "generatedAt": "2026-10-20T12:32:27.190Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -19227,13 +19227,13 @@
       "premium": 14.97356777,
       "tbtcAmount": 1.0167176,
       "marketDepth": {
-        "buyDepthUsd": 380.94,
-        "sellDepthUsd": 518.75,
+        "buyDepthUsd": 380,
+        "sellDepthUsd": 529.69,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
       "dexLiquidity": {
-        "totalLiquidityUsd": 133567.43,
+        "totalLiquidityUsd": 133569.39,
         "poolCount": 5,
         "provider": "dexscreener",
         "pools": [
@@ -19262,7 +19262,7 @@
             "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
             "dexId": "meteora",
             "pairLabel": "NUMMUS/USDT",
-            "liquidityUsd": 2728.9,
+            "liquidityUsd": 2730.86,
             "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
           },
           {
@@ -19291,18 +19291,18 @@
       },
       "collectionIssues": [],
       "holderGrowth": {
-        "holderCount": 16633,
+        "holderCount": 16632,
         "newHolders": 2,
-        "exitedHolders": 5,
+        "exitedHolders": 6,
         "concentration": {
           "topHolderPct": 3.3137,
-          "top10Pct": 15.0687,
-          "top50Pct": 35.3639,
-          "othersPct": 64.636,
+          "top10Pct": 15.0295,
+          "top50Pct": 35.0394,
+          "othersPct": 64.9605,
           "topHolderAmount": 3005700,
-          "top10Amount": 13667812.666953,
-          "top50Amount": 32076319.127599,
-          "othersAmount": 58626993.142715,
+          "top10Amount": 13632280.674781,
+          "top50Amount": 31781902.207123,
+          "othersAmount": 58921310.063561,
           "excludedPoolCount": 7
         }
       }
