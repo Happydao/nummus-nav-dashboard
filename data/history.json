@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-24T11:24:13.543Z",
+  "generatedAt": "2026-10-24T11:48:08.220Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -19589,8 +19589,8 @@
       "premium": 14.0543333,
       "tbtcAmount": 1.03506036,
       "marketDepth": {
-        "buyDepthUsd": 614.69,
-        "sellDepthUsd": 240,
+        "buyDepthUsd": 710,
+        "sellDepthUsd": 150.08,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
