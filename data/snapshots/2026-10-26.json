@@ -2,19 +2,19 @@
   "date": "2026-10-26",
   "vaultUsd": 83280.01613928,
   "supply": 97583360.937514,
-  "marketPrice": 0.010423856871657792,
+  "marketPrice": 0.010350592984114337,
   "nav": 0.00085342,
-  "backing": 8.18718072,
-  "premium": 12.21421677,
+  "backing": 8.24513148,
+  "premium": 12.12836937,
   "tbtcAmount": 1.03917324,
   "marketDepth": {
-    "buyDepthUsd": 480,
-    "sellDepthUsd": 383.75,
+    "buyDepthUsd": 40,
+    "sellDepthUsd": 764.38,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 119623.15,
+    "totalLiquidityUsd": 119408.89,
     "poolCount": 7,
     "provider": "dexscreener",
     "pools": [
@@ -22,14 +22,14 @@
         "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/SOL",
-        "liquidityUsd": 105601.4,
+        "liquidityUsd": 105410.22,
         "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
       },
       {
         "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/USDC",
-        "liquidityUsd": 8134.31,
+        "liquidityUsd": 8114.04,
         "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
       },
       {
@@ -43,7 +43,7 @@
         "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
         "dexId": "meteora",
         "pairLabel": "NUMMUS/USDT",
-        "liquidityUsd": 2466.36,
+        "liquidityUsd": 2463.54,
         "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
       },
       {
@@ -64,7 +64,7 @@
         "pairAddress": "htJHMSsSry2c8E77hQgU39Zq8B2TszhHytSh6KznD1Y",
         "dexId": "meteora",
         "pairLabel": "IMT/NUMMUS",
-        "liquidityUsd": 0.68,
+        "liquidityUsd": 0.69,
         "url": "https://dexscreener.com/solana/htjhmsssry2c8e77hqgu39zq8b2tszhhytsh6kznd1y"
       }
     ]
@@ -86,9 +86,9 @@
   },
   "collectionIssues": [],
   "holderGrowth": {
-    "holderCount": 16664,
-    "newHolders": 2,
-    "exitedHolders": 4,
+    "holderCount": 16663,
+    "newHolders": 3,
+    "exitedHolders": 6,
     "concentration": {
       "topHolderPct": 3.3316,
       "top10Pct": 14.9909,
@@ -97,7 +97,7 @@
       "topHolderAmount": 3005700,
       "top10Amount": 13524142.344765,
       "top50Amount": 31698065.069014,
-      "othersAmount": 58517446.717548,
+      "othersAmount": 58517422.066011,
       "excludedPoolCount": 7
     }
   }
