@@ -2,48 +2,48 @@
   "date": "2026-10-31",
   "vaultUsd": 81524.54849165,
   "supply": 97544757.357583,
-  "marketPrice": 0.010686250819085441,
+  "marketPrice": 0.010227523375884773,
   "nav": 0.00083577,
-  "backing": 7.82098431,
-  "premium": 12.78611438,
+  "backing": 8.17177306,
+  "premium": 12.23724634,
   "tbtcAmount": 1.05087282,
   "marketDepth": {
-    "buyDepthUsd": 580.63,
-    "sellDepthUsd": 207.34,
+    "buyDepthUsd": 565,
+    "sellDepthUsd": 205,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
   "dexLiquidity": {
-    "totalLiquidityUsd": 118238.43,
-    "poolCount": 5,
+    "totalLiquidityUsd": 115565.55,
+    "poolCount": 6,
     "provider": "dexscreener",
     "pools": [
       {
         "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/SOL",
-        "liquidityUsd": 104052.46,
+        "liquidityUsd": 101686.79,
         "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
       },
       {
         "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/USDC",
-        "liquidityUsd": 8234.7,
+        "liquidityUsd": 8042.64,
         "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
       },
       {
         "pairAddress": "BqXJoDkmKvbeSKJn9RwqvoKkgu3KyDv9hPHf2NoMjs1d",
         "dexId": "orca",
         "pairLabel": "NUMMUS/USDT",
-        "liquidityUsd": 3357.59,
+        "liquidityUsd": 3298.46,
         "url": "https://dexscreener.com/solana/bqxjodkmkvbeskjn9rwqvokkgu3kydv9hphf2nomjs1d"
       },
       {
         "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
         "dexId": "meteora",
         "pairLabel": "NUMMUS/USDT",
-        "liquidityUsd": 2496.25,
+        "liquidityUsd": 2439.56,
         "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
       },
       {
@@ -52,6 +52,13 @@
         "pairLabel": "QUANGO/NUMMUS",
         "liquidityUsd": 97.43,
         "url": "https://dexscreener.com/solana/ezz3kltbgm9do1vuchr7dqvs4u17zaylamkbqfuo1eyf"
+      },
+      {
+        "pairAddress": "htJHMSsSry2c8E77hQgU39Zq8B2TszhHytSh6KznD1Y",
+        "dexId": "meteora",
+        "pairLabel": "IMT/NUMMUS",
+        "liquidityUsd": 0.67,
+        "url": "https://dexscreener.com/solana/htjhmsssry2c8e77hqgu39zq8b2tszhhytsh6kznd1y"
       }
     ]
   },
@@ -72,18 +79,18 @@
   },
   "collectionIssues": [],
   "holderGrowth": {
-    "holderCount": 16755,
+    "holderCount": 16754,
     "newHolders": 2,
-    "exitedHolders": 5,
+    "exitedHolders": 6,
     "concentration": {
-      "topHolderPct": 3.1942,
-      "top10Pct": 14.7663,
-      "top50Pct": 35.0917,
-      "othersPct": 64.9082,
+      "topHolderPct": 3.1988,
+      "top10Pct": 14.7291,
+      "top50Pct": 35.0673,
+      "othersPct": 64.9326,
       "topHolderAmount": 2890096.153846,
-      "top10Amount": 13360299.038476,
-      "top50Amount": 31750262.34672,
-      "othersAmount": 58727570.341433,
+      "top10Amount": 13307385.77685,
+      "top50Amount": 31682539.141882,
+      "othersAmount": 58665020.550732,
       "excludedPoolCount": 7
     }
   }
