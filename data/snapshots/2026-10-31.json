@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-31",
+  "vaultUsd": 80396.37781337,
+  "supply": 97544757.357583,
+  "marketPrice": 0.010874728036108394,
+  "nav": 0.0008242,
+  "backing": 7.57904011,
+  "premium": 13.19428298,
+  "tbtcAmount": 1.04684586,
+  "marketDepth": {
+    "buyDepthUsd": 559.38,
+    "sellDepthUsd": 262.81,
+    "priceImpactPct": 1,
+    "provider": "jupiter"
+  },
+  "dexLiquidity": {
+    "totalLiquidityUsd": 119070.72,
+    "poolCount": 5,
+    "provider": "dexscreener",
+    "pools": [
+      {
+        "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
+        "dexId": "raydium",
+        "pairLabel": "NUMMUS/SOL",
+        "liquidityUsd": 104855.27,
+        "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
+      },
+      {
+        "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
+        "dexId": "raydium",
+        "pairLabel": "NUMMUS/USDC",
+        "liquidityUsd": 8298.82,
+        "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
+      },
+      {
+        "pairAddress": "BqXJoDkmKvbeSKJn9RwqvoKkgu3KyDv9hPHf2NoMjs1d",
+        "dexId": "orca",
+        "pairLabel": "NUMMUS/USDT",
+        "liquidityUsd": 3400.31,
+        "url": "https://dexscreener.com/solana/bqxjodkmkvbeskjn9rwqvokkgu3kydv9hphf2nomjs1d"
+      },
+      {
+        "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
+        "dexId": "meteora",
+        "pairLabel": "NUMMUS/USDT",
+        "liquidityUsd": 2515.62,
+        "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
+      },
+      {
+        "pairAddress": "htJHMSsSry2c8E77hQgU39Zq8B2TszhHytSh6KznD1Y",
+        "dexId": "meteora",
+        "pairLabel": "IMT/NUMMUS",
+        "liquidityUsd": 0.7,
+        "url": "https://dexscreener.com/solana/htjhmsssry2c8e77hqgu39zq8b2tszhhytsh6kznd1y"
+      }
+    ]
+  },
+  "valuationReport": {
+    "source": "Helius DAS current vault assets + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
+    "pricedAssets": [
+      {
+        "symbol": "tBTC",
+        "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
+        "amount": 1.04684586,
+        "priceUsd": 76798.6777092196,
+        "valueUsd": 80396.37781337,
+        "provider": "jupiter"
+      }
+    ],
+    "ignoredAssets": [],
+    "unpricedAssets": []
+  },
+  "collectionIssues": [],
+  "holderGrowth": {
+    "holderCount": 16758,
+    "newHolders": 1,
+    "exitedHolders": 1,
+    "concentration": {
+      "topHolderPct": 3.1934,
+      "top10Pct": 14.8179,
+      "top50Pct": 35.1582,
+      "othersPct": 64.8417,
+      "topHolderAmount": 2890096.153846,
+      "top10Amount": 13410299.055019,
+      "top50Amount": 31818429.132699,
+      "othersAmount": 58682145.934822,
+      "excludedPoolCount": 7
+    }
+  }
+}
