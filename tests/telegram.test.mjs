@@ -36,3 +36,28 @@ test('transport errors never expose token', async () => {
 test('Telegram API rejection fails delivery', async () => {
   await assert.rejects(sendTelegram('token', '123', 'Alert', async () => Response.json({ ok: false }, { status: 403 })), /HTTP 403/);
 });
+
+
+test('recovery sends a green message after an earlier outage', () => {
+  const text = buildAlert(history([]), 'success', 'success', url, history(['marketDepth']));
+  assert.match(text, /✅ NUMMUS — problema rientrato/);
+  assert.match(text, /Market Depth/);
+  assert.ok(text.includes(url));
+  assert.equal(buildAlert(history([]), 'success', 'success', url, history([])), null);
+});
+
+test('partial recovery lists recovered and still missing metrics separately', () => {
+  const text = buildAlert(history(['vaultUsd']), 'success', 'success', url, history(['marketDepth', 'vaultUsd']));
+  assert.match(text, /Metriche non aggiornate o incomplete:/);
+  assert.match(text, /✅ Problema rientrato per:\n• Market Depth/);
+});
+
+test('failed commit never announces recovery', () => {
+  const text = buildAlert(history([]), 'success', 'failure', url, history(['marketDepth']));
+  assert.doesNotMatch(text, /rientrato/);
+});
+
+test('recovery on the following UTC day resolves the previous outage', () => {
+  const current = { records: [{ date: '2026-10-19', collectionIssues: [] }] };
+  assert.match(buildAlert(current, 'success', 'success', url, history(['marketDepth'])), /problema rientrato/);
+});

@@ -76,25 +76,57 @@ test('total outage fails without changing the history or publication time', asyn
   assert.deepEqual(history, before);
 });
 
-test('same-day failure preserves earlier depth with an incomplete marker', async () => {
+test('same-day failure preserves earlier depth without an incomplete marker', async () => {
   const { history, holderState, deps } = setup();
   const first = await collectUpdate(history, holderState, deps);
   const depth = structuredClone(first.snapshot.marketDepth);
   deps.collectMarketDepth = fail;
   const second = await collectUpdate(history, first.holderState, deps);
   assert.deepEqual(second.snapshot.marketDepth, depth);
-  assert.ok(second.snapshot.collectionIssues.includes('marketDepth'));
+  assert.ok(!second.snapshot.collectionIssues.includes('marketDepth'));
+  assert.deepEqual(second.snapshot.collectionIssues, []);
   assert.equal(second.history.records.length, 2);
-  assert.equal(chartFreshness(second.history.records).find(s => s.id === 'market-depth').delayed, true);
+  assert.equal(chartFreshness(second.history.records).find(s => s.id === 'market-depth').delayed, false);
 });
 
-test('intraday retry does not reuse NAV with a changed vault and unavailable supply', async () => {
+test('intraday retry recalculates NAV using valid daily inputs', async () => {
   const { history, holderState, deps } = setup();
   await collectUpdate(history, holderState, deps);
   deps.getCurrentSupply = fail;
   deps.valueVault = async () => ({ vaultUsd: fixture.vaultUsd * 2, valuationReport: structuredClone(fixture.valuationReport) });
   const { snapshot } = await collectUpdate(history, holderState, deps);
-  assert.equal(snapshot.nav, null);
-  assert.equal(snapshot.backing, null);
-  assert.equal(snapshot.premium, null);
+  assert.ok(Math.abs(snapshot.nav - fixture.vaultUsd * 2 / fixture.supply) < 1e-8);
+  assert.ok(snapshot.backing > 0);
+  assert.ok(snapshot.premium > 0);
+  assert.ok(!snapshot.collectionIssues.includes('supply'));
+});
+
+
+test('failed depth then same-day recovery clears site status', async () => {
+  const { history, holderState, deps } = setup();
+  const healthyDepth = deps.collectMarketDepth;
+  deps.collectMarketDepth = fail;
+  const first = await collectUpdate(history, holderState, deps);
+  assert.ok(first.snapshot.collectionIssues.includes('marketDepth'));
+  deps.collectMarketDepth = healthyDepth;
+  const second = await collectUpdate(history, first.holderState, deps);
+  assert.deepEqual(second.snapshot.collectionIssues, []);
+  assert.equal(chartFreshness(second.history.records).find(s => s.id === 'market-depth').delayed, false);
+});
+
+test('a complete same-day outage retains valid daily data and scan status', async () => {
+  const { history, holderState, deps } = setup();
+  const first = await collectUpdate(history, holderState, deps);
+  for (const key of Object.keys(deps)) deps[key] = fail;
+  const second = await collectUpdate(history, first.holderState, deps);
+  assert.deepEqual(second.snapshot.marketDepth, first.snapshot.marketDepth);
+  assert.deepEqual(second.snapshot.collectionIssues, []);
+});
+
+test('unresolved history scan is not cleared by an unrelated daily observation', async () => {
+  const { history, holderState, deps } = setup();
+  deps.collectTbtcHistory = fail;
+  const first = await collectUpdate(history, holderState, deps);
+  const second = await collectUpdate(history, first.holderState, deps);
+  assert.ok(second.snapshot.collectionIssues.includes('tbtcHistory'));
 });

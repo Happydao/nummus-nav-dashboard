@@ -15,7 +15,7 @@ const metrics = [
   ['Storico burn/supply', ['supplyHistory']]
 ];
 
-export function buildAlert(history, collectionOutcome, commitOutcome, runUrl) {
+export function buildAlert(history, collectionOutcome, commitOutcome, runUrl, previousHistory = null) {
   if (collectionOutcome !== 'success') {
     return `🔴 NUMMUS — raccolta fallita\nNessun nuovo snapshot salvato da questa esecuzione. Controllare i log per le fonti non disponibili.\n${runUrl}`;
   }
@@ -24,12 +24,21 @@ export function buildAlert(history, collectionOutcome, commitOutcome, runUrl) {
   const issues = new Set(latest.collectionIssues ?? []);
   const affected = metrics.filter(([, deps]) => deps.some(key => issues.has(key)));
   const commitFailed = commitOutcome !== 'success';
-  if (!affected.length && !commitFailed) return null;
+  const previousIssues = new Set(previousHistory?.records?.at(-1)?.collectionIssues ?? []);
+  const recovered = commitFailed ? [] : metrics.filter(([, deps]) =>
+    deps.some(key => previousIssues.has(key)) && !deps.some(key => issues.has(key)));
+  if (!affected.length && !commitFailed) {
+    if (!recovered.length) return null;
+    return [`✅ NUMMUS — problema rientrato · ${latest.date}`,
+      'Dati validi disponibili per la giornata UTC:', ...recovered.map(([label]) => `• ${label}`),
+      'Le metriche sono state salvate. Pubblicazione della dashboard gestita dal job deploy.', runUrl].join('\n');
+  }
   const lines = [`⚠️ NUMMUS — aggiornamento ${latest.date}`];
   if (affected.length) {
     lines.push('Metriche non aggiornate o incomplete:', ...affected.map(([label]) => `• ${label}`));
     lines.push('Nessun dato di giorni precedenti viene copiato nella nuova data.');
   }
+  if (recovered.length) lines.push('✅ Problema rientrato per:', ...recovered.map(([label]) => `• ${label}`));
   lines.push(commitFailed
     ? 'Salvataggio su GitHub fallito: i nuovi dati non sono confermati nel repository.'
     : 'Le metriche disponibili sono state salvate. Pubblicazione della dashboard gestita dal job deploy.');
@@ -75,7 +84,9 @@ async function main() {
   const history = outcome === 'success'
     ? JSON.parse(await readFile(new URL('../data/history.json', import.meta.url), 'utf8')) : null;
   const runUrl = `${process.env.GITHUB_SERVER_URL ?? 'https://github.com'}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
-  const message = buildAlert(history, outcome, process.env.COMMIT_OUTCOME, runUrl);
+  const previousHistory = outcome === 'success' && process.env.PREVIOUS_HISTORY_PATH
+    ? JSON.parse(await readFile(process.env.PREVIOUS_HISTORY_PATH, 'utf8')) : null;
+  const message = buildAlert(history, outcome, process.env.COMMIT_OUTCOME, runUrl, previousHistory);
   if (!message) { console.log('All metrics updated: no Telegram alert needed'); return; }
   await sendTelegram(token, chatId, message);
   console.log('Telegram alert delivered');

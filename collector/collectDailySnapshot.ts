@@ -82,6 +82,7 @@ export async function collectDailySnapshot(deps = sources): Promise<DailySnapsho
 
 export async function collectUpdate(history: HistoryFile, holderState: HolderCursor | undefined, deps = sources) {
   const snapshot = await collectDailySnapshot(deps);
+  const previous = history.records.find((record) => record.date === snapshot.date);
   const issues = snapshot.collectionIssues!;
   // Do not let a failed source mutate a cursor that will be retained on failure.
   const [tbtc, holders, supply] = await Promise.all([
@@ -94,7 +95,7 @@ export async function collectUpdate(history: HistoryFile, holderState: HolderCur
   else issues.push("holderGrowth");
   validateSnapshot(snapshot);
   if (![snapshot.vaultUsd, snapshot.supply, snapshot.marketPrice, snapshot.tbtcAmount].some(nonNegative) &&
-      !snapshot.marketDepth && !snapshot.dexLiquidity && !snapshot.holderGrowth) {
+      !snapshot.marketDepth && !snapshot.dexLiquidity && !snapshot.holderGrowth && !previous) {
     throw new Error("No valid current metrics; existing history remains unchanged");
   }
   if (tbtc) { history.tbtcHistory = tbtc.history; history.tbtcCursor = tbtc.cursor; }
@@ -108,20 +109,23 @@ export async function collectUpdate(history: HistoryFile, holderState: HolderCur
   const nextHolderState = snapshot.holderGrowth && holders ? holders.cursor : holderState;
   if (nextHolderState) delete history.holderCursor;
   // Preserve successful observations on an intraday retry, never copy an older day forward.
-  const previous = history.records.find((record) => record.date === snapshot.date);
   if (previous) {
-    for (const key of ["vaultUsd", "supply", "marketPrice", "tbtcAmount", "marketDepth", "dexLiquidity", "holderGrowth"] as const) {
+    const dailyKeys = ["vaultUsd", "supply", "marketPrice", "tbtcAmount", "marketDepth", "dexLiquidity", "holderGrowth"] as const;
+    for (const key of dailyKeys) {
       if (snapshot[key] == null && previous[key] != null) Object.assign(snapshot, { [key]: previous[key] });
     }
-    // Never reuse a derived value beside changed inputs from another attempt.
-    if (snapshot.vaultUsd === previous.vaultUsd && snapshot.supply === previous.supply) {
-      snapshot.nav ??= previous.nav;
-      if (snapshot.marketPrice === previous.marketPrice) {
-        snapshot.backing ??= previous.backing;
-        snapshot.premium ??= previous.premium;
-      }
+    if (issues.includes("vaultUsd") && snapshot.vaultUsd === previous.vaultUsd) {
+      snapshot.valuationReport = previous.valuationReport;
     }
-    if (issues.includes("vaultUsd")) snapshot.valuationReport = previous.valuationReport;
+    // Issues describe missing daily observations, not failed individual attempts.
+    // History scans are usable only if a scan already succeeded on this UTC date.
+    snapshot.collectionIssues = issues.filter(key =>
+      !dailyKeys.some(dailyKey => dailyKey === key) &&
+      !(["tbtcHistory", "supplyHistory"].includes(key) &&
+        !previous.collectionIssues?.includes(key))
+    );
+    validateSnapshot(snapshot);
+    if (!snapshot.holderGrowth) snapshot.collectionIssues!.push("holderGrowth");
   }
   const records = new Map(history.records.map((record) => [record.date, record]));
   records.set(snapshot.date, snapshot);
