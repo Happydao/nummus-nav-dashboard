@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T22:38:34.873Z",
+  "generatedAt": "2026-11-07T02:32:03.441Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -20924,6 +20924,110 @@
           "excludedPoolCount": 7
         }
       }
+    },
+    {
+      "date": "2026-11-07",
+      "vaultUsd": 80160.96724863,
+      "supply": 97507707.350697,
+      "marketPrice": 0.0105166198805776,
+      "nav": 0.0008221,
+      "backing": 7.81715047,
+      "premium": 12.79238521,
+      "tbtcAmount": 1.06192849,
+      "marketDepth": {
+        "buyDepthUsd": 170,
+        "sellDepthUsd": 592.19,
+        "priceImpactPct": 1,
+        "provider": "jupiter"
+      },
+      "dexLiquidity": {
+        "totalLiquidityUsd": 114645.39,
+        "poolCount": 7,
+        "provider": "dexscreener",
+        "pools": [
+          {
+            "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
+            "dexId": "raydium",
+            "pairLabel": "NUMMUS/SOL",
+            "liquidityUsd": 100492.02,
+            "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
+          },
+          {
+            "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
+            "dexId": "raydium",
+            "pairLabel": "NUMMUS/USDC",
+            "liquidityUsd": 8198.57,
+            "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
+          },
+          {
+            "pairAddress": "BqXJoDkmKvbeSKJn9RwqvoKkgu3KyDv9hPHf2NoMjs1d",
+            "dexId": "orca",
+            "pairLabel": "NUMMUS/USDT",
+            "liquidityUsd": 3377.08,
+            "url": "https://dexscreener.com/solana/bqxjodkmkvbeskjn9rwqvokkgu3kydv9hphf2nomjs1d"
+          },
+          {
+            "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
+            "dexId": "meteora",
+            "pairLabel": "NUMMUS/USDT",
+            "liquidityUsd": 2483.77,
+            "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
+          },
+          {
+            "pairAddress": "Ezz3kLtbGm9Do1vUCHr7dQvS4U17ZayLaMKBqfuo1EYF",
+            "dexId": "meteora",
+            "pairLabel": "QUANGO/NUMMUS",
+            "liquidityUsd": 92.97,
+            "url": "https://dexscreener.com/solana/ezz3kltbgm9do1vuchr7dqvs4u17zaylamkbqfuo1eyf"
+          },
+          {
+            "pairAddress": "htJHMSsSry2c8E77hQgU39Zq8B2TszhHytSh6KznD1Y",
+            "dexId": "meteora",
+            "pairLabel": "IMT/NUMMUS",
+            "liquidityUsd": 0.69,
+            "url": "https://dexscreener.com/solana/htjhmsssry2c8e77hqgu39zq8b2tszhhytsh6kznd1y"
+          },
+          {
+            "pairAddress": "o6XaXnGjZVXvdJC6UugBRvRi5AoxKk9SyHfi6zwnk9V",
+            "dexId": "orca",
+            "pairLabel": "VICI6/NUMMUS",
+            "liquidityUsd": 0.29,
+            "url": "https://dexscreener.com/solana/o6xaxngjzvxvdjc6uugbrvri5aoxkk9syhfi6zwnk9v"
+          }
+        ]
+      },
+      "valuationReport": {
+        "source": "Helius DAS current vault assets + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
+        "pricedAssets": [
+          {
+            "symbol": "tBTC",
+            "mint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
+            "amount": 1.06192849,
+            "priceUsd": 75486.21964990189,
+            "valueUsd": 80160.96724863,
+            "provider": "jupiter"
+          }
+        ],
+        "ignoredAssets": [],
+        "unpricedAssets": []
+      },
+      "collectionIssues": [],
+      "holderGrowth": {
+        "holderCount": 16787,
+        "newHolders": 1,
+        "exitedHolders": 2,
+        "concentration": {
+          "topHolderPct": 3.1918,
+          "top10Pct": 15.1773,
+          "top50Pct": 35.3224,
+          "othersPct": 64.6775,
+          "topHolderAmount": 2890096.153846,
+          "top10Amount": 13742353.366965,
+          "top50Amount": 31982825.991605,
+          "othersAmount": 58562458.930872,
+          "excludedPoolCount": 7
+        }
+      }
     }
   ],
   "tbtcHistory": [
@@ -21873,6 +21977,10 @@
     },
     {
       "date": "2026-11-06",
+      "amount": 1.06192849
+    },
+    {
+      "date": "2026-11-07",
       "amount": 1.06192849
     }
   ],
