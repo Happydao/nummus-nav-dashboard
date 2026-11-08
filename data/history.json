@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-08T13:45:26.597Z",
+  "generatedAt": "2026-11-08T14:01:48.890Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -21018,13 +21018,13 @@
       "premium": 12.52545754,
       "tbtcAmount": 1.06608881,
       "marketDepth": {
-        "buyDepthUsd": 510.94,
-        "sellDepthUsd": 232.34,
+        "buyDepthUsd": 577.19,
+        "sellDepthUsd": 199.84,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
       "dexLiquidity": {
-        "totalLiquidityUsd": 113035.71,
+        "totalLiquidityUsd": 112604.45,
         "poolCount": 4,
         "provider": "dexscreener",
         "pools": [
@@ -21032,7 +21032,7 @@
             "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
             "dexId": "raydium",
             "pairLabel": "NUMMUS/SOL",
-            "liquidityUsd": 99080.83,
+            "liquidityUsd": 98652.13,
             "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
           },
           {
@@ -21046,14 +21046,14 @@
             "pairAddress": "BqXJoDkmKvbeSKJn9RwqvoKkgu3KyDv9hPHf2NoMjs1d",
             "dexId": "orca",
             "pairLabel": "NUMMUS/USDT",
-            "liquidityUsd": 3344.92,
+            "liquidityUsd": 3343.52,
             "url": "https://dexscreener.com/solana/bqxjodkmkvbeskjn9rwqvokkgu3kydv9hphf2nomjs1d"
           },
           {
             "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
             "dexId": "meteora",
             "pairLabel": "NUMMUS/USDT",
-            "liquidityUsd": 2463.48,
+            "liquidityUsd": 2462.32,
             "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
           }
         ]
@@ -21086,7 +21086,7 @@
           "topHolderAmount": 2890096.153846,
           "top10Amount": 13742353.366965,
           "top50Amount": 31952825.991605,
-          "othersAmount": 58572531.501153,
+          "othersAmount": 58572531.536244,
           "excludedPoolCount": 7
         }
       }
