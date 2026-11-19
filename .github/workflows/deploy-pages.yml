@@ -89,8 +89,8 @@ jobs:
         run: node scripts/notify-telegram.mjs
 
   deploy:
-    needs: collect
-    if: ${{ always() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
+    # Maintenance deployments are independent of the disabled collection job.
+    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -117,9 +117,19 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
+        id: upload
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
+      - name: Verify Pages artifact upload
+        env:
+          ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
+        run: |
+          if [ -z "$ARTIFACT_ID" ]; then
+            echo "::error::Pages artifact upload returned no artifact ID; stopping deployment."
+            exit 1
+          fi
 
       - name: Deploy to GitHub Pages
         id: deployment
