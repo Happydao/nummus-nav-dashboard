@@ -10,8 +10,8 @@
     "import:vault-history": "tsx collector/importVaultHistory.ts",
     "check": "tsc --noEmit",
     "dev": "VITE_BASE_PATH=/ vite --host 127.0.0.1",
-    "build": "vite build && node scripts/copy-data.mjs",
-    "build:local": "VITE_BASE_PATH=/ vite build && node scripts/copy-data.mjs",
+    "build": "vite build && node --import tsx scripts/copy-data.mjs",
+    "build:local": "VITE_BASE_PATH=/ vite build && node --import tsx scripts/copy-data.mjs",
     "preview:local": "VITE_BASE_PATH=/ vite preview --host 127.0.0.1"
   },
   "dependencies": {

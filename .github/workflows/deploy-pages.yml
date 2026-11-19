@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  schedule:
-    # Daily fallback at 06:25 UTC (08:25 in Italy during daylight saving time).
-    - cron: "25 6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -20,7 +17,7 @@ concurrency:
 
 jobs:
   collect:
-    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ false }} # Maintenance: no collection, alerts or downstream dispatch.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -93,7 +90,7 @@ jobs:
 
   deploy:
     needs: collect
-    if: ${{ always() && (github.event_name == 'push' || needs.collect.result == 'success') }}
+    if: ${{ always() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

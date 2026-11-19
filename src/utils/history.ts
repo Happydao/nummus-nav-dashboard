@@ -1,3 +1,4 @@
+import { frozenHistory } from "./maintenance.js";
 export interface DailySnapshot {
   collectionIssues?: string[];
   date: string;
@@ -74,7 +75,7 @@ export async function loadHistory(): Promise<HistoryFile> {
     return { generatedAt: null, records: [] };
   }
 
-  return (await response.json()) as HistoryFile;
+  return frozenHistory((await response.json()) as HistoryFile);
 }
 
 export function latestRecord(records: DailySnapshot[]): DailySnapshot | null {

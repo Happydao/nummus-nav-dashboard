@@ -1,3 +1,4 @@
+import { maintenance } from "../utils/maintenance.js";
 import "./styles.css";
 import { attachChartInteractions, type ChartZoomAction } from "../charts/interactions.js";
 import {
@@ -70,7 +71,7 @@ async function render(): Promise<void> {
     : "";
   const vaultComposition = latest ? vaultCompositionDetails(latest, tbtcChange) : "";
   const isStale =
-    history.generatedAt !== null && Date.now() - new Date(history.generatedAt).getTime() > STALE_AFTER_MS;
+    !maintenance.enabled && history.generatedAt !== null && Date.now() - new Date(history.generatedAt).getTime() > STALE_AFTER_MS;
 
   root.innerHTML = `
     <div class="shell">
@@ -85,7 +86,7 @@ async function render(): Promise<void> {
               </a>
             </div>
             <span>Measure the intrinsic value behind every NUMMUS token.</span>
-            <span class="updated${isStale ? " updated-stale" : ""}">${history.generatedAt ? `Updated ${formatUtcTimestamp(history.generatedAt)} UTC` : "No snapshot collected yet"}</span>
+            <span class="updated${isStale ? " updated-stale" : ""}">${maintenance.enabled ? "Data frozen as of November 17, 2026" : history.generatedAt ? `Updated ${formatUtcTimestamp(history.generatedAt)} UTC` : "No snapshot collected yet"}</span>
           </div>
         </div>
         <div class="topbar-tools">
@@ -107,12 +108,13 @@ async function render(): Promise<void> {
         </div>
       </header>
       <div class="content">
+        ${maintenance.enabled ? `<div class="notice maintenance-notice" role="status"><strong>Dashboard under maintenance</strong><p>Following the community’s decision, Nummus is transitioning from a tBTC accumulation strategy to a Zcash (ZEC) accumulation strategy. Existing tBTC holdings are being converted to ZEC. Dashboard updates are paused and all figures are held at their November 17, 2026 values. Points after that date repeat the frozen values and do not represent new observations.</p></div>` : ""}
         ${
           isStale
             ? `<div class="notice stale-notice" role="alert">Data update delayed: the last published update is more than 48 hours old. The dashboard is showing the most recent verified data.</div>`
             : ""
         }
-        ${latest?.collectionIssues?.length ? `<div class="notice stale-notice" role="status">Some metrics could not be refreshed. Available metrics have been updated; affected charts show their last observation date. Missing current values are shown as n/a.</div>` : ""}
+        ${!maintenance.enabled && latest?.collectionIssues?.length ? `<div class="notice stale-notice" role="status">Some metrics could not be refreshed. Available metrics have been updated; affected charts show their last observation date. Missing current values are shown as n/a.</div>` : ""}
         <header class="section-intro snapshot-intro">
           <span>Latest verified metrics</span>
           <h2>Current Snapshot</h2>
@@ -310,9 +312,9 @@ async function render(): Promise<void> {
             <p>Modelled outcomes based on the latest real snapshot and documented assumptions. This section is not historical data or a price forecast.</p>
           </header>
           ${projectionChart({
-            latest,
-            records: financialRecords,
-            supplyHistory: history.supplyHistory ?? [],
+            latest: maintenance.enabled ? records.find(record => record.date === maintenance.frozenDate) ?? null : latest,
+            records: maintenance.enabled ? financialRecords.filter(record => record.date <= maintenance.frozenDate) : financialRecords,
+            supplyHistory: (history.supplyHistory ?? []).filter(point => !maintenance.enabled || point.date <= maintenance.frozenDate),
             scenario: selectedProjectionScenario,
             years: selectedProjectionYears,
             zoomWindow: chartZoom("projection")
@@ -342,7 +344,7 @@ async function render(): Promise<void> {
     if (!chart) continue;
     const note = document.createElement("p");
     note.className = `chart-freshness${status.delayed || isStale ? " updated-stale" : ""}`;
-    note.textContent = `${status.delayed ? "Update incomplete · " : ""}${status.date ? `Last valid observation: ${status.date} UTC` : "No valid observation available"}`;
+    note.textContent = maintenance.enabled ? "Data frozen as of November 17, 2026 · Later points repeat frozen values" : `${status.delayed ? "Update incomplete · " : ""}${status.date ? `Last valid observation: ${status.date} UTC` : "No valid observation available"}`;
     chart.prepend(note);
   }
   attachRangeHandlers();

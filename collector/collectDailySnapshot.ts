@@ -1,3 +1,4 @@
+import { maintenance } from "../src/utils/maintenance.js";
 import { getCurrentMarketPrice } from "./sources/marketPrice.js";
 import { collectMarketDepth } from "./sources/marketDepth.js";
 import { getCurrentDexLiquidity } from "./sources/dexLiquidity.js";
@@ -135,6 +136,10 @@ export async function collectUpdate(history: HistoryFile, holderState: HolderCur
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  if (maintenance.enabled) {
+    console.log(`Collection paused: dashboard frozen as of ${maintenance.frozenDate}.`);
+    process.exit(0);
+  }
   const history = await readHistory();
   const update = await collectUpdate(history, await readHolderState() ?? history.holderCursor);
   await commitSnapshot(update.snapshot, update.history, update.holderState);

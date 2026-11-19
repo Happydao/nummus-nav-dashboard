@@ -1,5 +1,11 @@
 # NUMMUS NAV Dashboard
 
+## Maintenance — November 17, 2026 freeze
+
+Automatic collection is paused during the community-approved transition from tBTC to Zcash. The published dashboard repeats the verified November 17 values for later dates, explicitly labelled as frozen display points rather than observations. Source snapshots remain intact for audit. Build and browser loading both enforce the cutoff; a missing November 17 snapshot fails rather than substituting another date. The simulator uses only observations through the cutoff. Scheduled collection, manual workflow collection, Telegram collection alerts and downstream update dispatches are disabled; push/manual deployments remain available. The collector CLI also exits without contacting providers or writing data.
+
+`src/utils/maintenance.ts` stores the freeze and proposed ZEC mint/wallet. ZEC is not yet active and no restart date is set. At the user’s explicit restart instruction, replace the tBTC Accumulation chart with Zcash Accumulation, starting from the actual ZEC holdings (including the initial converted balance); never relabel old tBTC amounts as ZEC. Update balance collection, valuation and history to use the configured ZEC mint only, excluding residual tBTC. Other charts retain their definitions. Verify mint decimals, balances and pricing before restoring collection. Do not simply disable maintenance without completing that migration.
+
 The NUMMUS NAV Dashboard tracks the treasury backing, market valuation and liquidity conditions supporting NUMMUS over time.
 
 It is not primarily a treasury-composition dashboard. Current asset holdings are available as supporting context, while the dashboard's main purpose is to preserve and explain the historical relationship between:

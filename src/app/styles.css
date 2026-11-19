@@ -2499,3 +2499,7 @@ h2 {
 }
 
 .chart-freshness { margin: 0 0 0.65rem; font-size: 0.75rem; opacity: 0.85; }
+
+.maintenance-notice { border: 1px solid #b88a36; background: color-mix(in srgb, #d8a641 12%, var(--bg, transparent)); line-height: 1.6; }
+.maintenance-notice strong { display: block; font-size: 1.1rem; }
+.maintenance-notice p { margin: .5rem 0 0; }
