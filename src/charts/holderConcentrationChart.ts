@@ -1,3 +1,4 @@
+import { strategyTransitionMarker } from "./strategyTransition.js";
 import { chartZoomControls, type ChartZoomWindow, type HolderConcentrationSnapshot, type RangeKey } from "./lineChart.js";
 import { percent } from "../utils/format.js";
 
@@ -76,6 +77,7 @@ export function holderConcentrationChart(options: Options): string {
           ${holderBounds.ticks.map((tick) => `<text class="tick-label holder-y-label" x="${PAD.left - 10}" y="${holderY(tick) + 4}" text-anchor="end">${integer(tick)}</text>`).join("")}
           <text class="tick-label" x="${PAD.left}" y="${HEIGHT - 18}" text-anchor="start">${dateLabel(records[0].date)}</text>
           <text class="tick-label" x="${WIDTH - PAD.right}" y="${HEIGHT - 18}" text-anchor="end">${dateLabel(latest.date)}</text>
+          ${strategyTransitionMarker(records.map((record, index) => ({ date: record.date, x: x(index) })), PAD.top, HEIGHT - PAD.bottom)}
           <line class="crosshair" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
           <circle class="hover-dot" cx="${boundaries[0].x}" cy="${holderY(records[0].holderCount)}" r="5" />
           <rect class="hover-capture" x="${PAD.left}" y="${PAD.top}" width="${plotWidth}" height="${plotHeight}" />

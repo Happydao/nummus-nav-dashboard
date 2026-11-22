@@ -1,3 +1,4 @@
+import { STRATEGY_TRANSITION_EXPLANATION } from "../charts/strategyTransition.js";
 import { treasuryAccumulationChart } from "../charts/treasuryAccumulationChart.js";
 import { maintenance } from "../utils/maintenance.js";
 import "./styles.css";
@@ -100,7 +101,7 @@ async function render(): Promise<void> {
             ${rangeButtons(selectedRange)}
           </div>
           <div class="topbar-meta">
-            <div class="change-meaning" aria-label="Arrows show numerical direction. Green means favorable and red means unfavorable.">
+            <div class="change-meaning" aria-label="Chart guide: change direction, colors and the treasury strategy transition marker.">
               <span class="change-direction">${directionInfoTip()} ↑↓ Direction</span>
               <span class="change-favorable">Green favorable</span>
               <span class="change-adverse">Red unfavorable</span>
@@ -367,7 +368,7 @@ function themeToggle(theme: Theme): string {
 
 function directionInfoTip(): string {
   const text = "The arrow shows the numerical direction of change: up means the value increased and down means it decreased. Color shows the effect: green is favorable, red is unfavorable and grey is unchanged. A red upward arrow therefore means the value increased but the movement is considered unfavorable for that metric.";
-  return `<span class="info-tip direction-info-tip" tabindex="0" aria-label="${escapeHtml(text)}">i<span class="info-popover" role="tooltip">${escapeHtml(text)}</span></span>`;
+  return `<span class="info-tip direction-info-tip" tabindex="0" aria-label="${escapeHtml(`${text} ${STRATEGY_TRANSITION_EXPLANATION}`)}">i<span class="info-popover" role="tooltip"><span class="chart-guide-section">${escapeHtml(text)}</span><span class="chart-guide-section"><b>Treasury strategy transition</b><br>${escapeHtml(STRATEGY_TRANSITION_EXPLANATION)}</span></span></span>`;
 }
 
 function attachThemeHandler(): void {

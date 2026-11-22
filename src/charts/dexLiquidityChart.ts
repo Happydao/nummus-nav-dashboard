@@ -1,3 +1,4 @@
+import { strategyTransitionMarker } from "./strategyTransition.js";
 import type { DailySnapshot } from "../utils/history.js";
 import { usd, usdCompact } from "../utils/format.js";
 import {
@@ -110,6 +111,7 @@ export function dexLiquidityChart(options: DexLiquidityChartOptions): string {
           <line class="axis-line" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
           <path class="area-path liquidity-total-area" d="${totalAreaPath}" />
           <path class="liquidity-total-path" d="${totalPath}" />
+          ${strategyTransitionMarker(records.map((record, index) => ({ date: record.date, x: totalPoints[index].x })), PAD.top, HEIGHT - PAD.bottom)}
           <line class="crosshair" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
           <circle class="hover-dot liquidity-hover-dot" cx="${totalPoints[0].x}" cy="${totalPoints[0].y}" r="5" />
           <rect class="hover-capture" x="${PAD.left}" y="${PAD.top}" width="${chartWidth}" height="${chartHeight}" />

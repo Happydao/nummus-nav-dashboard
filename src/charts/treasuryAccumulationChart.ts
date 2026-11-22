@@ -1,3 +1,4 @@
+import { strategyTransitionMarker } from "./strategyTransition.js";
 import { maintenance } from "../utils/maintenance.js";
 import type { HistoryFile } from "../utils/history.js";
 import { applyZoomWindow, chartZoomControls, type ChartZoomWindow, type RangeKey } from "./lineChart.js";
@@ -50,8 +51,6 @@ export function treasuryAccumulationChart(options: { history: HistoryFile; range
     const observations = points.filter(p => valid(p[key]));
     return `<path class="treasury-series" stroke="${color}" d="${path}" />${observations.map((p, i) => i === 0 || i === observations.length - 1 ? `<circle fill="${color}" cx="${x(p.date)}" cy="${y(p[key]!, max)}" r="4" />` : "").join("")}`;
   }
-  const transitionX = x(restart);
-  const transitionVisible = stamp(restart) >= first && stamp(restart) <= last;
   const ticks = [0, .25, .5, .75, 1];
   const dateCount = Math.min(typeof window !== "undefined" && window.innerWidth <= 620 ? 3 : 5, Math.max(2, points.length));
   const dateTicks = [...new Set(Array.from({ length: dateCount }, (_, i) => points[Math.round(i * (points.length - 1) / (dateCount - 1))].date))];
@@ -79,8 +78,8 @@ export function treasuryAccumulationChart(options: { history: HistoryFile; range
       ${ticks.map(f => `<line class="grid-line" x1="${left}" y1="${y(f, 1)}" x2="${right}" y2="${y(f, 1)}" /><text class="tick-label" style="fill:${ORANGE}" x="${left - 10}" y="${y(f, 1) + 4}" text-anchor="end">${tick(f * tMax)}</text><text class="tick-label" style="fill:${GREEN}" x="${right + 10}" y="${y(f, 1) + 4}">${tick(f * zMax)}</text>`).join("")}
       <line class="axis-line" x1="${left}" x2="${right}" y1="${bottom}" y2="${bottom}" /><line class="axis-line" x1="${left}" x2="${left}" y1="${P.top}" y2="${bottom}" /><line class="axis-line" x1="${right}" x2="${right}" y1="${P.top}" y2="${bottom}" />
       ${dateTicks.map(date => `<text class="tick-label" x="${x(date)}" y="${H - 18}" text-anchor="${date === points[0].date ? "start" : date === points.at(-1)!.date ? "end" : "middle"}">${date.slice(8)}-${date.slice(5, 7)}-${date.slice(2, 4)}</text>`).join("")}
-      ${transitionVisible ? `<line class="treasury-transition" x1="${transitionX}" x2="${transitionX}" y1="${P.top}" y2="${bottom}"><title>Transition from tBTC to ZEC accumulation · November 22, 2026</title></line><text class="tick-label" x="${transitionX < (left + right) / 2 ? transitionX + 7 : transitionX - 7}" y="${P.top + 15}" text-anchor="${transitionX < (left + right) / 2 ? "start" : "end"}">tBTC → ZEC · Nov 22</text>` : ""}
       ${series("tbtc", tMax, ORANGE)}${series("zec", zMax, GREEN)}
+      ${strategyTransitionMarker(points.map(point => ({ date: point.date, x: x(point.date) })), P.top, bottom, true)}
       <line class="crosshair" x1="${left}" x2="${left}" y1="${P.top}" y2="${bottom}" /><circle class="hover-dot" cx="${interactive[0]?.x ?? left}" cy="${interactive[0]?.y ?? bottom}" r="5" /><rect class="hover-capture" x="${left}" y="${P.top}" width="${right - left}" height="${bottom - P.top}" />
     </svg><div class="chart-tooltip"></div></div>
     <script type="application/json" class="chart-data">${JSON.stringify({ formatterName: "treasury-accumulation", points: interactive }).replaceAll("<", "\\u003c")}</script>

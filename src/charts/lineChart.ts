@@ -1,3 +1,4 @@
+import { strategyTransitionMarker } from "./strategyTransition.js";
 import type { DailySnapshot, SupplySnapshot, TbtcSnapshot } from "../utils/history.js";
 
 export type RangeKey = "1D" | "7D" | "30D" | "1Y" | "ALL";
@@ -290,6 +291,7 @@ export function lineChart(options: ChartOptions): string {
               ? coords.map((point, index) => marker(point, index)).join("")
               : ""
           }
+          ${strategyTransitionMarker(coords, PAD.top, HEIGHT - PAD.bottom)}
           <line class="crosshair" x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${HEIGHT - PAD.bottom}" />
           <circle class="hover-dot" cx="${coords[0].x}" cy="${coords[0].y}" r="5" />
           <rect class="hover-capture" x="${PAD.left}" y="${PAD.top}" width="${chartWidth}" height="${chartHeight}" />
