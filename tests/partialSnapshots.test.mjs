@@ -3,24 +3,23 @@ import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { collectUpdate } from '../collector/collectDailySnapshot.ts';
 import { chartFreshness } from '../src/utils/history.ts';
-import { TBTC_MINT } from '../collector/utils/constants.ts';
+import { ZEC_MINT } from '../collector/utils/constants.ts';
 
-const fixture = JSON.parse(readFileSync(new URL('../data/history.json', import.meta.url))).records.at(-1);
+const fixture = JSON.parse(readFileSync(new URL('../data/history.json', import.meta.url))).records.find(r => r.date === "2026-11-17");
 const fail = async () => { throw new Error('source unavailable'); };
 function setup() {
-  const baseline = { ...structuredClone(fixture), date: '2026-01-01' };
+  const baseline = { ...structuredClone(fixture), date: '2026-11-17' };
   const holderState = { date: baseline.date, owners: ['previous'] };
   const history = { generatedAt: '2026-01-01T12:00:00Z', records: [baseline],
     tbtcHistory: [{ date: baseline.date, amount: 1 }], tbtcCursor: { tokenAccounts: [], processedSignatures: ['old'], lastAmount: 1 },
     supplyHistory: [{ date: baseline.date, supply: 100, burnedCumulative: 0 }], supplyCursor: { processedSignatures: ['old'], totalBurned: 0 } };
   const deps = {
-    getCurrentVaultAssets: async () => ({ fungibleAssets: [{ mint: TBTC_MINT, amount: fixture.tbtcAmount }], ignoredAssets: [] }),
+    getCurrentVaultAssets: async () => ({ fungibleAssets: [{ mint: ZEC_MINT, amount: 180 }], ignoredAssets: [] }),
     getCurrentSupply: async () => fixture.supply,
     getCurrentMarketPrice: async () => fixture.marketPrice,
     getCurrentDexLiquidity: async () => structuredClone(fixture.dexLiquidity),
     valueVault: async () => ({ vaultUsd: fixture.vaultUsd, valuationReport: structuredClone(fixture.valuationReport) }),
     collectMarketDepth: async () => structuredClone(fixture.marketDepth),
-    collectTbtcHistory: async (history, cursor) => ({ history, cursor }),
     collectSupplyHistory: async (_, history, cursor) => ({ history, cursor }),
     collectHolderGrowth: async (date) => ({ snapshot: structuredClone(fixture.holderGrowth), cursor: { date, owners: ['new'] } })
   };
@@ -39,7 +38,7 @@ test('depth failure publishes other metrics without carrying yesterday forward',
   assert.deepEqual(update.history.records[0], previous);
   assert.ok(update.snapshot.collectionIssues.includes('marketDepth'));
   const freshness = chartFreshness(update.history.records);
-  assert.equal(freshness.find(s => s.id === 'market-depth').date, previous.date);
+  assert.equal(freshness.find(s => s.id === 'market-depth').date, '2026-11-21');
   assert.equal(freshness.find(s => s.id === 'market-depth').delayed, true);
   assert.equal(freshness.find(s => s.id === 'vault').delayed, false);
 });
@@ -57,7 +56,6 @@ test('vault failure blanks dependent metrics but publishes price, depth and supp
 test('failed history and holder scans retain cursors and publish current metrics', async () => {
   const { history, holderState, deps } = setup();
   const before = structuredClone(history);
-  deps.collectTbtcHistory = async (_, cursor) => { cursor.processedSignatures.push('bad'); throw new Error('failed scan'); };
   deps.collectSupplyHistory = fail;
   deps.collectHolderGrowth = fail;
   const result = await collectUpdate(history, holderState, deps);
@@ -85,7 +83,7 @@ test('same-day failure preserves earlier depth without an incomplete marker', as
   assert.deepEqual(second.snapshot.marketDepth, depth);
   assert.ok(!second.snapshot.collectionIssues.includes('marketDepth'));
   assert.deepEqual(second.snapshot.collectionIssues, []);
-  assert.equal(second.history.records.length, 2);
+  assert.equal(second.history.records.length, 6);
   assert.equal(chartFreshness(second.history.records).find(s => s.id === 'market-depth').delayed, false);
 });
 
@@ -125,8 +123,8 @@ test('a complete same-day outage retains valid daily data and scan status', asyn
 
 test('unresolved history scan is not cleared by an unrelated daily observation', async () => {
   const { history, holderState, deps } = setup();
-  deps.collectTbtcHistory = fail;
+  deps.collectSupplyHistory = fail;
   const first = await collectUpdate(history, holderState, deps);
   const second = await collectUpdate(history, first.holderState, deps);
-  assert.ok(second.snapshot.collectionIssues.includes('tbtcHistory'));
+  assert.ok(second.snapshot.collectionIssues.includes('supplyHistory'));
 });

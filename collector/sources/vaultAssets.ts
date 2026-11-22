@@ -1,4 +1,4 @@
-import { TBTC_MINT, VAULT_WALLET } from "../utils/constants.js";
+import { ZEC_MINT, VAULT_WALLET } from "../utils/constants.js";
 import { HeliusClient } from "./helius.js";
 
 export interface HeliusPriceInfo {
@@ -58,11 +58,11 @@ export async function getCurrentVaultAssets(
   const fungibleAssets: FungibleVaultAsset[] = [];
   const ignoredAssets: IgnoredVaultAsset[] = [];
   for (const item of response.items ?? []) {
-    if (item.id !== TBTC_MINT) continue;
+    if (item.id !== ZEC_MINT) continue;
 
     const symbol = item.token_info?.symbol ?? item.content?.metadata?.symbol ?? null;
 
-    if (item.interface !== "FungibleToken") {
+    if (item.interface !== "FungibleToken" && item.interface !== "FungibleAsset") {
       ignoredAssets.push({
         symbol,
         mint: item.id,
@@ -73,7 +73,7 @@ export async function getCurrentVaultAssets(
 
     const decimals = item.token_info?.decimals;
     const balance = Number(item.token_info?.balance);
-    if (decimals === undefined || !Number.isFinite(balance)) {
+    if (decimals === undefined || !Number.isInteger(decimals) || decimals < 0 || !Number.isFinite(balance) || balance < 0) {
       ignoredAssets.push({
         symbol,
         mint: item.id,
@@ -83,12 +83,15 @@ export async function getCurrentVaultAssets(
     }
 
     fungibleAssets.push({
-      symbol,
+      symbol: "ZEC",
       mint: item.id,
       amount: balance / 10 ** decimals,
       heliusPriceInfo: item.token_info?.price_info
     });
   }
 
+  if (!fungibleAssets.length) {
+    throw new Error("Configured ZEC mint has no verifiable vault balance; valuation unavailable");
+  }
   return { fungibleAssets, ignoredAssets };
 }

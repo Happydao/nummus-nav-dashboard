@@ -8,7 +8,7 @@ const metrics = [
   ['NAV', ['vaultUsd', 'supply']],
   ['Treasury Backing', ['vaultUsd', 'supply', 'marketPrice']],
   ['Premium vs NAV', ['vaultUsd', 'supply', 'marketPrice']],
-  ['tBTC Accumulation', ['tbtcAmount', 'tbtcHistory']],
+  ['ZEC Accumulation', ['zecAmount']],
   ['Market Depth (acquisto/vendita)', ['marketDepth', 'marketPrice']],
   ['DEX Liquidity', ['dexLiquidity']],
   ['Holder Distribution', ['holderGrowth', 'dexLiquidity']],

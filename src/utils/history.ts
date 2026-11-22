@@ -1,4 +1,4 @@
-import { frozenHistory } from "./maintenance.js";
+import { frozenHistory, maintenance } from "./maintenance.js";
 export interface DailySnapshot {
   collectionIssues?: string[];
   date: string;
@@ -9,6 +9,7 @@ export interface DailySnapshot {
   backing: number | null;
   premium: number | null;
   tbtcAmount?: number | null;
+  zecAmount?: number | null;
   marketDepth?: {
     buyDepthUsd: number | null;
     sellDepthUsd: number | null;
@@ -55,6 +56,7 @@ export interface HistoryFile {
   generatedAt: string | null;
   records: DailySnapshot[];
   tbtcHistory?: TbtcSnapshot[];
+  zecHistory?: TbtcSnapshot[];
   supplyHistory?: SupplySnapshot[];
 }
 
@@ -92,7 +94,7 @@ export function chartFreshness(records: DailySnapshot[]) {
     ["vault", ["vaultUsd"], (r) => positive(r.vaultUsd)],
     ["vault-drawdown", ["vaultUsd"], (r) => positive(r.vaultUsd)],
     ["supply", ["supply", "supplyHistory"], (r) => positive(r.supply)],
-    ["tbtc", ["tbtcAmount", "tbtcHistory"], (r) => typeof r.tbtcAmount === "number" && r.tbtcAmount >= 0],
+    ["treasury-accumulation", ["zecAmount"], (r) => r.date >= maintenance.restartDate && typeof r.zecAmount === "number" && r.zecAmount >= 0],
     ["market-depth", ["marketDepth"], (r) => positive(r.marketDepth?.buyDepthUsd) && positive(r.marketDepth?.sellDepthUsd)],
     ["dex-liquidity", ["dexLiquidity"], (r) => positive(r.dexLiquidity?.totalLiquidityUsd)],
     ["holder-concentration", ["holderGrowth"], (r) => positive(r.holderGrowth?.holderCount)]

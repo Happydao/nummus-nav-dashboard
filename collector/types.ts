@@ -2,6 +2,7 @@ export interface HistoryFile {
   generatedAt: string | null;
   records: DailySnapshot[];
   tbtcHistory?: TbtcSnapshot[];
+  zecHistory?: TbtcSnapshot[];
   tbtcCursor?: TbtcCursor;
   supplyHistory?: SupplySnapshot[];
   supplyCursor?: SupplyCursor;
@@ -18,6 +19,7 @@ export interface DailySnapshot {
   backing: number | null;
   premium: number | null;
   tbtcAmount: number | null;
+  zecAmount?: number | null;
   marketDepth?: MarketDepth;
   dexLiquidity?: DexLiquidity;
   valuationReport: ValuationReport;

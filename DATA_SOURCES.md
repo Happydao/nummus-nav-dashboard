@@ -63,3 +63,7 @@ The boundary is intentionally not smoothed. The reconstructed 4 December value a
 - Dates before an asset's first market price cannot be valued without inventing a price.
 - `data/history.json` remains the dashboard read model; raw daily snapshots remain the source of truth from the live collector start date onward.
 - Historical imports should stay bounded, cached, manually invoked, and separate from the daily GitHub Action.
+
+## November 2026 strategy transition
+
+November 18–21, 2026 repeat the complete November 17 snapshot; these are explicitly frozen values. Current collection resumes on November 22 with ZEC mint `A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS` in the unchanged vault. Only this mint contributes to current vault valuation. Historical tBTC stays in its original units through November 21; `zecAmount` and `zecHistory` provide separate ZEC balances from November 22. Published `data/history.json` and raw repository history use the same closed freeze interval. No post-restart day is filled from old balances. The existing pricing cascade is applied to the ZEC mint, with transport failures falling through to the next provider.

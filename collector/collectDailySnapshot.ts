@@ -1,21 +1,20 @@
-import { maintenance } from "../src/utils/maintenance.js";
+import { frozenHistory, maintenance } from "../src/utils/maintenance.js";
 import { getCurrentMarketPrice } from "./sources/marketPrice.js";
 import { collectMarketDepth } from "./sources/marketDepth.js";
 import { getCurrentDexLiquidity } from "./sources/dexLiquidity.js";
 import { getCurrentSupply } from "./sources/supply.js";
 import { collectSupplyHistory } from "./sources/supplyHistory.js";
-import { collectTbtcHistory } from "./sources/tbtcHistory.js";
 import { getCurrentVaultAssets } from "./sources/vaultAssets.js";
 import { commitSnapshot, readHistory, readHolderState } from "./utils/historyStore.js";
 import { divideOrNull, round } from "./utils/math.js";
 import { valueVault } from "./pricing/valueVault.js";
 import type { DailySnapshot, HistoryFile, HolderCursor } from "./types.js";
-import { TBTC_MINT } from "./utils/constants.js";
+import { ZEC_MINT } from "./utils/constants.js";
 import { collectHolderGrowth } from "./sources/holderGrowth.js";
 
 export const sources = {
   getCurrentVaultAssets, getCurrentSupply, getCurrentMarketPrice, getCurrentDexLiquidity,
-  valueVault, collectMarketDepth, collectTbtcHistory, collectHolderGrowth, collectSupplyHistory
+  valueVault, collectMarketDepth, collectHolderGrowth, collectSupplyHistory
 };
 
 const positive = (value: unknown): value is number => typeof value === "number" && Number.isFinite(value) && value > 0;
@@ -37,7 +36,7 @@ export function validateSnapshot(snapshot: DailySnapshot): void {
     if (!positive(snapshot[key])) { snapshot[key] = null; issues.push(key); }
   }
   if (snapshot.valuationReport.unpricedAssets.length) { snapshot.vaultUsd = null; issues.push("vaultUsd"); }
-  if (!nonNegative(snapshot.tbtcAmount)) { snapshot.tbtcAmount = null; issues.push("tbtcAmount"); }
+  if (!nonNegative(snapshot.zecAmount)) { snapshot.zecAmount = null; issues.push("zecAmount"); }
   snapshot.nav = round(divideOrNull(snapshot.vaultUsd, snapshot.supply));
   snapshot.backing = round(snapshot.nav !== null && snapshot.marketPrice !== null ? snapshot.nav / snapshot.marketPrice * 100 : null);
   snapshot.premium = round(snapshot.marketPrice !== null && snapshot.nav !== null && snapshot.nav > 0 ? snapshot.marketPrice / snapshot.nav : null);
@@ -72,7 +71,8 @@ export async function collectDailySnapshot(deps = sources): Promise<DailySnapsho
     date: new Date().toISOString().slice(0, 10),
     vaultUsd: valuation?.vaultUsd ?? null, supply, marketPrice,
     nav: null, backing: null, premium: null,
-    tbtcAmount: assets?.fungibleAssets.find((asset) => asset.mint === TBTC_MINT)?.amount ?? null,
+    tbtcAmount: null,
+    zecAmount: assets?.fungibleAssets.find((asset) => asset.mint === ZEC_MINT)?.amount ?? null,
     ...(marketDepth ? { marketDepth } : {}), ...(dexLiquidity ? { dexLiquidity } : {}),
     valuationReport: valuation?.valuationReport ?? { source: "unavailable", pricedAssets: [], ignoredAssets: [], unpricedAssets: [] },
     collectionIssues: issues
@@ -83,11 +83,11 @@ export async function collectDailySnapshot(deps = sources): Promise<DailySnapsho
 
 export async function collectUpdate(history: HistoryFile, holderState: HolderCursor | undefined, deps = sources) {
   const snapshot = await collectDailySnapshot(deps);
+  if (snapshot.date < maintenance.restartDate) throw new Error("ZEC collection cannot precede the restart date");
   const previous = history.records.find((record) => record.date === snapshot.date);
   const issues = snapshot.collectionIssues!;
   // Do not let a failed source mutate a cursor that will be retained on failure.
-  const [tbtc, holders, supply] = await Promise.all([
-    attempt(issues, "tbtcHistory", () => deps.collectTbtcHistory(structuredClone(history.tbtcHistory ?? []), structuredClone(history.tbtcCursor))),
+  const [holders, supply] = await Promise.all([
     snapshot.dexLiquidity ? attempt(issues, "holderGrowth", () => deps.collectHolderGrowth(snapshot.date,
       snapshot.dexLiquidity!.pools.map((pool) => ({ pairAddress: pool.pairAddress, dexId: pool.dexId })), structuredClone(holderState))) : null,
     snapshot.supply !== null ? attempt(issues, "supplyHistory", () => deps.collectSupplyHistory(snapshot.supply!, structuredClone(history.supplyHistory ?? []), structuredClone(history.supplyCursor))) : null
@@ -95,23 +95,23 @@ export async function collectUpdate(history: HistoryFile, holderState: HolderCur
   if (holders) snapshot.holderGrowth = holders.snapshot;
   else issues.push("holderGrowth");
   validateSnapshot(snapshot);
-  if (![snapshot.vaultUsd, snapshot.supply, snapshot.marketPrice, snapshot.tbtcAmount].some(nonNegative) &&
+  if (![snapshot.vaultUsd, snapshot.supply, snapshot.marketPrice, snapshot.zecAmount].some(nonNegative) &&
       !snapshot.marketDepth && !snapshot.dexLiquidity && !snapshot.holderGrowth && !previous) {
     throw new Error("No valid current metrics; existing history remains unchanged");
   }
-  if (tbtc) { history.tbtcHistory = tbtc.history; history.tbtcCursor = tbtc.cursor; }
-  if (snapshot.tbtcAmount !== null) {
-    const points = new Map((history.tbtcHistory ?? []).map((point) => [point.date, point.amount]));
-    points.set(snapshot.date, snapshot.tbtcAmount);
-    history.tbtcHistory = [...points].sort(([a], [b]) => a.localeCompare(b)).map(([date, amount]) => ({ date, amount }));
-    if (tbtc) tbtc.cursor.lastAmount = snapshot.tbtcAmount;
+  if (supply) {
+    // A full burn rescan must not rewrite the pre-transition published history.
+    history.supplyHistory = [
+      ...(history.supplyHistory ?? []).filter(point => point.date < maintenance.restartDate),
+      ...supply.history.filter(point => point.date >= maintenance.restartDate)
+    ];
+    history.supplyCursor = supply.cursor;
   }
-  if (supply) { history.supplyHistory = supply.history; history.supplyCursor = supply.cursor; }
   const nextHolderState = snapshot.holderGrowth && holders ? holders.cursor : holderState;
   if (nextHolderState) delete history.holderCursor;
   // Preserve successful observations on an intraday retry, never copy an older day forward.
   if (previous) {
-    const dailyKeys = ["vaultUsd", "supply", "marketPrice", "tbtcAmount", "marketDepth", "dexLiquidity", "holderGrowth"] as const;
+    const dailyKeys = ["vaultUsd", "supply", "marketPrice", "zecAmount", "marketDepth", "dexLiquidity", "holderGrowth"] as const;
     for (const key of dailyKeys) {
       if (snapshot[key] == null && previous[key] != null) Object.assign(snapshot, { [key]: previous[key] });
     }
@@ -122,16 +122,22 @@ export async function collectUpdate(history: HistoryFile, holderState: HolderCur
     // History scans are usable only if a scan already succeeded on this UTC date.
     snapshot.collectionIssues = issues.filter(key =>
       !dailyKeys.some(dailyKey => dailyKey === key) &&
-      !(["tbtcHistory", "supplyHistory"].includes(key) &&
+      !(["supplyHistory"].includes(key) &&
         !previous.collectionIssues?.includes(key))
     );
     validateSnapshot(snapshot);
     if (!snapshot.holderGrowth) snapshot.collectionIssues!.push("holderGrowth");
   }
+  if (nonNegative(snapshot.zecAmount)) {
+    const points = new Map((history.zecHistory ?? []).map(point => [point.date, point.amount]));
+    points.set(snapshot.date, snapshot.zecAmount);
+    history.zecHistory = [...points].sort(([a], [b]) => a.localeCompare(b)).map(([date, amount]) => ({ date, amount }));
+  }
   const records = new Map(history.records.map((record) => [record.date, record]));
   records.set(snapshot.date, snapshot);
   history.records = [...records.values()].sort((a, b) => a.date.localeCompare(b.date));
   history.generatedAt = new Date().toISOString();
+  Object.assign(history, frozenHistory(history));
   return { snapshot, history, holderState: nextHolderState ?? null };
 }
 
@@ -141,7 +147,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.exit(0);
   }
   const history = await readHistory();
+  const firstZecRun = !history.records.some(record => record.date >= maintenance.restartDate && positive(record.zecAmount) && positive(record.vaultUsd));
   const update = await collectUpdate(history, await readHolderState() ?? history.holderCursor);
+  if (firstZecRun && (!positive(update.snapshot.zecAmount) || !positive(update.snapshot.vaultUsd) || !positive(update.snapshot.nav))) {
+    throw new Error("Restart requires a verified ZEC balance, USD valuation and NAV; previous dataset remains unchanged");
+  }
   await commitSnapshot(update.snapshot, update.history, update.holderState);
   console.log(`Saved ${update.snapshot.date}. Unavailable groups: ${update.snapshot.collectionIssues?.join(", ") || "none"}`);
 }

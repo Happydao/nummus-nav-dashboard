@@ -1,3 +1,4 @@
+import { treasuryAccumulationChart } from "../charts/treasuryAccumulationChart.js";
 import { maintenance } from "../utils/maintenance.js";
 import "./styles.css";
 import { attachChartInteractions, type ChartZoomAction } from "../charts/interactions.js";
@@ -19,7 +20,7 @@ import {
 } from "../charts/projectionChart.js";
 import { kpi } from "../components/kpi.js";
 import { chartFreshness, latestRecord, loadHistory, type DailySnapshot, type SupplySnapshot } from "../utils/history.js";
-import { numberCompact, percent, ratio, tbtcAxis, usd, usdCompact } from "../utils/format.js";
+import { numberCompact, percent, ratio, usd, usdCompact } from "../utils/format.js";
 
 const app = document.querySelector<HTMLDivElement>("#app");
 const NUMMUS_MINT_URL = "https://solscan.io/token/9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray";
@@ -56,20 +57,20 @@ async function render(): Promise<void> {
   const history = await loadHistory();
   const records = history.records;
   const financialRecords = records.filter((record) => record.date >= FINANCIAL_HISTORY_START);
-  const tbtcHistory = history.tbtcHistory ?? [];
+  const zecHistory = history.zecHistory ?? [];
   const supplyChartRecords = buildSupplyChartRecords(history.supplyHistory ?? [], records);
   const marketDepthRecords = buildMarketDepthRecords(records);
   const vaultDrawdownRecords = buildVaultDrawdownRecords(financialRecords);
   const holderConcentrationRecords = buildHolderConcentrationRecords(records);
   const latest = latestRecord(records);
   const unpricedCount = latest?.valuationReport?.unpricedAssets.length ?? 0;
-  const tbtcChange = latest
+  const zecChange = latest
     ? rangeChange(
-        latest.tbtcAmount,
-        rangeStartValue(tbtcHistory, selectedRange, (point) => point.amount, true)
+        latest.zecAmount,
+        rangeStartValue(zecHistory, selectedRange, (point) => point.amount, true)
       )
     : "";
-  const vaultComposition = latest ? vaultCompositionDetails(latest, tbtcChange) : "";
+  const vaultComposition = latest ? vaultCompositionDetails(latest, zecChange) : "";
   const isStale =
     !maintenance.enabled && history.generatedAt !== null && Date.now() - new Date(history.generatedAt).getTime() > STALE_AFTER_MS;
 
@@ -108,7 +109,7 @@ async function render(): Promise<void> {
         </div>
       </header>
       <div class="content">
-        ${maintenance.enabled ? `<div class="notice maintenance-notice" role="status"><strong>Dashboard under maintenance</strong><p>Following the community’s decision, Nummus is transitioning from a tBTC accumulation strategy to a Zcash (ZEC) accumulation strategy. Existing tBTC holdings are being converted to ZEC. Dashboard updates are paused and all figures are held at their November 17, 2026 values. Points after that date repeat the frozen values and do not represent new observations.</p></div>` : ""}
+        <div class="notice transition-notice" role="status"><strong>ZEC accumulation is now active</strong><p>Following the community’s decision, Nummus transitioned from tBTC to Zcash (ZEC) accumulation on November 22, 2026. Live updates have resumed. November 18–21 remain fixed at November 17 values. Treasury valuation now includes only the configured ZEC token on Solana; residual tBTC is excluded.</p></div>
         ${
           isStale
             ? `<div class="notice stale-notice" role="alert">Data update delayed: the last published update is more than 48 hours old. The dashboard is showing the most recent verified data.</div>`
@@ -252,24 +253,7 @@ async function render(): Promise<void> {
             },
             info: "Supply Reduction starts from the initial 100 million NUMMUS supply on 27 June 2025. It remains flat until the first recorded burn on 17 October, then follows the real burn-derived supply and current daily snapshots. Lower supply can increase NAV per token if treasury value is stable or growing."
           })}
-          ${lineChart({
-            id: "tbtc",
-            title: "tBTC Accumulation",
-            records: tbtcHistory,
-            key: "amount",
-            range: selectedRange,
-            zoomWindow: chartZoom("tbtc"),
-            formatter: (value) => `${value.toFixed(8)} tBTC`,
-            axisFormatter: tbtcAxis,
-            yLabel: "tBTC",
-            yMin: 0,
-            includePreviousPoint: true,
-            action: {
-              label: "Vault DAO",
-              href: "https://happydao.github.io/Nummus.VaultDAO/"
-            },
-            info: "tBTC Accumulation shows how much tBTC the treasury has collected. A rising line means the treasury is accumulating more BTC exposure."
-          })}
+          ${treasuryAccumulationChart({ history, range: selectedRange, zoomWindow: chartZoom("treasury-accumulation") })}
           ${lineChart({
             id: "market-depth",
             title: "NUMMUS Market Depth",
@@ -479,7 +463,7 @@ function attachProjectionHandlers(): void {
   }
 }
 
-function vaultCompositionDetails(record: DailySnapshot, tbtcChange: string): string {
+function vaultCompositionDetails(record: DailySnapshot, zecChange: string): string {
   const minDisplayValueUsd = 20;
   const assets = (record.valuationReport?.pricedAssets ?? []) as Array<{
     symbol?: string | null;
@@ -497,7 +481,7 @@ function vaultCompositionDetails(record: DailySnapshot, tbtcChange: string): str
             ${escapeHtml(asset.symbol ?? shortMint(asset.mint ?? ""))}
             <small>${formatAssetAmount(asset.amount)}</small>
           </span>
-            ${asset.symbol === "tBTC" ? tbtcChange : `<strong>${usd(asset.valueUsd ?? null)}</strong>`}
+            ${asset.mint === maintenance.nextAsset.mint ? zecChange : `<strong>${usd(asset.valueUsd ?? null)}</strong>`}
         </li>
       `
     )

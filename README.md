@@ -1,10 +1,12 @@
 # NUMMUS NAV Dashboard
 
-## Maintenance — November 17, 2026 freeze
+## ZEC transition — live from November 22, 2026
 
-Automatic collection is paused during the community-approved transition from tBTC to Zcash. The published dashboard repeats the verified November 17 values for later dates, explicitly labelled as frozen display points rather than observations. Repository history and daily snapshots after November 17 also repeat the frozen values so direct GitHub consumers receive the same data. Original observations remain available in Git history. Collection cursors are retained as internal scan state and must be reviewed at restart. Build and browser loading both enforce the cutoff; a missing November 17 snapshot fails rather than substituting another date. The simulator uses only observations through the cutoff. Scheduled collection, manual workflow collection, Telegram collection alerts and downstream update dispatches are disabled; push/manual deployments remain available. The collector CLI also exits without contacting providers or writing data.
+The community approved a transition from tBTC to Zcash accumulation. All metrics for November 18–21 repeat the verified November 17 snapshot, both in the dashboard and repository JSON files. They are held values, not new observations. Original observations remain available in Git history. The collector, browser and build enforce this closed interval without overriding observations from November 22 onward.
 
-`src/utils/maintenance.ts` stores the freeze and proposed ZEC mint/wallet. ZEC is not yet active and no restart date is set. At the user’s explicit restart instruction, replace the tBTC Accumulation chart with Zcash Accumulation, starting from the actual ZEC holdings (including the initial converted balance); never relabel old tBTC amounts as ZEC. Update balance collection, valuation and history to use the configured ZEC mint only, excluding residual tBTC. Other charts retain their definitions. Verify mint decimals, balances and pricing before restoring collection. Do not simply disable maintenance without completing that migration.
+Current valuation includes only Solana ZEC mint `A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS` in the existing vault wallet. Residual tBTC is excluded. Treasury Accumulation preserves tBTC through November 21 on the left orange axis and starts ZEC on November 22 on the right green axis, with the actual initial converted holdings. The scales measure different token units and are not comparable. The two paths never connect. ZEC history starts with verified daily balances; pre-restart ZEC balances are not backfilled.
+
+Daily scheduled collection, manual runs, collection on push, notifications and downstream data dispatches are active again. Deploy waits for successful collection. The first holder baseline uses verified November 17 owners held through November 21, so resumed holder changes compare against the published baseline. Historical tBTC scanning has stopped, and full supply rescans preserve all pre-restart published history. Missing ZEC balances or prices are reported as unavailable; they are never replaced with tBTC or invented holdings.
 
 The NUMMUS NAV Dashboard tracks the treasury backing, market valuation and liquidity conditions supporting NUMMUS over time.
 
@@ -14,7 +16,7 @@ It is not primarily a treasury-composition dashboard. Current asset holdings are
 - the circulating NUMMUS supply and its reduction through verified burns;
 - NAV, the treasury value attributable to each token;
 - the NUMMUS market price, Treasury Backing and the market premium over NAV;
-- the quantity of tBTC accumulated by the treasury;
+- the historical tBTC and current ZEC quantities accumulated by the treasury;
 - the buy-side and sell-side market depth available through Jupiter routes;
 - the total and per-pool DEX liquidity reported for NUMMUS markets.
 - the growth of unique NUMMUS holder wallets.
@@ -118,11 +120,9 @@ This chart tracks the reduction of NUMMUS supply from the initial `100,000,000` 
 
 The series begins on **27 June 2025**, remains at 100 million until the first verified burn and then follows the supply changes derived from burn activity and subsequent snapshots. A lower supply increases NAV when Vault Value remains unchanged.
 
-### tBTC Accumulation
+### Treasury Accumulation
 
-This chart tracks the amount of tBTC held by the treasury, not its USD value.
-
-An upward movement means additional tBTC entered the treasury. A flat section means the quantity remained unchanged. Changes in the Bitcoin price do not alter this chart because it measures token units rather than their market value.
+This chart preserves historical tBTC accumulation through November 21, 2026 and tracks ZEC accumulation from November 22. The orange tBTC series uses the left axis; the green ZEC series uses an independent right axis. A dated transition marker identifies the strategy change. No line connects different token units, and the initial ZEC observation includes the converted treasury holdings. Each series measures token quantity rather than USD value. Range selection, zoom, pan and date tooltips apply to the shared timeline. November 18–21 are explicitly held at November 17 values.
 
 ### NUMMUS Market Depth
 
@@ -180,7 +180,7 @@ These four areas always sum to 100%. Above the chart, Unique Holder Wallets, Lar
 
 Broader distribution generally appears as a declining Largest Holder, Top 10 and Top 50 share together with a growing Outside Top 50 share. The opposite movement indicates increasing concentration. This is descriptive rather than a guarantee of decentralization because several wallets can belong to one beneficial owner and custodial wallets can represent many users.
 
-Concentration is calculated against the adjusted holder set. Verified NUMMUS owners used by tracked DEX pools are excluded because pooled liquidity represents protocol custody supplied by multiple participants and should not be interpreted as an individual whale. Known project operational wallets are also excluded when their NUMMUS balance is reserved for protocol operations, such as supplying swaps used to acquire tBTC for the DAO Vault, rather than representing an independent investor position. Treasury, burn and all other owners remain subject to the same balance-ranking rules. Holder count includes every owner with a positive balance and therefore follows an unadjusted inclusion rule.
+Concentration is calculated against the adjusted holder set. Verified NUMMUS owners used by tracked DEX pools are excluded because pooled liquidity represents protocol custody supplied by multiple participants and should not be interpreted as an individual whale. Known project operational wallets are also excluded when their NUMMUS balance is reserved for protocol operations, such as supplying swaps used to accumulate treasury assets, rather than representing an independent investor position. Treasury, burn and all other owners remain subject to the same balance-ranking rules. Holder count includes every owner with a positive balance and therefore follows an unadjusted inclusion rule.
 
 The reliable historical series begins with the first successfully collected Holder Distribution snapshot. Earlier values are not estimated or copied from current data.
 
@@ -217,7 +217,7 @@ The simulator is an analytical tool, not a price forecast, financial advice or a
 
 Each update publishes the valid metrics collected during that run. Unavailable metrics are left absent, with a partial-update notice and each chart's last valid observation date. Previous days remain unchanged; values are never copied from an earlier date to create a new observation. A retry on the same date retains already recorded valid values when that group cannot be refreshed, and marks the affected group as incomplete.
 
-Vault Value, supply, market price, Market Depth, DEX liquidity and holder distribution are validated independently. NAV requires valid current Vault Value and supply; backing and premium also require current market price. Holder concentration requires the current pool inventory to exclude pool custody correctly. Historical tBTC and supply scans retain their previous cursors if a scan fails. If no current metric is valid, the update fails and the previous published dataset remains unchanged. The workflow retries failed collections three times.
+Vault Value, supply, market price, Market Depth, DEX liquidity and holder distribution are validated independently. NAV requires valid current Vault Value and supply; backing and premium also require current market price. Holder concentration requires the current pool inventory to exclude pool custody correctly. Historical tBTC is archived; supply scans retain their previous cursor if a scan fails. ZEC quantities come from verified daily vault balances. If no current metric is valid, the update fails and the previous published dataset remains unchanged. The workflow retries failed collections three times.
 
 The dashboard warns when publication is more than 48 hours old, and identifies partial updates even when other metrics are fresh. A downstream notification failure does not prevent deployment of collected data.
 

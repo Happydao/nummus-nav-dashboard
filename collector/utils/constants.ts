@@ -1,3 +1,5 @@
+import { maintenance } from "../../src/utils/maintenance.js";
+export const ZEC_MINT = maintenance.nextAsset.mint;
 export const NUMMUS_MINT = "9JK2U7aEkp3tWaFNuaJowWRgNys5DVaKGxWk73VT5ray";
 export const REALMS_REALM = "2Czvw7p29thfqNJznuicygBKxh33xoCMuGMH7zbPQ2gp";
 export const SPL_GOVERNANCE_PROGRAM_ID = "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw";

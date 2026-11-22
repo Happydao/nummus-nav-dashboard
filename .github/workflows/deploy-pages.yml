@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  schedule:
+    - cron: "25 6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -17,7 +19,7 @@ concurrency:
 
 jobs:
   collect:
-    if: ${{ false }} # Maintenance: no collection, alerts or downstream dispatch.
+    if: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -89,8 +91,8 @@ jobs:
         run: node scripts/notify-telegram.mjs
 
   deploy:
-    # Maintenance deployments are independent of the disabled collection job.
-    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+    needs: collect
+    if: ${{ !cancelled() && needs.collect.result == 'success' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
