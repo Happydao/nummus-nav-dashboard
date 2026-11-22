@@ -55,12 +55,17 @@ jobs:
         env:
           HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
 
+      - name: Generate optional badge feed
+        continue-on-error: true
+        timeout-minutes: 1
+        run: node scripts/generate-badge.mjs
+
       - name: Commit snapshot
         id: commit-snapshot
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Update daily NUMMUS snapshot"
-          file_pattern: data/history.json data/holder-state.json data/snapshots/*.json
+          file_pattern: data/history.json data/holder-state.json data/snapshots/*.json data/badge.json
 
       - name: Trigger NUMMUS Aeternitas data update
         continue-on-error: true
@@ -113,6 +118,11 @@ jobs:
 
       - name: Build dashboard
         run: npm run build
+
+      - name: Publish optional badge feed
+        continue-on-error: true
+        timeout-minutes: 1
+        run: node scripts/generate-badge.mjs --publish
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
