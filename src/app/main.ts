@@ -106,6 +106,10 @@ async function render(): Promise<void> {
               <span class="change-favorable">Green favorable</span>
               <span class="change-adverse">Red unfavorable</span>
             </div>
+            <div class="strategy-transition-key">
+              <svg viewBox="0 0 12 20" width="12" height="20" aria-hidden="true" focusable="false"><line class="strategy-transition" x1="6" x2="6" y1="1" y2="19" /></svg>
+              <span>tBTC → ZEC strategy transition · Nov 22, 2026</span>
+            </div>
           </div>
         </div>
       </header>
