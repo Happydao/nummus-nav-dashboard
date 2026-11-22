@@ -59,8 +59,7 @@ export function treasuryAccumulationChart(options: { history: HistoryFile; range
     const isZec = valid(p.zec), value = isZec ? p.zec : p.tbtc;
     if (!valid(value)) return [];
     return [{ date: p.date, dateLabel: p.date, value, x: x(p.date), y: y(value, isZec ? zMax : tMax), label: qty(value, isZec ? "ZEC" : "tBTC"),
-      series: [{ name: isZec ? "ZEC accumulation" : "tBTC accumulation (historical)", label: qty(value, isZec ? "ZEC" : "tBTC"), kind: "neutral", color: isZec ? GREEN : ORANGE },
-        ...(p.date > maintenance.frozenDate && p.date < restart ? [{ name: "Maintenance", label: "Held at November 17 values", kind: "neutral" }] : [])] }];
+      series: [{ name: isZec ? "ZEC accumulation" : "tBTC accumulation (historical)", label: qty(value, isZec ? "ZEC" : "tBTC"), kind: "neutral", color: isZec ? GREEN : ORANGE }] }];
   });
   const summary = (key: "tbtc" | "zec", symbol: string, color: string) => {
     const observed = points.filter(p => valid(p[key]));
@@ -72,19 +71,23 @@ export function treasuryAccumulationChart(options: { history: HistoryFile; range
   };
   const zoomed = Boolean(zoomWindow && (zoomWindow.start > 0 || zoomWindow.end < 1));
   return `<section class="chart interactive-chart treasury-chart${zoomed ? " chart-zoomed" : ""}" data-chart-id="treasury-accumulation">
-    <div class="chart-head"><div><div class="chart-title-row"><h2>Treasury Accumulation</h2>${chartZoomControls("treasury-accumulation", zoomWindow)}</div><span>${points[0].date} → ${points.at(-1)!.date}</span>
+    <div class="chart-head"><div><div class="chart-title-row"><h2>Treasury Accumulation</h2>${transitionInfoTip()}${chartZoomControls("treasury-accumulation", zoomWindow)}</div><span>${points[0].date} → ${points.at(-1)!.date}</span>
     <div class="chart-legend"><span><i class="legend-swatch" style="background:${ORANGE}"></i>tBTC · left axis</span><span><i class="legend-swatch" style="background:${GREEN}"></i>ZEC · right axis</span></div></div></div>
     <div class="dual-axis-summary">${summary("tbtc", "tBTC", ORANGE)}${summary("zec", "ZEC", GREEN)}</div>
-    <p class="treasury-note">Transition from tBTC to ZEC accumulation · November 22, 2026. Independent scales measure different token units; line heights are not comparable. November 18–21 repeat November 17 values. ZEC starts from the actual converted holdings.</p>
     <div class="chart-canvas"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Treasury accumulation: historical tBTC on the left axis, ZEC from November 22 on the right axis">
       <text class="axis-title" style="fill:${ORANGE}" x="${left}" y="16">tBTC</text><text class="axis-title" style="fill:${GREEN}" x="${right}" y="16" text-anchor="end">ZEC</text>
       ${ticks.map(f => `<line class="grid-line" x1="${left}" y1="${y(f, 1)}" x2="${right}" y2="${y(f, 1)}" /><text class="tick-label" style="fill:${ORANGE}" x="${left - 10}" y="${y(f, 1) + 4}" text-anchor="end">${tick(f * tMax)}</text><text class="tick-label" style="fill:${GREEN}" x="${right + 10}" y="${y(f, 1) + 4}">${tick(f * zMax)}</text>`).join("")}
       <line class="axis-line" x1="${left}" x2="${right}" y1="${bottom}" y2="${bottom}" /><line class="axis-line" x1="${left}" x2="${left}" y1="${P.top}" y2="${bottom}" /><line class="axis-line" x1="${right}" x2="${right}" y1="${P.top}" y2="${bottom}" />
       ${dateTicks.map(date => `<text class="tick-label" x="${x(date)}" y="${H - 18}" text-anchor="${date === points[0].date ? "start" : date === points.at(-1)!.date ? "end" : "middle"}">${date.slice(8)}-${date.slice(5, 7)}-${date.slice(2, 4)}</text>`).join("")}
-      ${transitionVisible ? `<line class="treasury-transition" x1="${transitionX}" x2="${transitionX}" y1="${P.top}" y2="${bottom}"><title>Transition from tBTC to ZEC accumulation · November 22, 2026</title></line><text class="tick-label" x="${transitionX - 7}" y="${P.top + 15}" text-anchor="end">ZEC begins · Nov 22</text>` : ""}
+      ${transitionVisible ? `<line class="treasury-transition" x1="${transitionX}" x2="${transitionX}" y1="${P.top}" y2="${bottom}"><title>Transition from tBTC to ZEC accumulation · November 22, 2026</title></line><text class="tick-label" x="${transitionX < (left + right) / 2 ? transitionX + 7 : transitionX - 7}" y="${P.top + 15}" text-anchor="${transitionX < (left + right) / 2 ? "start" : "end"}">tBTC → ZEC · Nov 22</text>` : ""}
       ${series("tbtc", tMax, ORANGE)}${series("zec", zMax, GREEN)}
       <line class="crosshair" x1="${left}" x2="${left}" y1="${P.top}" y2="${bottom}" /><circle class="hover-dot" cx="${interactive[0]?.x ?? left}" cy="${interactive[0]?.y ?? bottom}" r="5" /><rect class="hover-capture" x="${left}" y="${P.top}" width="${right - left}" height="${bottom - P.top}" />
     </svg><div class="chart-tooltip"></div></div>
     <script type="application/json" class="chart-data">${JSON.stringify({ formatterName: "treasury-accumulation", points: interactive }).replaceAll("<", "\\u003c")}</script>
   </section>`;
+}
+
+function transitionInfoTip(): string {
+  const text = "Following the community's decision, Nummus began transitioning its entire treasury and ongoing accumulation strategy from tBTC to Zcash (ZEC) on November 22, 2026. The orange line preserves historical tBTC balances on the left axis; the green line tracks ZEC holdings on the right axis, including the initial converted treasury balance. The dashed vertical line marks the transition date. The two independent scales measure different token units, so line heights are not directly comparable.";
+  return `<span class="info-tip" tabindex="0" aria-label="${text}">i<span class="info-popover" role="tooltip">${text}</span></span>`;
 }

@@ -2504,10 +2504,6 @@ h2 {
 .maintenance-notice strong { display: block; font-size: 1.1rem; }
 .maintenance-notice p { margin: .5rem 0 0; }
 
-.transition-notice { border: 1px solid #57a87b; line-height: 1.6; }
-.transition-notice strong { display: block; font-size: 1.1rem; }
-.transition-notice p { margin: .5rem 0 0; }
 .treasury-series { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
 .treasury-transition { stroke: var(--text-muted, #87918b); stroke-width: 1.5; stroke-dasharray: 5 5; }
-.treasury-note { margin: 0 0 16px; font-size: 12px; line-height: 1.6; color: var(--muted); }
 .treasury-chart .dual-axis-metric small { font-size: 11px; color: var(--muted); }

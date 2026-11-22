@@ -109,7 +109,6 @@ async function render(): Promise<void> {
         </div>
       </header>
       <div class="content">
-        <div class="notice transition-notice" role="status"><strong>ZEC accumulation is now active</strong><p>Following the community’s decision, Nummus transitioned from tBTC to Zcash (ZEC) accumulation on November 22, 2026. Live updates have resumed. November 18–21 remain fixed at November 17 values. Treasury valuation now includes only the configured ZEC token on Solana; residual tBTC is excluded.</p></div>
         ${
           isStale
             ? `<div class="notice stale-notice" role="alert">Data update delayed: the last published update is more than 48 hours old. The dashboard is showing the most recent verified data.</div>`
