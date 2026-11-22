@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T10:25:17.790Z",
+  "generatedAt": "2026-11-22T10:30:09.070Z",
   "records": [
     {
       "date": "2025-06-16",
@@ -22375,17 +22375,17 @@
     },
     {
       "date": "2026-11-22",
-      "vaultUsd": 63964.42258052,
+      "vaultUsd": 64149.03234906,
       "supply": 97507281.38422,
       "marketPrice": 0.006468096119039145,
-      "nav": 0.000656,
-      "backing": 10.142088,
-      "premium": 9.85990262,
+      "nav": 0.00065789,
+      "backing": 10.17130834,
+      "premium": 9.83157689,
       "tbtcAmount": null,
       "zecAmount": 80,
       "marketDepth": {
-        "buyDepthUsd": 279.06,
-        "sellDepthUsd": 264.84,
+        "buyDepthUsd": 244.22,
+        "sellDepthUsd": 292.5,
         "priceImpactPct": 1,
         "provider": "jupiter"
       },
@@ -22459,8 +22459,8 @@
             "symbol": "ZEC",
             "mint": "A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS",
             "amount": 80,
-            "priceUsd": 799.5552822565296,
-            "valueUsd": 63964.42258052,
+            "priceUsd": 801.8629043632097,
+            "valueUsd": 64149.03234906,
             "provider": "jupiter"
           }
         ],
