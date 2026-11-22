@@ -90,13 +90,12 @@ jobs:
           COMMIT_OUTCOME: ${{ steps.commit-snapshot.outcome }}
         run: node scripts/notify-telegram.mjs
 
-  deploy:
+  build:
     needs: collect
     if: ${{ !cancelled() && needs.collect.result == 'success' }}
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    outputs:
+      artifact_id: ${{ steps.upload.outputs.artifact_id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -120,8 +119,9 @@ jobs:
 
       - name: Upload artifact
         id: upload
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
+          name: github-pages
           path: dist
 
       - name: Verify Pages artifact upload
@@ -133,6 +133,50 @@ jobs:
             exit 1
           fi
 
+  deploy:
+    # Start only after the upload job has finished, so the artifact is finalized.
+    needs: build
+    if: ${{ !cancelled() && needs.build.result == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Wait for uploaded Pages artifact
+        timeout-minutes: 2
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ needs.build.outputs.artifact_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$ARTIFACT_ID" =~ ^[0-9]+$ ]]; then
+            echo "::error::Build did not return a valid Pages artifact ID."
+            exit 1
+          fi
+          for attempt in 1 2 3 4 5 6; do
+            if visible_id=$(gh api \
+              "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?per_page=100" \
+              --jq ".artifacts[] | select(.name == \"github-pages\" and .expired == false and .id == ${ARTIFACT_ID}) | .id"); then
+              if [[ "$visible_id" == "$ARTIFACT_ID" ]]; then
+                echo "Confirmed github-pages artifact ${ARTIFACT_ID} in this workflow run."
+                exit 0
+              fi
+            fi
+            if [[ "$attempt" -lt 6 ]]; then
+              echo "Pages artifact not visible yet; checking again in 10 seconds."
+              sleep 10
+            fi
+          done
+          echo "::error::Uploaded Pages artifact ${ARTIFACT_ID} is not available in run ${GITHUB_RUN_ID}; deployment stopped."
+          exit 1
+
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
+        with:
+          artifact_name: github-pages
