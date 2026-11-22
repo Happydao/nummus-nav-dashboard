@@ -8,7 +8,7 @@ Current valuation includes only Solana ZEC mint `A7bdiYdS5GjqGFtxf17ppRHtDKPkkRq
 
 Daily scheduled collection, manual runs, collection on push, notifications and downstream data dispatches are active again. Deploy waits for successful collection. The first holder baseline uses verified November 17 owners held through November 21, so resumed holder changes compare against the published baseline. Historical tBTC scanning has stopped, and full supply rescans preserve all pre-restart published history. Missing ZEC balances or prices are reported as unavailable; they are never replaced with tBTC or invented holdings.
 
-The NUMMUS NAV Dashboard tracks the treasury backing, market valuation and liquidity conditions supporting NUMMUS over time.
+The NUMMUS NAV Dashboard tracks the treasury backing, market valuation and liquidity conditions supporting NUMMUS over time. Following the community’s decision, Zcash (ZEC) became the treasury accumulation asset on November 22, 2026. The dashboard preserves the earlier tBTC history and tracks the new ZEC strategy in its original token units.
 
 It is not primarily a treasury-composition dashboard. Current asset holdings are available as supporting context, while the dashboard's main purpose is to preserve and explain the historical relationship between:
 
@@ -29,7 +29,7 @@ Current data is recorded through recurring snapshots and retained to build a ver
 
 ### Vault Value
 
-Vault Value is the total USD value of the fungible assets included in the DAO treasury valuation.
+Vault Value is the USD value of the assets included in the DAO treasury valuation. From November 22, 2026, only the configured ZEC token on Solana is included: `Vault Value = ZEC balance × ZEC price in USD`. Residual tBTC and other wallet assets are excluded. Earlier dates retain their original historical valuations.
 
 It can change because assets enter or leave the treasury, but also because the market prices of assets already held by the treasury change. A higher Vault Value does not therefore necessarily mean that an equivalent amount of new capital was deposited.
 
@@ -192,6 +192,8 @@ Charts support mouse drag, horizontal trackpad movement, touch panning and pinch
 
 Percentage changes shown above the charts are calculated from the first and last valid observations in the currently visible period.
 
+Every historical chart displays a grey vertical dashed line at November 22, 2026 when that date is inside the visible range. The line marks the community-approved transition of the entire treasury and ongoing accumulation strategy from tBTC to ZEC. It follows range selection, zoom and pan. A dashed-line key appears below the direction/color legend, and the top information popup explains its meaning. Treasury Accumulation also labels the marker `tBTC → ZEC`. The separate projection simulator does not display this historical reference.
+
 ## Projection Simulator
 
 The simulator is visually separated from the historical dashboard because it presents hypothetical scenarios rather than observed data.
@@ -213,9 +215,40 @@ For shorter periods, the selected five-year growth is distributed progressively 
 
 The simulator is an analytical tool, not a price forecast, financial advice or a promise of future performance.
 
+## Automatic Updates and Publishing
+
+The NAV collector runs when triggered by:
+
+- **VaultDAO:** the `Monitor ZEC Vault + Swap Events` workflow in `Happydao/Nummus.VaultDAO` is scheduled hourly. Each successful monitor run requests this repository’s `deploy-pages.yml` workflow on `main`, using the upstream `NAV_DISPATCH_TOKEN` secret.
+- **Daily fallback:** this repository independently schedules a run at **06:25 UTC**.
+- **Repository changes:** pushes to `main` collect and publish fresh data.
+- **Manual invocation:** GitHub Actions `Run workflow` and API workflow dispatches use the same collection path.
+
+VaultDAO provides an update trigger; the NAV collector independently fetches its own Solana balances and market data. It does not copy the current ZEC valuation from another dashboard.
+
+Publishing follows `collect → build → deploy`. Collection commits the validated dataset; build checks out the updated `main`, builds the site and uploads the `github-pages` artifact. A separate deployment job waits for that exact artifact to be visible in the workflow run before publishing to GitHub Pages. A failed build or deployment leaves the existing live site in place; repository JSON may already contain the newly collected data. Successful changed collections also notify the linked `Happydao/Nummus.Aeternitas` site through its data-update event.
+
+## JSON Data for Connected Sites
+
+Connected sites can keep using the stable repository dataset:
+
+```text
+https://raw.githubusercontent.com/Happydao/nummus-nav-dashboard/main/data/history.json
+```
+
+The successfully deployed dashboard also serves `https://happydao.github.io/nummus-nav-dashboard/data/history.json`. The repository updates at collection time; the Pages copy updates after successful deployment.
+
+| Location | Quantity field | Meaning |
+| --- | --- | --- |
+| Last element of `history.records` | `zecAmount` | Latest date’s ZEC balance; `date` identifies the observation date |
+| Last element of `history.zecHistory` | `amount` | Latest valid ZEC quantity recorded in the accumulation series; use its own `date` |
+| `data/snapshots/YYYY-MM-DD.json` | `zecAmount` | Snapshot for that specific UTC date, refreshed by successful runs on that date |
+
+Quantities are already expressed in ZEC token units; no raw decimal conversion is needed. Missing or `null` values mean unavailable, not zero. If the latest daily snapshot lacks a ZEC observation, the last valid `zecHistory` point can be older and must be displayed with its date. `generatedAt` identifies the dataset publication time. The `tbtcAmount` and `tbtcHistory` fields retain their historical tBTC meaning and must never be relabelled as ZEC.
+
 ## Snapshot Integrity and Update Status
 
-Each update publishes the valid metrics collected during that run. Unavailable metrics are left absent, with a partial-update notice and each chart's last valid observation date. Previous days remain unchanged; values are never copied from an earlier date to create a new observation. A retry on the same date retains already recorded valid values when that group cannot be refreshed, and marks the affected group as incomplete.
+Each UTC date has one daily snapshot. Successful intraday runs replace that date’s available metrics with the latest valid observations. If a source cannot refresh on a later run, an already validated value from the same date is retained; a metric without a valid observation for that date stays unavailable and is reported as incomplete. Derived values are recalculated using the valid daily inputs. The previous days remain unchanged, including the explicit November 18–21 maintenance interval documented above. Outside that interval, older dates are never copied forward to fabricate observations.
 
 Vault Value, supply, market price, Market Depth, DEX liquidity and holder distribution are validated independently. NAV requires valid current Vault Value and supply; backing and premium also require current market price. Holder concentration requires the current pool inventory to exclude pool custody correctly. Historical tBTC is archived; supply scans retain their previous cursor if a scan fails. ZEC quantities come from verified daily vault balances. If no current metric is valid, the update fails and the previous published dataset remains unchanged. The workflow retries failed collections three times.
 

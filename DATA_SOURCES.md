@@ -4,7 +4,7 @@
 
 | Metric | Source | Calculation |
 | --- | --- | --- |
-| Vault assets | Helius DAS `getAssetsByOwner` for the Vault wallet | Current fungible balances only; NFTs are ignored |
+| Vault assets | Helius DAS `getAssetsByOwner` for the Vault wallet | Only configured ZEC mint `A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS`; on-chain decimals convert raw balances to token units; residual tBTC is excluded |
 | Vault asset prices | Jupiter, Helius `price_info`, DexScreener, DefiLlama | First valid provider wins |
 | NUMMUS supply | Helius RPC `getTokenSupply` | Current mint supply |
 | NUMMUS market price | Current pricing cascade | Current USD market price |
@@ -14,7 +14,9 @@
 | Holder Growth | Helius DAS `getTokenAccounts` filtered by NUMMUS mint | Unique owners with a positive aggregated balance, regardless of quantity held |
 | Holder Concentration | Holder balances + verified exclusion mapping | Top 10 and Top 50 shares after excluding tracked DEX pool owners and known project operational wallets |
 
-The daily collector validates the complete dataset before publishing `data/snapshots/YYYY-MM-DD.json` and the corresponding date in `data/history.json`. Holder pagination or validation failure rejects the entire update together with any other incomplete metric.
+The collector validates metric groups independently before publishing `data/snapshots/YYYY-MM-DD.json` and the corresponding date in `data/history.json`. A failed group remains unavailable without blocking unrelated valid metrics. Intraday runs retain valid observations already collected on the same UTC date. A total outage with no valid daily observation fails without replacing the published dataset. The initial ZEC restart additionally requires a verified ZEC balance, USD valuation and NAV.
+
+Successful hourly VaultDAO monitor runs trigger this collector through workflow dispatch. This repository also has a daily 06:25 UTC fallback, collection on pushes to `main`, and manual/API dispatches. VaultDAO is a trigger for current collection, not a source of its live ZEC balances or prices.
 
 ## Early Vault reconstruction
 
