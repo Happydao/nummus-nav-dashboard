@@ -1,15 +1,21 @@
 {
   "date": "2026-11-25",
-  "vaultUsd": 57489.59665169,
+  "vaultUsd": 61246.85163716,
   "supply": 97507281.365548,
-  "marketPrice": 0.006669213784690252,
-  "nav": 0.00058959,
-  "backing": 8.84047234,
-  "premium": 11.31161279,
+  "marketPrice": 0.006363466415377372,
+  "nav": 0.00062813,
+  "backing": 9.8708779,
+  "premium": 10.13081116,
   "tbtcAmount": null,
   "zecAmount": 80.61682935,
+  "marketDepth": {
+    "buyDepthUsd": 139.92,
+    "sellDepthUsd": 374.69,
+    "priceImpactPct": 1,
+    "provider": "jupiter"
+  },
   "dexLiquidity": {
-    "totalLiquidityUsd": 81180.35,
+    "totalLiquidityUsd": 79984.42,
     "poolCount": 6,
     "provider": "dexscreener",
     "pools": [
@@ -17,28 +23,28 @@
         "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/SOL",
-        "liquidityUsd": 69854.86,
+        "liquidityUsd": 68979.39,
         "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
       },
       {
         "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
         "dexId": "raydium",
         "pairLabel": "NUMMUS/USDC",
-        "liquidityUsd": 6584.38,
+        "liquidityUsd": 6395.01,
         "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
       },
       {
         "pairAddress": "BqXJoDkmKvbeSKJn9RwqvoKkgu3KyDv9hPHf2NoMjs1d",
         "dexId": "orca",
         "pairLabel": "NUMMUS/USDT",
-        "liquidityUsd": 2703.59,
+        "liquidityUsd": 2629.23,
         "url": "https://dexscreener.com/solana/bqxjodkmkvbeskjn9rwqvokkgu3kydv9hphf2nomjs1d"
       },
       {
         "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
         "dexId": "meteora",
         "pairLabel": "NUMMUS/USDT",
-        "liquidityUsd": 1992.89,
+        "liquidityUsd": 1936.18,
         "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
       },
       {
@@ -52,7 +58,7 @@
         "pairAddress": "htJHMSsSry2c8E77hQgU39Zq8B2TszhHytSh6KznD1Y",
         "dexId": "meteora",
         "pairLabel": "IMT/NUMMUS",
-        "liquidityUsd": 0.47,
+        "liquidityUsd": 0.45,
         "url": "https://dexscreener.com/solana/htjhmsssry2c8e77hqgu39zq8b2tszhhytsh6kznd1y"
       }
     ]
@@ -64,8 +70,8 @@
         "symbol": "ZEC",
         "mint": "A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS",
         "amount": 80.61682935,
-        "priceUsd": 713.121529526994,
-        "valueUsd": 57489.59665169,
+        "priceUsd": 759.727864901011,
+        "valueUsd": 61246.85163716,
         "provider": "jupiter"
       }
     ],
@@ -74,25 +80,19 @@
   },
   "collectionIssues": [],
   "holderGrowth": {
-    "holderCount": 16874,
+    "holderCount": 16873,
     "newHolders": 1,
-    "exitedHolders": 2,
+    "exitedHolders": 3,
     "concentration": {
-      "topHolderPct": 2.9495,
-      "top10Pct": 15.0332,
-      "top50Pct": 35.2126,
-      "othersPct": 64.7873,
+      "topHolderPct": 2.9575,
+      "top10Pct": 15.0737,
+      "top50Pct": 35.091,
+      "othersPct": 64.9089,
       "topHolderAmount": 2658888.461538,
       "top10Amount": 13551605.426115,
-      "top50Amount": 31742098.423115,
-      "othersAmount": 58401976.955489,
+      "top50Amount": 31547454.38143,
+      "othersAmount": 58354355.250763,
       "excludedPoolCount": 7
     }
-  },
-  "marketDepth": {
-    "buyDepthUsd": 250,
-    "sellDepthUsd": 295,
-    "priceImpactPct": 1,
-    "provider": "jupiter"
   }
 }
