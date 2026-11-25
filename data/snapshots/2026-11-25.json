@@ -1,0 +1,91 @@
+{
+  "date": "2026-11-25",
+  "vaultUsd": 58661.99209121,
+  "supply": 97507281.365548,
+  "marketPrice": 0.006767312610918374,
+  "nav": 0.00060162,
+  "backing": 8.89008732,
+  "premium": 11.24848345,
+  "tbtcAmount": null,
+  "zecAmount": 80.34896759,
+  "marketDepth": {
+    "buyDepthUsd": 474.69,
+    "sellDepthUsd": 40,
+    "priceImpactPct": 1,
+    "provider": "jupiter"
+  },
+  "dexLiquidity": {
+    "totalLiquidityUsd": 81457.33,
+    "poolCount": 5,
+    "provider": "dexscreener",
+    "pools": [
+      {
+        "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
+        "dexId": "raydium",
+        "pairLabel": "NUMMUS/SOL",
+        "liquidityUsd": 70206.02,
+        "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
+      },
+      {
+        "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
+        "dexId": "raydium",
+        "pairLabel": "NUMMUS/USDC",
+        "liquidityUsd": 6572.22,
+        "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
+      },
+      {
+        "pairAddress": "BqXJoDkmKvbeSKJn9RwqvoKkgu3KyDv9hPHf2NoMjs1d",
+        "dexId": "orca",
+        "pairLabel": "NUMMUS/USDT",
+        "liquidityUsd": 2690.17,
+        "url": "https://dexscreener.com/solana/bqxjodkmkvbeskjn9rwqvokkgu3kydv9hphf2nomjs1d"
+      },
+      {
+        "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
+        "dexId": "meteora",
+        "pairLabel": "NUMMUS/USDT",
+        "liquidityUsd": 1988.45,
+        "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
+      },
+      {
+        "pairAddress": "htJHMSsSry2c8E77hQgU39Zq8B2TszhHytSh6KznD1Y",
+        "dexId": "meteora",
+        "pairLabel": "IMT/NUMMUS",
+        "liquidityUsd": 0.47,
+        "url": "https://dexscreener.com/solana/htjhmsssry2c8e77hqgu39zq8b2tszhhytsh6kznd1y"
+      }
+    ]
+  },
+  "valuationReport": {
+    "source": "Helius DAS current vault assets + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
+    "pricedAssets": [
+      {
+        "symbol": "ZEC",
+        "mint": "A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS",
+        "amount": 80.34896759,
+        "priceUsd": 730.0901785141895,
+        "valueUsd": 58661.99209121,
+        "provider": "jupiter"
+      }
+    ],
+    "ignoredAssets": [],
+    "unpricedAssets": []
+  },
+  "collectionIssues": [],
+  "holderGrowth": {
+    "holderCount": 16875,
+    "newHolders": 2,
+    "exitedHolders": 2,
+    "concentration": {
+      "topHolderPct": 2.9504,
+      "top10Pct": 15.0375,
+      "top50Pct": 35.1559,
+      "othersPct": 64.844,
+      "topHolderAmount": 2658888.461538,
+      "top10Amount": 13551605.426115,
+      "top50Amount": 31682098.45522,
+      "othersAmount": 58436600.95327,
+      "excludedPoolCount": 7
+    }
+  }
+}
