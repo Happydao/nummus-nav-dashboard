@@ -1,0 +1,98 @@
+{
+  "date": "2026-11-26",
+  "vaultUsd": 61967.22909768,
+  "supply": 97507281.365548,
+  "marketPrice": 0.0064325868674028055,
+  "nav": 0.00063551,
+  "backing": 9.87954012,
+  "premium": 10.12192864,
+  "tbtcAmount": null,
+  "zecAmount": 80.61682935,
+  "marketDepth": {
+    "buyDepthUsd": 394.06,
+    "sellDepthUsd": 129.92,
+    "priceImpactPct": 1,
+    "provider": "jupiter"
+  },
+  "dexLiquidity": {
+    "totalLiquidityUsd": 80917.36,
+    "poolCount": 6,
+    "provider": "dexscreener",
+    "pools": [
+      {
+        "pairAddress": "AuQtgm4tzdJSsZNGxrM1F69hxbyvMpNM95496pUuSBQg",
+        "dexId": "raydium",
+        "pairLabel": "NUMMUS/SOL",
+        "liquidityUsd": 69865.64,
+        "url": "https://dexscreener.com/solana/auqtgm4tzdjsszngxrm1f69hxbyvmpnm95496puusbqg"
+      },
+      {
+        "pairAddress": "Ba6vunzD97PR1y2iWvp7EZnsn5uSbCii8AuEPjYfb5M8",
+        "dexId": "raydium",
+        "pairLabel": "NUMMUS/USDC",
+        "liquidityUsd": 6418.92,
+        "url": "https://dexscreener.com/solana/ba6vunzd97pr1y2iwvp7eznsn5usbcii8auepjyfb5m8"
+      },
+      {
+        "pairAddress": "BqXJoDkmKvbeSKJn9RwqvoKkgu3KyDv9hPHf2NoMjs1d",
+        "dexId": "orca",
+        "pairLabel": "NUMMUS/USDT",
+        "liquidityUsd": 2644.95,
+        "url": "https://dexscreener.com/solana/bqxjodkmkvbeskjn9rwqvokkgu3kydv9hphf2nomjs1d"
+      },
+      {
+        "pairAddress": "FUpAv7xc8LBo5iJ1sw2QThcw1WmqvHTtHNsGJ5hQuy7k",
+        "dexId": "meteora",
+        "pairLabel": "NUMMUS/USDT",
+        "liquidityUsd": 1943.23,
+        "url": "https://dexscreener.com/solana/fupav7xc8lbo5ij1sw2qthcw1wmqvhtthnsgj5hquy7k"
+      },
+      {
+        "pairAddress": "Ezz3kLtbGm9Do1vUCHr7dQvS4U17ZayLaMKBqfuo1EYF",
+        "dexId": "meteora",
+        "pairLabel": "QUANGO/NUMMUS",
+        "liquidityUsd": 44.16,
+        "url": "https://dexscreener.com/solana/ezz3kltbgm9do1vuchr7dqvs4u17zaylamkbqfuo1eyf"
+      },
+      {
+        "pairAddress": "htJHMSsSry2c8E77hQgU39Zq8B2TszhHytSh6KznD1Y",
+        "dexId": "meteora",
+        "pairLabel": "IMT/NUMMUS",
+        "liquidityUsd": 0.46,
+        "url": "https://dexscreener.com/solana/htjhmsssry2c8e77hqgu39zq8b2tszhhytsh6kznd1y"
+      }
+    ]
+  },
+  "valuationReport": {
+    "source": "Helius DAS current vault assets + Jupiter/Helius/DexScreener/DefiLlama pricing cascade",
+    "pricedAssets": [
+      {
+        "symbol": "ZEC",
+        "mint": "A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS",
+        "amount": 80.61682935,
+        "priceUsd": 768.6636847084682,
+        "valueUsd": 61967.22909768,
+        "provider": "jupiter"
+      }
+    ],
+    "ignoredAssets": [],
+    "unpricedAssets": []
+  },
+  "collectionIssues": [],
+  "holderGrowth": {
+    "holderCount": 16874,
+    "newHolders": 1,
+    "exitedHolders": 0,
+    "concentration": {
+      "topHolderPct": 2.9576,
+      "top10Pct": 15.0745,
+      "top50Pct": 35.0927,
+      "othersPct": 64.9072,
+      "topHolderAmount": 2658888.461538,
+      "top10Amount": 13551605.426115,
+      "top50Amount": 31547454.38143,
+      "othersAmount": 58349866.483305,
+      "excludedPoolCount": 7
+    }
+  }
+}
