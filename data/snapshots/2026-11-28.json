@@ -1,16 +1,16 @@
 {
   "date": "2026-11-28",
-  "vaultUsd": 58191.04784683,
+  "vaultUsd": 58445.4132496,
   "supply": 97507231.365548,
-  "marketPrice": 0.0063790591498587915,
-  "nav": 0.00059679,
-  "backing": 9.35545487,
-  "premium": 10.68895114,
+  "marketPrice": 0.006415368316333075,
+  "nav": 0.0005994,
+  "backing": 9.34318921,
+  "premium": 10.70298351,
   "tbtcAmount": null,
   "zecAmount": 81.0417255,
   "marketDepth": {
-    "buyDepthUsd": 280.63,
-    "sellDepthUsd": 241.09,
+    "buyDepthUsd": 284.38,
+    "sellDepthUsd": 237.5,
     "priceImpactPct": 1,
     "provider": "jupiter"
   },
@@ -63,8 +63,8 @@
         "symbol": "ZEC",
         "mint": "A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS",
         "amount": 81.0417255,
-        "priceUsd": 718.0381154005767,
-        "valueUsd": 58191.04784683,
+        "priceUsd": 721.1768121792879,
+        "valueUsd": 58445.4132496,
         "provider": "jupiter"
       }
     ],
@@ -77,14 +77,14 @@
     "newHolders": 4,
     "exitedHolders": 5,
     "concentration": {
-      "topHolderPct": 2.9576,
-      "top10Pct": 15.0742,
-      "top50Pct": 35.0853,
-      "othersPct": 64.9146,
+      "topHolderPct": 2.9573,
+      "top10Pct": 15.0729,
+      "top50Pct": 35.0822,
+      "othersPct": 64.9177,
       "topHolderAmount": 2658888.461538,
       "top10Amount": 13551605.426115,
       "top50Amount": 31541404.802911,
-      "othersAmount": 58357544.164696,
+      "othersAmount": 58365605.501311,
       "excludedPoolCount": 7
     }
   }
